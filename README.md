@@ -3,7 +3,7 @@
 ### Prepare VCFs
 
 
-`filter_vcf.sh` applies the MAC10 filter 
+[`filter_vcf.sh`](eqtl/filter_vcf.sh) applies the MAC10 filter 
 
 ### Prepare covariates
 
