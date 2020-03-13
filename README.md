@@ -176,10 +176,12 @@ gzip ${vcfdir}/gtex.admixed.MAC10.phased.chr*
 [`prepare_covariates.sh`](eqtl/prepare_covariates.sh) concatenates covariates provided by GTEx and new PEER factors. It requires paths to two GTEx v8 files:  
   - `${tissue}.v8.normalized_expression.bed.gz` (hg38 coordinates now)   
   - `${tissue}.v8.covariates.txt`  
+
 It also calls 3 other scripts:  
   - [`filter_expression_admixed.R`](eqtl/filter_expression_admixed.R)
   - [`concat_cov.R`](eqtl/concat_cov.R)
   - [`run_PEER.R`](https://github.com/broadinstitute/gtex-pipeline/blob/master/qtl/src/run_PEER.R) (not in this repository)
+
 It has a few outputs:  
   - `${tissue}.v8.normalized_expression.admixed_subset.bed`: expression in 117AX (however many have samples in this tissue)
   - `other_covariates.txt`: necessary covariates extracted from the GTEx v8 covariates file  
