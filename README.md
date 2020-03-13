@@ -1,11 +1,13 @@
 # Impact of admixture and ancestry on eQTL analysis and GWAS colocalization in GTEx
 
-This repository provides code and resources used to perform the analyses presented in the bioRxiv preprint [Impact of admixture and ancestry on eQTL analysis and GWAS colocalization in GTEx](https://www.biorxiv.org/content/10.1101/836825v1) by Nicole Gay, et al. The author of all code is Nicole Gay (nicolerg@stanford.edu) unless otherwise noted.  
+This repository provides code and resources used to perform the analyses presented in the bioRxiv preprint [Impact of admixture and ancestry on eQTL analysis and GWAS colocalization in GTEx](https://www.biorxiv.org/content/10.1101/836825v1) by Nicole Gay, et al. The author of all code is Nicole Gay (nicolerg@stanford.edu) unless otherwise noted. Please see the manuscript for context.   
 
 Note that code is primarily provided to replicate analyses in the manuscript. However, when applicable, updated or more efficient versions of the code are also provided.  
 
+"117AX" refers to a subset of 117 admixed invididuals in the GTEx v8 release whose GTEx IDs are provided in [`metadata/gtex-admix0.9.txt`](metadata/gtex-admix0.9.txt). These scripts could be adapted for any subset of individuals.  
+
 ## Table of contents  
-- **Perform local ancestry inference:** Use RFMix v1.5.4 and 1000 Genomes reference panels to perform local ancestry inference on 117 admixed individuals in GTEx   
+- **Perform local ancestry inference:** Use RFMix v1.5.4 and 1000 Genomes reference panels to perform local ancestry inference on 117AX   
 - **eQTL calling:** Perform eQTL calling with both Global Ancestry Adjustment (GlobalAA) and Local Ancestry Adjustment (LocalAA)  
 - **Colocalization:** <Add something here>
 
@@ -80,7 +82,7 @@ done
 [RFMix v1.5.4](https://sites.google.com/site/rfmixlocalancestryinference/) requires specially formatted inputs, including SNP positions in centimorgans. See the [Manual](https://www.dropbox.com/s/cmq4saduh9gozi9/RFMix_v1.5.4.zip?file_subpath=%2FRFMix_v1.5.4%2FManual.pdf) for more details. While the merging steps of [format-rfmix.R](rfmix/format-rfmix.R) can be improved (see above), it is still helpful for generating these inputs.   
 
 [format-rfmix.R](rfmix/format-rfmix.R) requires several files:  
-  - (gtex-admixed0.9.txt)[gtex-admixed0.9.txt]: list of 117AX GTEx IDs
+  - (gtex-admixed0.9.txt)[metadata/gtex-admixed0.9.txt]: list of 117AX GTEx IDs
   - 1000 Genomes metadata file with population labels, i.e.:
     ```
     Subject Subpop  Superpop
@@ -207,7 +209,19 @@ It has a few outputs:
 
 ### Get tied lead SNPs for each gene 
 
+[`extract-egenes.py`](eqtl/extract-egenes.py) identifies the most significant SNP(s) for each tested gene. If multiple SNPs have the same smallest p-value, all tied lead SNPs are reported. No significance threshold is applied; the lead SNP(s) is reported for **all** tested genes.  
 
+There are two outputs:
+  - `gtex.admix.global.egenes.tied.txt.gz`: Lead SNPs according to GlobalAA  
+  - `gtex.admix.lava.egenes.tied.txt.gz`: Lead SNPs according to LocalAA  
+
+
+
+
+
+---------------------------------
+
+#TODO
 
 ## Colocalization (colocalization subdirectory)
 
