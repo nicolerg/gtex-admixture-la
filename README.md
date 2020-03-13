@@ -186,14 +186,28 @@ It has a few outputs:
   - `${tissue}.v8.normalized_expression.admixed_subset.bed`: expression in 117AX (however many have samples in this tissue)
   - `other_covariates.txt`: necessary covariates extracted from the GTEx v8 covariates file  
   - `peer` folder with 3 outputs, including `Whole_Blood.PEER_covariates.txt`, which are the PEER covariates calculated using only 117AX samples
-  - `Whole_Blood.all_covariates.txt`: combined covariates. **This file will be used for eQTL calling.**
+  - `${tissue}.all_covariates.txt`: combined covariates. **This file will be used for eQTL calling.**
 
 ### Run eQTL calling with both LocalAA and GlobalAA 
 
-[`batch_eqtl_localaa_globalaa.sh`](eqtl/batch_eqtl_localaa_globalaa.sh) splits the expression file for a tissue into chunks of 50 genes (line 49) and runs [`eqtl_localaa_globalaa.R`](eqtl/eqtl_localaa_globalaa.R) on each chunk of genes per chromosome. 
+[`batch_eqtl_localaa_globalaa.sh`](eqtl/batch_eqtl_localaa_globalaa.sh) splits the expression file for a tissue into chunks of 50 genes (line 49) and runs [`eqtl_localaa_globalaa.R`](eqtl/eqtl_localaa_globalaa.R) on each chunk of genes per chromosome.  
 
+[`eqtl_localaa_globalaa.R`](eqtl/eqtl_localaa_globalaa.R) requires several inputs (see arguments):
+  - `chr`: Chromosome number
+  - `tissue`: Tissue specified with GTEx file prefix, e.g. `Muscle_Skeletal` 
+  - `exprfile`: Path to GTEx v8 expression file for this tissue 
+  - `globalcov`: Path to `${tissue}.all_covariates.txt` from the [previous step](#prepare-covariates)
+  - `geno`: Path to filtered VCF for this chromosome (from [this step](#prepare-vcfs))
+  - `localcov`: Path to local ancestry covariates for this chromosome from [this step](#make-master-local-ancestry-files)
+  - `out`: Output file. Results from each test are added to this file as they are generated. This file is analogous to GTEx's "allpairs" files  
 
 [`batch_eqtl_localaa_globalaa.sh`](eqtl/batch_eqtl_localaa_globalaa.sh) was written to parallelize eQTL calling on a cluster without a job submission system. As written, it restricts processes to 9 cores. If you have access to a HPC with a job submission system like `SGE` or `SLURM`, I highly recommend parallelizing this process as much as possible. See scripts in [eqtl/slurm](eqtl/slurm) for an example of how to do this with `SLURM`.  
+
+[`eqtl_localaa_globalaa.R`](eqtl/eqtl_localaa_globalaa.R) generates a progress bar for its corresponding chunk for your sanity. Once all chunks are done running, concatenate the results for each tissue (see the end of [`batch_eqtl_localaa_globalaa.sh`](eqtl/batch_eqtl_localaa_globalaa.sh)).  
+
+### Get tied lead SNPs for each gene 
+
+
 
 ## Colocalization (colocalization subdirectory)
 
