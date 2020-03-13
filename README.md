@@ -190,7 +190,7 @@ It has a few outputs:
 
 ### Run eQTL calling with both LocalAA and GlobalAA 
 
-
+[`batch_eqtl_localaa_globalaa.sh`](eqtl/batch_eqtl_localaa_globalaa.sh) splits the expression file for a tissue into chunks of 50 genes (line 49) and runs [`eqtl_localaa_globalaa.R`](eqtl/eqtl_localaa_globalaa.R) on each chunk of genes per chromosome. 
 
 
 [`batch_eqtl_localaa_globalaa.sh`](eqtl/batch_eqtl_localaa_globalaa.sh) was written to parallelize eQTL calling on a cluster without a job submission system. As written, it restricts processes to 9 cores. If you have access to a HPC with a job submission system like `SGE` or `SLURM`, I highly recommend parallelizing this process as much as possible. See scripts in [eqtl/slurm](eqtl/slurm) for an example of how to do this with `SLURM`.  
