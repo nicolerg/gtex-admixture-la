@@ -1,21 +1,20 @@
 #!/bin/bash
 # run LAVA eQTL calling (LocalAA and GlobalAA)
-# for new PEER factors, first run new_peer_admixed.sh to generate covariate files 
 
 set -e
 
 module load r/3.5
 
-base=/labs/smontgom/nicolerg/LAVA
-srcdir=/labs/smontgom/nicolerg/src/gtex-admixture-la/eqtl
-exprdir=${base}/Whole_Blood
-localcov=${base}/manuscript_version/admixed_ancestry
-admix_ids=${localcov}/gtex-admixed0.9.txt
-geno=${base}/manuscript_version/admixed_vcf
+base=/path/to/analysis/root
+srcdir=/path/to/gtex-admixture-la/eqtl
+exprdir=${base}/expression_dir # GTEx v8 expression files
+localcov=${base}/local_ancestry # local ancestry covariates (e.g. chr10.hg19.maf0.localcov.tsv.gz)
+admix_ids=${localcov}/gtex-admixed0.9.txt # see root of repository 
+geno=${base}/manuscript_version/admixed_vcf # path to filtered VCFs for eQTL calling 
 
-mkdir -p ${base}/slurm
+mkdir -p ${base}/slurm # output folder for log files
 
-for tissue in Whole_Blood; do 
+for tissue in Whole_Blood; do # list as many tissues as you want; must correspond with GTEx file name prefixes 
 
     indir=${base}/${tissue}
     edir=${indir}/chunks
@@ -23,7 +22,7 @@ for tissue in Whole_Blood; do
     mkdir -p $edir
 
     exprfile=${exprdir}/${tissue}.v8.normalized_expression.bed.gz
-    globalcov=${indir}/${tissue}.all_covariates.txt
+    globalcov=${indir}/${tissue}.all_covariates.txt # path to all covaraites file (GTEx covariates and new PEERs)
 
     for chr in {1..22}; do
      
@@ -61,7 +60,7 @@ for tissue in Whole_Blood; do
             suf=`echo ${gene} | sed 's/.*expression\.//' | sed 's/\..*//'`
 
             echo "Starting chr $chr chunk $suf"
-            out=${outdir}/${tissue}-LAVA-global-allpairs-chr${chr}-${suf}.tsv
+            out=${outdir}/${tissue}-local-global-allpairs-chr${chr}-${suf}.tsv
 
             sbatch --export=tissue=${tissue},exprfile=${gene},globalcov=${globalcov},geno=${geno},localcov=${localcov}/chr${chr}.hg19.maf0.localcov.tsv.gz,out=${out},chr=${chr} \
 		eqtl_localaa_globalaa_sbatch.sh
