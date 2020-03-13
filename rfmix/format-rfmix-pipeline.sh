@@ -114,9 +114,9 @@ rm ${outdir}/classes-*
 
 # compress whole outputs
 for chr in {1..22}; do 
-	paste -d'\0' ${outdir}/whole-outputs/gtex-*-chr${chr}.0.Viterbi.txt > ${outdir}/gtex-chr${chr}.0.Viterbi.txt ### THIS COLLAPSES SUBJECTS IN THE WRONG ORDER
-	paste -d'\0' ${outdir}/whole-outputs/gtex-*-chr${chr}.allelesRephased0.txt > ${outdir}/gtex-chr${chr}.allelesRephased0.txt
-	paste -d'\0' ${outdir}/whole-outputs/gtex-*-chr${chr}.0.ForwardBackward.txt > ${outdir}/gtex-chr${chr}.0.ForwardBackward.txt
+	paste -d'\0' ${outdir}/whole-outputs/gtex-{1..117}-chr${chr}.0.Viterbi.txt > ${outdir}/gtex-chr${chr}.0.Viterbi.txt
+	paste -d'\0' ${outdir}/whole-outputs/gtex-{1..117}-chr${chr}.allelesRephased0.txt > ${outdir}/gtex-chr${chr}.allelesRephased0.txt
+	paste -d'\0' ${outdir}/whole-outputs/gtex-{1..117}-chr${chr}.0.ForwardBackward.txt > ${outdir}/gtex-chr${chr}.0.ForwardBackward.txt
 
 	gzip ${outdir}/whole-outputs/gtex-chr${chr}.0.Viterbi.txt
 	gzip ${outdir}/whole-outputs/gtex-chr${chr}.allelesRephased0.txt
