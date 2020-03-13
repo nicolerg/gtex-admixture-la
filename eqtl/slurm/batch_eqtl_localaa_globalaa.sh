@@ -10,7 +10,7 @@ srcdir=/path/to/gtex-admixture-la/eqtl
 exprdir=${base}/expression_dir # GTEx v8 expression files
 localcov=${base}/local_ancestry # local ancestry covariates (e.g. chr10.hg19.maf0.localcov.tsv.gz)
 admix_ids=${localcov}/gtex-admixed0.9.txt # see root of repository 
-geno=${base}/manuscript_version/admixed_vcf # path to filtered VCFs for eQTL calling 
+geno_dir=${base}/manuscript_version/admixed_vcf # path to filtered VCFs for eQTL calling 
 
 mkdir -p ${base}/slurm # output folder for log files
 
@@ -29,7 +29,7 @@ for tissue in Whole_Blood; do # list as many tissues as you want; must correspon
         outdir=${indir}/chr${chr}
         mkdir -p ${outdir}
        
-        geno=${geno}/gtex.admixed.MAC10.phased.chr${chr}.recode.vcf.gz
+        geno=${geno_dir}/gtex.admixed.MAC10.phased.chr${chr}.recode.vcf.gz
 
         if [[ -f "${indir}/${tissue}.chr${chr}.expression.bed" ]]; then
             echo 'expression already processed'
