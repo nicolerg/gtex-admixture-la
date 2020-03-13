@@ -181,7 +181,10 @@ It also calls 3 other scripts:
   - [`concat_cov.R`](eqtl/concat_cov.R)
   - [`run_PEER.R`](https://github.com/broadinstitute/gtex-pipeline/blob/master/qtl/src/run_PEER.R) (not in this repository)
 It has a few outputs:  
-  - `${tissue}.v8.normalized_expression.admixed_subset.bed`
+  - `${tissue}.v8.normalized_expression.admixed_subset.bed`: expression in 117AX (however many have samples in this tissue)
+  - `other_covariates.txt`: necessary covariates extracted from the GTEx v8 covariates file  
+  - `peer` folder with 3 outputs, including `Whole_Blood.PEER_covariates.txt`, which are the PEER covariates calculated using only 117AX samples
+  - `Whole_Blood.all_covariates.txt`: combined covariates. **This file will be used for eQTL calling.**
 
 ### Run eQTL calling with both LocalAA and GlobalAA 
 

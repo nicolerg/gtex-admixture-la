@@ -5,16 +5,18 @@
 
 # start with the GTEx normalized expression file 
 
+set -e
+
 tissue=Whole_Blood
 
 EXPRDIR=/path/to/norm/expr # directory with all GTEx v8 normalized expression files 
-COVDRIR=/path/to/covariate/files
+COVDIR=/path/to/covariate/files
 expr=${EXPRDIR}/${tissue}.v8.normalized_expression.bed.gz
 outdir=/path/to/outdir
 
 # filter expression down to admixed individuals 
 module load r/3.6
-Rscript filter_expression_admixed.R ${expr} ${outdir}
+Rscript filter_expression_admixed.R ${expr} ../gtex-admix0.9.txt ${outdir}
 
 num_peer=15
 

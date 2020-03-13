@@ -4,9 +4,10 @@ library(data.table)
 
 args <- commandArgs(trailingOnly = TRUE)
 expr <- args[1] # GTEx normalized expression file 
-outdir <- args[2]
+subj <- args[2]
+outdir <- args[3]
 
-keep = fread("gtex-admixed0.9.txt", sep='\t', header=F) # see root of repository
+keep = fread(subj, sep='\t', header=F) # see root of repository: "gtex-admixed0.9.txt"
 expression = fread(cmd=sprintf('zcat %s',expr),sep='\t',header=T)
 
 # filter columns 
