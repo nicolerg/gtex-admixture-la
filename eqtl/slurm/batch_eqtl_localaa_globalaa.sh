@@ -60,7 +60,7 @@ for tissue in Whole_Blood; do # list as many tissues as you want; must correspon
             suf=`echo ${gene} | sed 's/.*expression\.//' | sed 's/\..*//'`
 
             echo "Starting chr $chr chunk $suf"
-            out=${outdir}/${tissue}-local-global-allpairs-chr${chr}-${suf}.tsv
+            out=${outdir}/${tissue}-LocalAA-GlobalAA-allpairs-chr${chr}-${suf}.tsv
 
             sbatch --export=tissue=${tissue},exprfile=${gene},globalcov=${globalcov},geno=${geno},localcov=${localcov}/chr${chr}.hg19.maf0.localcov.tsv.gz,out=${out},chr=${chr} \
 		eqtl_localaa_globalaa_sbatch.sh
