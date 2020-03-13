@@ -13,9 +13,9 @@ Note that code is primarily provided to replicate analyses in the manuscript. Ho
 
 ### Merge GTEx and 1000 Genomes VCFs
 
-The SHAPEIT2-phased, MAF 0.01-filtered GTEx v8 WGS VCF was converted to hg19 using LiftOver for compatibility with the GRCh37 HapMap genetic map [`liftOver-hg38Tohg19.sh`](rfmix/liftOver-hg38Tohg19.sh) and 1000 Genomes hg19. Both 1000 Genomes (hg19) and GTEx v8 (hg19) VCFs were split into chromosome-level VCFs and `tabix` indexed. 
+The SHAPEIT2-phased, MAF 0.01-filtered GTEx v8 WGS VCF was converted to hg19 using LiftOver for compatibility with the GRCh37 HapMap genetic map and hg19 1000 Genomes ([`liftOver-hg38Tohg19.sh`](rfmix/liftOver-hg38Tohg19.sh)). Both 1000 Genomes (hg19) and GTEx v8 (hg19) VCFs were split into chromosome-level VCFs. GTEx and 1000 Genomes VCFs were then merged for each chromosome. For the manuscript, this was done with [format-rfmix.R](rfmix/format-rfmix.R) (see [format-rfmix.sh](rfmix/format-rfmix.sh)). 
 
-Here is an example of code that can be used to do this on a system with 22 cores. A cleaner, more efficiently parallelized version in the form of a [Snakemake pipeline](https://snakemake.readthedocs.io/en/stable/) is available [here](rfmix/Snakefile). 
+However, this merging step can be streamlined by first applying a MAF filter to the files before merging and using `bcftools` to merge the two projects. Here is an example of code that can be used to do this on a system with 22 cores. A cleaner, more efficiently parallelized version in the form of a [Snakemake pipeline](https://snakemake.readthedocs.io/en/stable/) is available [here](rfmix/Snakefile). 
 ```
 ## ALL genotyped individuals from both projects
 ## MAF filtered (0.05 in each project before merging)
@@ -72,6 +72,17 @@ for chr in {1..22}; do
     bcftools merge -0 -m none -Oz -o ${outdir}/merged_hg38_chr${chr}.vcf.gz ${outdir}/chr${chr}/0002.vcf.gz ${outdir}/chr${chr}/0003.vcf.gz &
 done
 ```
+
+### Format inputs for RFMix
+
+[RFMix v1.5.4](https://sites.google.com/site/rfmixlocalancestryinference/) requires specially formatted inputs, including SNP positions in centimorgans. See the [Manual](https://www.dropbox.com/s/cmq4saduh9gozi9/RFMix_v1.5.4.zip?file_subpath=%2FRFMix_v1.5.4%2FManual.pdf) for more details. While the merging steps of [format-rfmix.R](rfmix/format-rfmix.R) can be improved (see above), it is still helpful for generating these inputs.  
+
+[format-rfmix.R](rfmix/format-rfmix.R) requires several files:  
+  - 
+
+
+
+
 
 The GRCh37 HapMap genetic map was downloaded from [here](ftp://ftp.ncbi.nlm.nih.gov/hapmap/recombination/2011-01_phaseII_B37/).  
 
