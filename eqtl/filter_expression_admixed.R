@@ -6,7 +6,7 @@ args <- commandArgs(trailingOnly = TRUE)
 expr <- args[1] # GTEx normalized expression file 
 outdir <- args[2]
 
-keep = fread("gtex-admixed0.9.txt", sep='\t', header=F) # see "metadata" in repository
+keep = fread("gtex-admixed0.9.txt", sep='\t', header=F) # see root of repository
 expression = fread(cmd=sprintf('zcat %s',expr),sep='\t',header=T)
 
 # filter columns 
