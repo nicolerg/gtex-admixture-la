@@ -207,6 +207,14 @@ It has a few outputs:
 
 [`eqtl_localaa_globalaa.R`](eqtl/eqtl_localaa_globalaa.R) generates a progress bar for its corresponding chunk for your sanity. Once all chunks are done running, concatenate the results for each tissue (see the end of [`batch_eqtl_localaa_globalaa.sh`](eqtl/batch_eqtl_localaa_globalaa.sh)).  
 
+Now let's assume that, for each tissue, you have a master allpairs file called `${tissue}-LocalAA-GlobalAA-allpairs-merged.tsv.gz`. These files are very large. Some of the downstream steps are facilitated by having a filtered allpairs file that only includes tests where either the GlobalAA or LocalAA nominal p-value is less than 0.05. Generate this filtered allpairs file as follows:  
+```
+zcat ${tissue}-LocalAA-GlobalAA-allpairs-merged.tsv.gz | \
+  awk -F "\t" '{ if(($6 < 0.05) || ($9 < 0.05)) { print } }' \
+  > ${tissue}-LocalAA-GlobalAA-allpairs-merged-filt.tsv
+gzip ${tissue}-LocalAA-GlobalAA-allpairs-merged-filt.tsv
+```
+
 ### Get tied lead SNPs for each gene 
 
 [`extract-egenes.py`](eqtl/extract-egenes.py) identifies the most significant SNP(s) for each tested gene. If multiple SNPs have the same smallest p-value, all tied lead SNPs are reported. No significance threshold is applied; the lead SNP(s) is reported for **all** tested genes.  
