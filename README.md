@@ -190,9 +190,10 @@ It has a few outputs:
 
 ### Run eQTL calling with both LocalAA and GlobalAA 
 
-`batch_eqtl_localaa_globalaa.sh`
-calls:
-  - `eqtl_localaa_globalaa.R`
+
+
+
+[`batch_eqtl_localaa_globalaa.sh`](eqtl/batch_eqtl_localaa_globalaa.sh) was written to parallelize eQTL calling on a cluster without a job submission system. As written, it restricts processes to 9 cores. If you have access to a HPC with a job submission system like `SGE` or `SLURM`, I highly recommend parallelizing this process as much as possible. See scripts in [eqtl/slurm](eqtl/slurm) for an example of how to do this with `SLURM`.  
 
 ## Colocalization (colocalization subdirectory)
 
