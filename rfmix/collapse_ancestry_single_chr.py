@@ -1,5 +1,7 @@
 __author__ = 'armartin'
 #takes in RFMix output and creates collapsed 2 haploid bed files per individual
+#source: https://github.com/armartin/ancestry_pipeline/blob/master/collapse_ancestry.py
+#adjusted by Nicole Gay
 
 from datetime import datetime
 import time

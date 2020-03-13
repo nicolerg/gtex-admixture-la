@@ -21,7 +21,7 @@ mapchr = list()
 line = infile.readline()
 while line:
     line = line.strip().split()
-    chr = line[0]
+    chrom = line[0]
     pos = int(line[2])
     #rs = line[3]
     posin.append(pos)
@@ -35,23 +35,23 @@ while line:
     line = line.strip().split()
     #pos = int(line[0])
     pos = int(line[1]) #uncomment for hapmap input
-    chr = line[0]
+    chrom = line[0]
     #gpos = float(line[2])
     gpos = float(line[3]) #uncomment for hapmap  input
     mappos.append(pos)
     mapgpos.append(gpos)
-    mapchr.append(chr)
+    mapchr.append(chrom)
     line = mapfile.readline()
 
 index1 = 0 #index for posin (bed pos in bp)
 index2 = 0 #index for mappos (map pos in bp)
 while index1 < len(posin):
     pos = posin[index1]
-    chr = chrin[index1]
+    chrom = chrin[index1]
     #rs = rsin[index1]
     if pos == mappos[index2]:
         #the 1000 Genomes site was genotyped as part of the map
-        print >> outfile, chr, pos, mapgpos[index2]
+        print >> outfile, chrom, pos, mapgpos[index2]
         print >> loc, mapgpos[index2]
         #print rs, pos, mapgpos[index2]
         index1 = index1+1
@@ -59,7 +59,7 @@ while index1 < len(posin):
         #current position in interpolation before marker
         if index2 ==0:
             #before the first site in the map (genetic position = 0)
-            print >> outfile, chr, pos, mapgpos[index2]
+            print >> outfile, chrom, pos, mapgpos[index2]
             print >> loc, mapgpos[index2]
             index1 = index1+1
         else:
@@ -68,7 +68,7 @@ while index1 < len(posin):
             prevpos = mappos[index2]
             frac = (float(pos)-float(mappos[index2-1]))/ (float(mappos[index2]) - float(mappos[index2-1]))
             tmpg = prevg + frac* (mapgpos[index2]-prevg)
-            print >> outfile, chr, pos, tmpg
+            print >> outfile, chrom, pos, tmpg
             print >> loc, tmpg
             #print rs, pos, tmpg
             index1 = index1+1
@@ -76,7 +76,7 @@ while index1 < len(posin):
         #current position in interpolation after marker
         if index2 == len(mappos)-1:
             #after the last site in the map (genetic position = maximum in map, note could try to extrapolate based on rate instead)
-            print >> outfile, chr, pos, mapgpos[index2]
+            print >> outfile, chrom, pos, mapgpos[index2]
             print >> loc, mapgpos[index2]
             #print rs, pos, mapgpos[index2]
             index1 = index1+1

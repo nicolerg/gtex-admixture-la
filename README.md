@@ -13,7 +13,7 @@ Note that code is primarily provided to replicate analyses in the manuscript. Ho
 
 ### Merge GTEx and 1000 Genomes VCFs
 
-The SHAPEIT2-phased, MAF 0.01-filtered GTEx v8 WGS VCF was converted to hg19 using LiftOver for compatibility with the GRCh37 HapMap genetic map and hg19 1000 Genomes ([`liftOver-hg38Tohg19.sh`](rfmix/liftOver-hg38Tohg19.sh)). Both 1000 Genomes (hg19) and GTEx v8 (hg19) VCFs were split into chromosome-level VCFs. GTEx and 1000 Genomes VCFs were then merged for each chromosome. For the manuscript, this was done with [format-rfmix.R](rfmix/format-rfmix.R) (see [format-rfmix.sh](rfmix/format-rfmix.sh)). 
+The SHAPEIT2-phased, MAF 0.01-filtered GTEx v8 WGS VCF was converted to hg19 using LiftOver for compatibility with the GRCh37 HapMap genetic map and hg19 1000 Genomes ([`liftOver-hg38Tohg19.sh`](rfmix/liftOver-hg38Tohg19.sh)). Both 1000 Genomes (hg19) and GTEx v8 (hg19) VCFs were split into chromosome-level VCFs. GTEx and 1000 Genomes VCFs were then merged for each chromosome. For the manuscript, this was done with [format-rfmix.R](rfmix/format-rfmix.R) (see [format-rfmix-pipeline.sh](rfmix/format-rfmix-pipeline.sh)). 
 
 However, this merging step can be streamlined by first applying a MAF filter to the files before merging and using `bcftools` to merge the two projects. Here is an example of code that can be used to do this on a system with 22 cores. A cleaner, more efficiently parallelized version in the form of a [Snakemake pipeline](https://snakemake.readthedocs.io/en/stable/) is available [here](rfmix/Snakefile). 
 ```
@@ -73,24 +73,80 @@ for chr in {1..22}; do
 done
 ```
 
-### Format inputs for RFMix
+### Generate `classes` and `alleles` RFMix inputs
 
 [RFMix v1.5.4](https://sites.google.com/site/rfmixlocalancestryinference/) requires specially formatted inputs, including SNP positions in centimorgans. See the [Manual](https://www.dropbox.com/s/cmq4saduh9gozi9/RFMix_v1.5.4.zip?file_subpath=%2FRFMix_v1.5.4%2FManual.pdf) for more details. While the merging steps of [format-rfmix.R](rfmix/format-rfmix.R) can be improved (see above), it is still helpful for generating these inputs.  
 
 [format-rfmix.R](rfmix/format-rfmix.R) requires several files:  
-  - 
+  - (gtex-admixed0.9.txt)[gtex-admixed0.9.txt]: list of 117AX GTEx IDs
+  - 1000 Genomes metadata file with population labels, i.e.:
+    ```
+    Subject Subpop  Superpop
+    HG02308 ACB AFR
+    HG02255 ACB AFR
+    ...
+    ```
+  - `CHROM`, number to specify the chromosome 
+  - GTEx VCF (hg19) for a single chromsome (`CHROM`)
+  - 1000 Genomes VCF (hg19) for a single chromosome (`CHROM`)
+
+Outputs of [format-rfmix.R](rfmix/format-rfmix.R):
+  - `alleles-chr${CHROM}`: One row per SNP and one column per haplotype (see `alleles` input spec in the [RFMix Manual](https://www.dropbox.com/s/cmq4saduh9gozi9/RFMix_v1.5.4.zip?file_subpath=%2FRFMix_v1.5.4%2FManual.pdf))
+  - `snp-bed-chr${CHROM}` where the columns are `chromosome`, `start (bp)`, `stop (bp)`, `rsid` (hg19 coordinates), e.g.:
+    ```
+    chr10 60753 60754 rs554788161
+    chr10 64774 64775 rs368644811
+    chr10 64851 64852 rs548882871
+    ```
+  - `classes-chr${CHROM}`: One row with one column per haplotype (see `classes` input spec in the [RFMix Manual](https://www.dropbox.com/s/cmq4saduh9gozi9/RFMix_v1.5.4.zip?file_subpath=%2FRFMix_v1.5.4%2FManual.pdf))
+  - `subject-ids-chr${CHROM}`: One row per GTEx ID, in the order of the columns in `alleles-chr${CHROM}`
+
+`classes-chr${CHROM}` and `subject-ids-chr${CHROM}` are the same for all chromosomes, so these outputs can be condensed into a single file once all chromosomes are processed, as in [format-rfmix-pipeline.sh](rfmix/format-rfmix-pipeline.sh):
+```
+# condense class and subject ID files
+mv ${outdir}/$(ls ${outdir} | grep "classes-chr" | head -1) ${outdir}/classes
+rm -f ${outdir}/classes-chr*
+mv ${outdir}/$(ls ${outdir} | grep "subject-ids-chr" | head -1) ${outdir}/subject-ids
+# mv ${outdir}/subject-ids-chr1 ${outdir}/subject-ids
+rm -f ${outdir}/subject-ids-chr*
+```
+
+### Convert SNP positions from bp to cM to generate `snp_locations` RFMix input 
+
+Next, SNP positions need to be converted from bp to centimorgans (cM). First, download a genetic map. This manuscript used the GRCh37 HapMap genetic map, available [here](ftp://ftp.ncbi.nlm.nih.gov/hapmap/recombination/2011-01_phaseII_B37/).  
+
+**Note:** A GRCh38 genetic map can now be downloaded from [Beagle](http://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/).  
+
+Follow the code block in [format-rfmix-pipeline.sh](rfmix/format-rfmix-pipeline.sh) labelled **convert bp to genetic distance**, which calls [bp-to-cM.py](rfmix/bp-to-cM.py).  
+
+**Note:** [bp-to-cM.py](rfmix/bp-to-cM.py) is a modified version of code written by Joe Pickrell, available [here](https://github.com/joepickrell/1000-genomes-genetic-maps/blob/master/scripts/interpolate_maps.py).
+
+### Run RFMix
+
+Download [RFMix v1.5.4](https://www.dropbox.com/s/cmq4saduh9gozi9/RFMix_v1.5.4.zip). Then follow the code block in [format-rfmix-pipeline.sh](rfmix/format-rfmix-pipeline.sh) labelled **run RFMix**. 
+
+**Note:** When RFMix was originally run for this manuscript, many more SNPs were included than necessary. This required RFMix to be parallelized per individual. The code in [format-rfmix-pipeline.sh](rfmix/format-rfmix-pipeline.sh) reflects this. Alternatively, apply a MAF filter and LD-prune your VCFs to get \~1M total SNPs before running RFMix, in which case you do not need to split up the analysis for each individual. It's fine to include more SNPs (RFMix is not affected by LD since SNP positions are modelled in cM), but it certainly does slow it down.   
+
+### Collapse local ancestry calls into BED files of contiguous local ancestry 
+
+
+collapse_ancestry_single_chr.py
+
+
+**Note:** [collapse_ancestry_single_chr.py](rfmix/collapse_ancestry_single_chr.py) is a modified version of code written by Alicia R. Martin, available [here](https://github.com/armartin/ancestry_pipeline/blob/master/collapse_ancestry.py).
 
 
 
 
 
-The GRCh37 HapMap genetic map was downloaded from [here](ftp://ftp.ncbi.nlm.nih.gov/hapmap/recombination/2011-01_phaseII_B37/).  
 
-**Note:** A GRCh38 genetic map can now be downloaded from [Beagle](http://bochet.gcc.biostat.washington.edu/beagle/genetic_maps/).
+
+
+
 
 ### Download RFMix v1.5.4
 
-Download the zip file found [here](https://www.dropbox.com/s/cmq4saduh9gozi9/RFMix_v1.5.4.zip).
+Download the zip file found 
 
 ### Format inputs for RFMix
 Run [`format-rfmix.sh`](rfmix/format-rfmix.sh) to do the following:
