@@ -219,9 +219,11 @@ gzip ${tissue}-LocalAA-GlobalAA-allpairs-merged-filt.tsv
 
 [`extract-egenes.py`](eqtl/extract-egenes.py) identifies the most significant SNP(s) for each tested gene. If multiple SNPs have the same smallest p-value, all tied lead SNPs are reported. No significance threshold is applied; the lead SNP(s) is reported for **all** tested genes.  
 
-There are two outputs:
+The input should be the **unfiltered** allpairs file for a given tissue. There are two outputs:
   - `gtex.admix.global.egenes.tied.txt.gz`: Lead SNPs according to GlobalAA  
   - `gtex.admix.lava.egenes.tied.txt.gz`: Lead SNPs according to LocalAA  
+
+### Generate some eGene sets that are repeatedly used in downstream analyses
 
 
 
