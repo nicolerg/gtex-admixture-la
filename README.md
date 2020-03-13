@@ -11,6 +11,8 @@ Note that code is primarily provided to replicate analyses in the manuscript. Ho
 
 ## Perform local ancestry inference  
 
+All of these steps are included in [format-rfmix-pipeline.sh](rfmix/format-rfmix-pipeline.sh).  
+
 ### Merge GTEx and 1000 Genomes VCFs
 
 The SHAPEIT2-phased, MAF 0.01-filtered GTEx v8 WGS VCF was converted to hg19 using LiftOver for compatibility with the GRCh37 HapMap genetic map and hg19 1000 Genomes ([`liftOver-hg38Tohg19.sh`](rfmix/liftOver-hg38Tohg19.sh)). Both 1000 Genomes (hg19) and GTEx v8 (hg19) VCFs were split into chromosome-level VCFs. GTEx and 1000 Genomes VCFs were then merged for each chromosome. For the manuscript, this was done with [format-rfmix.R](rfmix/format-rfmix.R) (see [format-rfmix-pipeline.sh](rfmix/format-rfmix-pipeline.sh)). 
@@ -129,39 +131,25 @@ Download [RFMix v1.5.4](https://www.dropbox.com/s/cmq4saduh9gozi9/RFMix_v1.5.4.z
 
 ### Collapse local ancestry calls into BED files of contiguous local ancestry 
 
-
-collapse_ancestry_single_chr.py
-
+Generate 2 BED files per individuals (1 per haplotype). Follow the code chunk in [format-rfmix-pipeline.sh](rfmix/format-rfmix-pipeline.sh) that calls [collapse_ancestry_single_chr.py](rfmix/collapse_ancestry_single_chr.py).  
 
 **Note:** [collapse_ancestry_single_chr.py](rfmix/collapse_ancestry_single_chr.py) is a modified version of code written by Alicia R. Martin, available [here](https://github.com/armartin/ancestry_pipeline/blob/master/collapse_ancestry.py).
 
+### Calculate global ancestry proportions  
 
+Scripts from Alicia R. Martin were also used to [calculate global ancestry](https://github.com/armartin/ancestry_pipeline/blob/master/lai_global.py) and [plot karyograms](https://github.com/armartin/ancestry_pipeline/blob/master/plot_karyogram.py) for each individual. See her repository for other scripts related to processing RFMix outputs: https://github.com/armartin/ancestry_pipeline.  
 
+### Make master local ancestry files
 
-----------------------------------------------
+See the last chunk of [format-rfmix-pipeline.sh](rfmix/format-rfmix-pipeline.sh) to generate chromosome-level local ancestry BED files.   
 
+Call [interpolate-local-anc.py](rfmix/interpolate-local-anc.py) to extract local ancestry for each SNP in a target VCF (`subset` path). `mapfile` is each chromosome-level local ancestry BED file. See how target VCFs were generated for this manuscript [here](#prepare-vcfs). 
 
-
-
-
-### Download RFMix v1.5.4
-
-Download the zip file found 
-
-### Format inputs for RFMix
-Run [`format-rfmix.sh`](rfmix/format-rfmix.sh) to do the following:
-  - Format inputs for RFMix (uses [`format-rfmix.R`](rfmix/format-rfmix.R))
-  - Run RFMix (v1.5.4)
-  - Generate per-individual BED files of contiguous ancestry assignments (`collapse_ancestry_single_chr.py`)
-  - Collapse all per-individual BED files into a master BED file (one per chromosome)
-  - Use the master BED file to interpolate local ancestry for every variant specified in the VCF file for your admixed individuals (per chromosome). This file is used to construct the local ancestry variables in eQTL calling (`interpolate-local-anc.py`)
-
-
-## eQTL calling (eqtl subdirectory)
+## eQTL calling
 
 ### Prepare VCFs 
 
-The SHAPEIT2-phased, MAF 0.01-filtered GTEx v8 WGS VCF was converted to hg19 using LiftOver for compatibility with the hg19 HapMap genetic map [`liftOver-hg38Tohg19.sh`](rfmix/liftOver-hg38Tohg19.sh). This VCF was then split into chromosome-level VCFs, each of which was then filtered to include only 117AX samples and MAC > 10 using `vcftools`:
+The SHAPEIT2-phased, MAF 0.01-filtered GTEx v8 WGS VCF was converted to hg19 using LiftOver for compatibility with the GRCh37 HapMap genetic map and hg19 1000 Genomes ([`liftOver-hg38Tohg19.sh`](rfmix/liftOver-hg38Tohg19.sh)). This VCF was then split into chromosome-level VCFs, each of which was then filtered to include only 117AX samples and MAC > 10 using `vcftools`:
 ```
 vcfin=genotypes-hg19
 vcfdir=admixed/geno
@@ -169,7 +157,7 @@ vcfdir=admixed/geno
 for chr in {1..22}; do
 	vcf_unfilt=${vcfin}/gtex.MAF01.phased.chr${chr}.vcf.gz
 	vcf_out=${vcfdir}/gtex.admixed.MAC10.phased.chr${chr}
-	taskset -c 24-47 vcftools \
+	vcftools \
 		--gzvcf ${vcf_unfilt} \
 		--keep ${admix_ids} \
 		--recode-INFO-all \
@@ -177,10 +165,8 @@ for chr in {1..22}; do
 		--max-alleles 2 \
 		--min-alleles 2 \
 		--out ${vcf_out} \
-		--recode &
+		--recode 
 done
-
-wait
 
 gzip ${vcfdir}/gtex.admixed.MAC10.phased.chr*
 ```
@@ -188,12 +174,14 @@ gzip ${vcfdir}/gtex.admixed.MAC10.phased.chr*
 ### Prepare covariates
 
 [`prepare_covariates.sh`](eqtl/prepare_covariates.sh) concatenates covariates provided by GTEx and new PEER factors. It requires paths to two GTEx v8 files:  
-  - `${tissue}.v8.normalized_expression.bed.gz`
+  - `${tissue}.v8.normalized_expression.bed.gz` (hg38 coordinates now)   
   - `${tissue}.v8.covariates.txt`  
 It also calls 3 other scripts:  
   - [`filter_expression_admixed.R`](eqtl/filter_expression_admixed.R)
   - [`concat_cov.R`](eqtl/concat_cov.R)
-  - [`run_PEER.R`](https://github.com/broadinstitute/gtex-pipeline/blob/master/qtl/src/run_PEER.R) 
+  - [`run_PEER.R`](https://github.com/broadinstitute/gtex-pipeline/blob/master/qtl/src/run_PEER.R) (not in this repository)
+It has a few outputs:  
+  - `${tissue}.v8.normalized_expression.admixed_subset.bed`
 
 ### Run eQTL calling with both LocalAA and GlobalAA 
 
