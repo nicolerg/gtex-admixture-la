@@ -75,7 +75,7 @@ done
 
 ### Generate `classes` and `alleles` RFMix inputs
 
-[RFMix v1.5.4](https://sites.google.com/site/rfmixlocalancestryinference/) requires specially formatted inputs, including SNP positions in centimorgans. See the [Manual](https://www.dropbox.com/s/cmq4saduh9gozi9/RFMix_v1.5.4.zip?file_subpath=%2FRFMix_v1.5.4%2FManual.pdf) for more details. While the merging steps of [format-rfmix.R](rfmix/format-rfmix.R) can be improved (see above), it is still helpful for generating these inputs.  
+[RFMix v1.5.4](https://sites.google.com/site/rfmixlocalancestryinference/) requires specially formatted inputs, including SNP positions in centimorgans. See the [Manual](https://www.dropbox.com/s/cmq4saduh9gozi9/RFMix_v1.5.4.zip?file_subpath=%2FRFMix_v1.5.4%2FManual.pdf) for more details. While the merging steps of [format-rfmix.R](rfmix/format-rfmix.R) can be improved (see above), it is still helpful for generating these inputs.   
 
 [format-rfmix.R](rfmix/format-rfmix.R) requires several files:  
   - (gtex-admixed0.9.txt)[gtex-admixed0.9.txt]: list of 117AX GTEx IDs
@@ -138,7 +138,7 @@ collapse_ancestry_single_chr.py
 
 
 
-
+----------------------------------------------
 
 
 
