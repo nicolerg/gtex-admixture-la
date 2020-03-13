@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#SBATCH -A smontgom
+#SBATCH -A account
 #SBATCH -c 1
-#SBATCH -o /labs/smontgom/nicolerg/LAVA/slurm/%j.log
+#SBATCH -o slurm/%j.log
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mem-per-cpu=10G
 #SBATCH -t 10:00:00
