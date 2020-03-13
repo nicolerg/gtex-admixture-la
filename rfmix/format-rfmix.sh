@@ -17,7 +17,7 @@ indir=/mnt/lab_data/montgomery/nicolerg/genotypes-hg19 # path to VCF files (all 
 outdir=/mnt/lab_data/montgomery/nicolerg/rfmix-all # output directory
 gpheno=/mnt/lab_data/montgomery/shared/datasets/gtex/GTEx_Analysis_2017-06-05_v8/sample_annotations/GTEx_Analysis_2017-06-05_v8_Annotations_SubjectPhenotypesDS.txt # admixed subject phenotype file 
 tdict=/users/nicolerg/gtex-admix/metadata/1kg-subject-popcodes.tsv # TSV file that matches 1000 Genomes subject to subpopulations
-subj=/mnt/lab_data/montgomery/nicolerg/rfmix-all/remaining_ids.txt # list of GTEx/admixed IDs, one ID per line (must match column names in admixed VCF)
+subj=/mnt/lab_data/montgomery/nicolerg/rfmix-all/gtex-admix0.9.txt # list of GTEx/admixed IDs, one ID per line (must match column names in admixed VCF)
 
 # format inputs ==========================================================================================
 
