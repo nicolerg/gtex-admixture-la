@@ -51,7 +51,7 @@ It has a few outputs:
   - `exprfile`: Path to GTEx v8 expression file for this tissue 
   - `globalcov`: Path to `${tissue}.all_covariates.txt` from the [previous step](#prepare-covariates)
   - `geno`: Path to filtered VCF for this chromosome (from [this step](#prepare-vcfs))
-  - `localcov`: Path to local ancestry covariates for this chromosome from [this step](#make-master-local-ancestry-files)
+  - `localcov`: Path to local ancestry covariates for this chromosome from [this step](https://github.com/nicolerg/gtex-admixture-la/tree/master/rfmix#make-master-local-ancestry-files)
   - `out`: Output file. Results from each test are added to this file as they are generated. This file is analogous to GTEx's "allpairs" files  
 
 [`batch_eqtl_localaa_globalaa.sh`](batch_eqtl_localaa_globalaa.sh) was written to parallelize eQTL calling on a cluster without a job submission system. As written, it restricts processes to 9 cores. If you have access to a HPC with a job submission system like `SGE` or `SLURM`, I highly recommend parallelizing this process as much as possible. See scripts in [eqtl/slurm](slurm) for an example of how to do this with `SLURM`.  
