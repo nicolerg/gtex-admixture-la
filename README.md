@@ -11,8 +11,6 @@ Note that code is primarily provided to replicate analyses in the manuscript. Ho
 - **eQTL calling:** Perform eQTL calling with both Global Ancestry Adjustment (GlobalAA) and Local Ancestry Adjustment (LocalAA)  
 - **Colocalization:** <Add something here>
 
-
-
 ## eQTL calling
 
 ### Prepare VCFs 
