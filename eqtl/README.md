@@ -2,7 +2,7 @@
 
 ## Prepare VCFs 
 
-The SHAPEIT2-phased, MAF 0.01-filtered GTEx v8 WGS VCF was converted to hg19 using LiftOver for compatibility with the GRCh37 HapMap genetic map and hg19 1000 Genomes ([`liftOver-hg38Tohg19.sh`](rfmix/liftOver-hg38Tohg19.sh)). This VCF was then split into chromosome-level VCFs, each of which was then filtered to include only 117AX samples and MAC > 10 using `vcftools`:
+The SHAPEIT2-phased, MAF 0.01-filtered GTEx v8 WGS VCF was converted to hg19 using LiftOver for compatibility with the GRCh37 HapMap genetic map and hg19 1000 Genomes ([`liftOver-hg38Tohg19.sh`](../rfmix/liftOver-hg38Tohg19.sh)). This VCF was then split into chromosome-level VCFs, each of which was then filtered to include only 117AX samples and MAC > 10 using `vcftools`:
 ```
 vcfin=genotypes-hg19
 vcfdir=admixed/geno
@@ -26,26 +26,26 @@ gzip ${vcfdir}/gtex.admixed.MAC10.phased.chr*
 
 ## Prepare covariates
 
-[`prepare_covariates.sh`](eqtl/prepare_covariates.sh) concatenates covariates provided by GTEx and new PEER factors. It requires paths to two GTEx v8 files:  
+[`prepare_covariates.sh`](prepare_covariates.sh) concatenates covariates provided by GTEx and new PEER factors. It requires paths to two GTEx v8 files:  
   - `${tissue}.v8.normalized_expression.bed.gz` (hg38 coordinates now)   
   - `${tissue}.v8.covariates.txt`  
 
 It also calls 3 other scripts:  
-  - [`filter_expression_admixed.R`](eqtl/filter_expression_admixed.R)
-  - [`concat_cov.R`](eqtl/concat_cov.R)
+  - [`filter_expression_admixed.R`](filter_expression_admixed.R)
+  - [`concat_cov.R`](concat_cov.R)
   - [`run_PEER.R`](https://github.com/broadinstitute/gtex-pipeline/blob/master/qtl/src/run_PEER.R) (not in this repository)
 
 It has a few outputs:  
   - `${tissue}.v8.normalized_expression.admixed_subset.bed`: expression in 117AX (however many have samples in this tissue)
   - `other_covariates.txt`: necessary covariates extracted from the GTEx v8 covariates file  
-  - `peer` folder with 3 outputs, including `Whole_Blood.PEER_covariates.txt`, which are the PEER covariates calculated using only 117AX samples
+  - `peer` folder with 3 outputs, including `${tissue}.PEER_covariates.txt`, which are the PEER covariates calculated using only 117AX samples
   - `${tissue}.all_covariates.txt`: combined covariates. **This file will be used for eQTL calling.**
 
 ## Run eQTL calling with both LocalAA and GlobalAA 
 
-[`batch_eqtl_localaa_globalaa.sh`](eqtl/batch_eqtl_localaa_globalaa.sh) splits the expression file for a tissue into chunks of 50 genes (line 49) and runs [`eqtl_localaa_globalaa.R`](eqtl/eqtl_localaa_globalaa.R) on each chunk of genes per chromosome.  
+[`batch_eqtl_localaa_globalaa.sh`](batch_eqtl_localaa_globalaa.sh) splits the expression file for a tissue into chunks of 50 genes (line 49) and runs [`eqtl_localaa_globalaa.R`](eqtl_localaa_globalaa.R) on each chunk of genes per chromosome.  
 
-[`eqtl_localaa_globalaa.R`](eqtl/eqtl_localaa_globalaa.R) requires several inputs (see arguments):
+[`eqtl_localaa_globalaa.R`](eqtl_localaa_globalaa.R) requires several inputs (see arguments):
   - `chr`: Chromosome number
   - `tissue`: Tissue specified with GTEx file prefix, e.g. `Muscle_Skeletal` 
   - `exprfile`: Path to GTEx v8 expression file for this tissue 
@@ -54,9 +54,9 @@ It has a few outputs:
   - `localcov`: Path to local ancestry covariates for this chromosome from [this step](#make-master-local-ancestry-files)
   - `out`: Output file. Results from each test are added to this file as they are generated. This file is analogous to GTEx's "allpairs" files  
 
-[`batch_eqtl_localaa_globalaa.sh`](eqtl/batch_eqtl_localaa_globalaa.sh) was written to parallelize eQTL calling on a cluster without a job submission system. As written, it restricts processes to 9 cores. If you have access to a HPC with a job submission system like `SGE` or `SLURM`, I highly recommend parallelizing this process as much as possible. See scripts in [eqtl/slurm](eqtl/slurm) for an example of how to do this with `SLURM`.  
+[`batch_eqtl_localaa_globalaa.sh`](batch_eqtl_localaa_globalaa.sh) was written to parallelize eQTL calling on a cluster without a job submission system. As written, it restricts processes to 9 cores. If you have access to a HPC with a job submission system like `SGE` or `SLURM`, I highly recommend parallelizing this process as much as possible. See scripts in [eqtl/slurm](slurm) for an example of how to do this with `SLURM`.  
 
-[`eqtl_localaa_globalaa.R`](eqtl/eqtl_localaa_globalaa.R) generates a progress bar for its corresponding chunk for your sanity. Once all chunks are done running, concatenate the results for each tissue (see the end of [`batch_eqtl_localaa_globalaa.sh`](eqtl/batch_eqtl_localaa_globalaa.sh)).  
+[`eqtl_localaa_globalaa.R`](eqtl_localaa_globalaa.R) generates a progress bar for its corresponding chunk for your sanity. Once all chunks are done running, concatenate the results for each tissue (see the end of [`batch_eqtl_localaa_globalaa.sh`](batch_eqtl_localaa_globalaa.sh)).  
 
 Now let's assume that, for each tissue, you have a master allpairs file called `${tissue}-LocalAA-GlobalAA-allpairs-merged.tsv.gz`. These files are very large. Some of the downstream steps are facilitated by having a filtered allpairs file that only includes tests where either the GlobalAA or LocalAA nominal p-value is less than 0.05. Generate this filtered allpairs file as follows:  
 ```
@@ -68,7 +68,7 @@ gzip ${tissue}-LocalAA-GlobalAA-allpairs-merged-filt.tsv
 
 ## Get tied lead SNPs for each gene 
 
-[`extract-egenes.py`](eqtl/extract-egenes.py) identifies the most significant SNP(s) for each tested gene. If multiple SNPs have the same smallest p-value, all tied lead SNPs are reported. No significance threshold is applied; the lead SNP(s) is reported for **all** tested genes.  
+[`extract-egenes.py`](extract-egenes.py) identifies the most significant SNP(s) for each tested gene. If multiple SNPs have the same smallest p-value, all tied lead SNPs are reported. No significance threshold is applied; the lead SNP(s) is reported for **all** tested genes.  
 
 The input should be the **unfiltered** allpairs file for a given tissue. There are two outputs:
   - `gtex.admix.global.egenes.tied.txt.gz`: Lead SNPs according to GlobalAA  
