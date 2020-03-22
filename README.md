@@ -6,7 +6,9 @@ Note that code is primarily provided to replicate analyses in the manuscript. Ho
 
 "117AX" refers to a subset of 117 admixed invididuals in the GTEx v8 release whose GTEx IDs are provided in [`metadata/gtex-admixed0.9.txt`](metadata/gtex-admixed0.9.txt). These scripts could be adapted for any subset of individuals.  
 
-## Table of contents  
+Please see a subdirectory for detailed documentation for each step:  
+
+## Subdirectories:  
 - [**Perform local ancestry inference:**](rfmix) Use RFMix v1.5.4 and 1000 Genomes reference panels to perform local ancestry inference on 117AX   
-- **eQTL calling:** Perform eQTL calling with both Global Ancestry Adjustment (GlobalAA) and Local Ancestry Adjustment (LocalAA)  
-- **Colocalization:** <Add something here>
+- [**eQTL calling:**](eqtl) Perform eQTL calling with both Global Ancestry Adjustment (GlobalAA) and Local Ancestry Adjustment (LocalAA)  
+- [**Colocalization:**](colocalization) <Add something here>
