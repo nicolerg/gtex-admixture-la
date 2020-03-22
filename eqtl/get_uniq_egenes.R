@@ -35,7 +35,7 @@ if(!file.exists(paste0(outdir,'/egenes_master.RData')) | !file.exists(paste0(out
 	for (t in tissues){
 
 		basedir = paste0(base,'/',t,'/')
-		filt_allpairs = paste0(basedir,t,'-LAVA-global-allpairs-filt-merged.tsv.gz')
+		filt_allpairs = paste0(basedir,t,'-LocalAA-GlobalAA-allpairs-filt-merged.tsv.gz')
 		global_egenes = paste0(basedir,'gtex.admix.global.egenes.tied.txt.gz')
 		lava_egenes = paste0(basedir,'gtex.admix.lava.egenes.tied.txt.gz')
 
@@ -79,13 +79,6 @@ get_egenes <- function(cutoff){
 	global <- global[,.(gene_id, pval_nominal, tissue, method)]
 	lava <- lava[,.(gene_id, pval_nominal, tissue, method)]
 
-	tissues <- c('Adipose_Subcutaneous',
-		'Nerve_Tibial',
-		'Artery_Tibial',
-		'Muscle_Skeletal',
-		'Lung',
-		'Skin_Not_Sun_Exposed_Suprapubic')
-
 	uniq_df <- list()
 	i <- 1
 	for (t in tissues){
@@ -101,7 +94,7 @@ get_egenes <- function(cutoff){
 	master_uniq_per_tissue <- data.table(rbindlist(uniq_df))
 	master_uniq_genes <- data.frame(gene_id=unique(master_uniq_per_tissue[,gene_id]))
 
-	write.table(master_uniq_per_tissue, paste0(outdir,'/uniq_egenes_per_tissue_',cutoff,'.tsv'), col.names=TRUE, row.names=FALSE, sep='\t', quote=FALSE)
+	#write.table(master_uniq_per_tissue, paste0(outdir,'/uniq_egenes_per_tissue_',cutoff,'.tsv'), col.names=TRUE, row.names=FALSE, sep='\t', quote=FALSE)
 	write.table(master_uniq_genes, paste0(outdir,'/uniq_egenes_list_',cutoff,'.tsv'), col.names=FALSE, row.names=FALSE, sep='\t', quote=FALSE)
 }
 
