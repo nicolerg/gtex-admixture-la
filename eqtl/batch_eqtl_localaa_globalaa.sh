@@ -114,7 +114,7 @@ outdir=${indir}
 
 zcat ${outdir}/chr1/${tissue}-LocalAA-GlobalAA-merged-allpairs-chr1.tsv.gz | head -1 > ${outdir}/${tissue}-LocalAA-GlobalAA-merged-allpairs.tsv
 for dir in chr{1..22}; do
-	file=${outdir}/${dir}/${tissue}-LLocalAA-GlobalAA-merged-allpairs-${dir}.tsv.gz
+	file=${outdir}/${dir}/${tissue}-LocalAA-GlobalAA-merged-allpairs-${dir}.tsv.gz
 	zcat $file | sed -e '1d' >> ${outdir}/${tissue}-LocalAA-GlobalAA-merged-allpairs.tsv
 done
 gzip ${outdir}/${tissue}-LocalAA-GlobalAA-merged-allpairs.tsv
