@@ -11,6 +11,7 @@ Note that code is primarily provided to replicate analyses in the manuscript. Ho
 **Please see a subdirectory for detailed documentation for each step:** 
 
 ### Subdirectories:  
-- [**Perform local ancestry inference:**](rfmix) Use RFMix v1.5.4 and 1000 Genomes reference panels to perform local ancestry inference on 117AX   
+- [**Local ancestry inference with RFMix:**](rfmix) Use RFMix v1.5.4 and 1000 Genomes reference panels to perform local ancestry inference on 117AX   
 - [**eQTL calling:**](eqtl) Perform eQTL calling with both Global Ancestry Adjustment (GlobalAA) and Local Ancestry Adjustment (LocalAA)  
 - [**Colocalization:**](colocalization) Perform colocalization between eQTL summary statistics (GlobalAA and LocalAA) and each of 114 GWAS (see [this preprint](https://www.biorxiv.org/content/10.1101/814350v1))
+- [**Local ancestry inference with ADMIXTURE:**](admixture) Compare global ancestry fractions estimated from RFMix to ADMIXTURE global ancestry inference  
