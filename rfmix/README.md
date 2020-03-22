@@ -6,7 +6,7 @@ All of these steps are included in [format-rfmix-pipeline.sh](format-rfmix-pipel
 
 The SHAPEIT2-phased, MAF 0.01-filtered GTEx v8 WGS VCF was converted to hg19 using LiftOver for compatibility with the GRCh37 HapMap genetic map and hg19 1000 Genomes ([`liftOver-hg38Tohg19.sh`](liftOver-hg38Tohg19.sh)). Both 1000 Genomes (hg19) and GTEx v8 (hg19) VCFs were split into chromosome-level VCFs. GTEx and 1000 Genomes VCFs were then merged for each chromosome. For the manuscript, this was done with [format-rfmix.R](format-rfmix.R) (see [format-rfmix-pipeline.sh](format-rfmix-pipeline.sh)). 
 
-However, this merging step can be streamlined by first applying a MAF filter to the files before merging and using `bcftools` to merge the two projects. Here is an example of code that can be used to do this on a system with 22 cores. A cleaner, more efficiently parallelized version in the form of a [Snakemake pipeline](https://snakemake.readthedocs.io/en/stable/) is available [here](Snakefile). 
+However, this merging step can be streamlined by first applying a MAF filter to the files before merging and using `bcftools` to merge the two projects. Here is an example of code that can be used to do this on a system with 22 cores. A cleaner, more efficiently parallelized version in the form of a [Snakemake pipeline](https://snakemake.readthedocs.io/en/stable/) is available [here](../admixture/Snakefile). 
 ```
 ## ALL genotyped individuals from both projects
 ## MAF filtered (0.05 in each project before merging)
