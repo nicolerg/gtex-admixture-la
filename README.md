@@ -209,10 +209,11 @@ It has a few outputs:
 
 Now let's assume that, for each tissue, you have a master allpairs file called `${tissue}-LocalAA-GlobalAA-allpairs-merged.tsv.gz`. These files are very large. Some of the downstream steps are facilitated by having a filtered allpairs file that only includes tests where either the GlobalAA or LocalAA nominal p-value is less than 0.05. Generate this filtered allpairs file as follows:  
 ```
+filt=${tissue}-LocalAA-GlobalAA-allpairs-merged-filt.tsv
 zcat ${tissue}-LocalAA-GlobalAA-allpairs-merged.tsv.gz | \
   awk -F "\t" '{ if(($6 < 0.05) || ($9 < 0.05)) { print } }' \
-  > ${tissue}-LocalAA-GlobalAA-allpairs-merged-filt.tsv
-gzip ${tissue}-LocalAA-GlobalAA-allpairs-merged-filt.tsv
+  > ${filt}
+gzip ${filt}
 ```
 
 ### Get tied lead SNPs for each gene 
@@ -225,8 +226,22 @@ The input should be the **unfiltered** allpairs file for a given tissue. There a
 
 ### Generate some eGene sets that are repeatedly used in downstream analyses
 
+[`get_uniq_egenes.R`](eqtl/get_uniq_egenes.R) takes these inputs from each tissue:
+  - `${tissue}-LocalAA-GlobalAA-allpairs-merged.tsv.gz`
+  - `gtex.admix.global.egenes.tied.txt.gz`
+  - `gtex.admix.lava.egenes.tied.txt.gz`
 
+It outputs several files/RData objects:
+  - `allp_master.RData`: Allpairs from all tissues
+  - `egenes_master.RData`: Lead SNPs from all genes, all tissues (single p-value per row; `method` column indicates whether the p-value corresponds to GlobalAA (`global`) or LocalAA (`local`))
 
+The following files are generated for each nominal p-value cutoff provided:  
+  - `uniq_egenes_list_${cutoff}.tsv`: List of unique genes where eGenes are called by only one of the two methods at a given cutoff (independently in any tissue) 
+  Subsets of `egenes_master.RData`:
+  - `uniq_egene_${cutoff}.RData`: eGene was only called with one method
+  - `uniq_eqtl_${cutoff}.RData`: Gene-SNP pair was only a significant lead SNP with one method (includes cases in `diff_lead_${cutoff}.RData`)
+  - `diff_lead_${cutoff}.RData`: Both methods called the eGene but with different lead SNPs 
+  - `same_egene_diff_lead_${cutoff}`: List of unique genes in `diff_lead_${cutoff}.RData`
 
 
 ---------------------------------
