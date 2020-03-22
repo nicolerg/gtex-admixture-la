@@ -10,4 +10,5 @@ Then follow [`run_admixture.sh`](run_admixture.sh) to prepare variant files and 
 3. Same as (2) but with the addition of SAS 
 
 [`run_admixture.sh`](run_admixture.sh) calls two other scripts:
-
+  - [select_reference_populations.R](select_reference_populations.R) is used to select the 1000 Genomes reference panels. Modify this script as necessary (for example, to select equal numbers of reference panels from each superpopulation)  
+  - [order_pop_file.R](order_pop_file.R) makes sure that the order of samples in the `fam` and `pop` files are the same 
