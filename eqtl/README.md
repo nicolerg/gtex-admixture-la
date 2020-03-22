@@ -3,7 +3,7 @@
 ## Prepare VCFs 
 
 The SHAPEIT2-phased, MAF 0.01-filtered GTEx v8 WGS VCF was converted to hg19 using LiftOver for compatibility with the GRCh37 HapMap genetic map and hg19 1000 Genomes ([`liftOver-hg38Tohg19.sh`](../rfmix/liftOver-hg38Tohg19.sh)). This VCF was then split into chromosome-level VCFs, each of which was then filtered to include only 117AX samples and MAC > 10 using `vcftools`:
-```
+```bash
 vcfin=genotypes-hg19
 vcfdir=admixed/geno
 
@@ -59,7 +59,7 @@ It has a few outputs:
 [`eqtl_localaa_globalaa.R`](eqtl_localaa_globalaa.R) generates a progress bar for its corresponding chunk for your sanity. Once all chunks are done running, concatenate the results for each tissue (see the end of [`batch_eqtl_localaa_globalaa.sh`](batch_eqtl_localaa_globalaa.sh)).  
 
 Now let's assume that, for each tissue, you have a master allpairs file called `${tissue}-LocalAA-GlobalAA-allpairs-merged.tsv.gz`. These files are very large. Some of the downstream steps are facilitated by having a filtered allpairs file that only includes tests where either the GlobalAA or LocalAA nominal p-value is less than 0.05. Generate this filtered allpairs file as follows:  
-```
+```bash
 zcat ${tissue}-LocalAA-GlobalAA-allpairs-merged.tsv.gz | \
   awk -F "\t" '{ if(($6 < 0.05) || ($9 < 0.05)) { print } }' \
   > ${tissue}-LocalAA-GlobalAA-allpairs-merged-filt.tsv
