@@ -15,53 +15,72 @@ However, this merging step can be streamlined by first applying a MAF filter to 
 ## chromosome names prepended with "chr"
 ## hg19
 
-outdir=/mnt/lab_data/montgomery/nicolerg/gtex-tg-merged
+outdir=/projects/nicolerg/gtex-tg-merged
 
 # 1000 Genomes VCFs, already split by chromosome:
-tg=/mnt/lab_data/montgomery/shared/1KG/hg19
+tg=/projects/1KG/hg19
 
 # GTEx VCF, needs to be split by chromosome:
-gtex_vcf=/mnt/lab_data/montgomery/nicolerg/gtex.phased.MAF01.hg19.vcf.gz
+gtex_vcf=/projects/gtex/gtex.phased.MAF01.hg19.vcf.gz
 
 # split GTEx VCF by chromosome (only need austosomes) and apply MAF filter
 for chr in {1..22}; do
-    bcftools view -r chr${chr} --min-af 0.05 -Oz -o ${outdir}/gtex_phased_chr${chr}_MAF05.vcf.gz ${gtex_vcf} &
+    bcftools view \
+    	-r chr${chr} \
+    	--min-af 0.05 \
+    	-Oz \
+    	-o ${outdir}/gtex_phased_chr${chr}_MAF05.vcf.gz \
+    	${gtex_vcf} &
 done
 wait
 
-# apply MAF filter to 1000 Genomes
-for chr in {1..22}; do
-    bcftools view --min-af 0.05 -Oz -o ${outdir}/tg_phased_chr${chr}_MAF05.vcf.gz ${tg}/ALL.chr${chr}_GRCh38.genotypes.20170504.vcf.gz &
-done
-wait
-
-# change 1000 Genomes naming convention
 for chr in {1..22}; do
     echo "${chr} chr${chr}" >> chr_name_conv.txt
 done
-for chr in {1..22}; do
-    bcftools annotate --rename-chrs chr_name_conv.txt -Oz -o ${outdir}/tg_phased_chr${chr}_MAF05_renamed.vcf.gz ${outdir}/tg_phased_chr${chr}_MAF05.vcf.gz &
-done
+format_1kg () {
+	local chr=$1
+	# apply MAF filter to 1000 Genomes
+    bcftools view \
+    	--min-af 0.05 \
+    	-Oz \
+    	-o ${outdir}/tg_phased_chr${chr}_MAF05.vcf.gz \
+    	${tg}/ALL.chr${chr}_GRCh38.genotypes.20170504.vcf.gz 
+    # change 1000 Genomes naming convention
+    bcftools annotate \
+    	--rename-chrs chr_name_conv.txt \
+    	-Oz \
+    	-o ${outdir}/tg_phased_chr${chr}_MAF05_renamed.vcf.gz \
+    	${outdir}/tg_phased_chr${chr}_MAF05.vcf.gz 
+}
+# this will use 22 cores 
+for chr in {1..22}; do format_1kg "${chr}" & done
 wait
 
 # index all VCFs
 rm ${outdir}/tg_phased_chr{1..22}_MAF05.vcf.gz
 for file in `ls | grep "gz"`; do
-    tabix -p vcf $file &
+    tabix -p vcf $file 
 done
-wait
 
 # find intersection; merge result
-for chr in {1..22}; do
-    mkdir -p ${outdir}/chr${chr}
-done
-for chr in {1..22}; do
-    bcftools isec --collapse none -Oz -p ${outdir}/chr${chr} ${outdir}/gtex_phased_chr${chr}.vcf.gz ${outdir}/tg_phased_chr${chr}_MAF05_renamed.vcf.gz &
-done
-wait
-for chr in {1..22}; do
-    bcftools merge -0 -m none -Oz -o ${outdir}/merged_hg38_chr${chr}.vcf.gz ${outdir}/chr${chr}/0002.vcf.gz ${outdir}/chr${chr}/0003.vcf.gz &
-done
+merge_chrom () {
+	mkdir -p ${outdir}/chr${chr}
+    bcftools isec \
+    	--collapse none \
+    	-Oz \
+    	-p ${outdir}/chr${chr} \
+    	${outdir}/gtex_phased_chr${chr}.vcf.gz \
+    	${outdir}/tg_phased_chr${chr}_MAF05_renamed.vcf.gz 
+    bcftools merge \
+    	-0 \
+    	-m none \
+    	-Oz \
+    	-o ${outdir}/merged_hg38_chr${chr}.vcf.gz \
+    	${outdir}/chr${chr}/0002.vcf.gz \
+    	${outdir}/chr${chr}/0003.vcf.gz 
+}
+# this will use 22 cores 
+for chr in {1..22}; do merge_chrom "${chr}" & done
 ```
 
 ### Generate `classes` and `alleles` RFMix inputs
