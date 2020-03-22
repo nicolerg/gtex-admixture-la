@@ -1,6 +1,6 @@
 # Impact of admixture and ancestry on eQTL analysis and GWAS colocalization in GTEx
 
-**Note:** This repository is still under construction.  
+### **Note:** This repository is still under construction.  
 
 This repository provides code and resources used to perform the analyses presented in the bioRxiv preprint [Impact of admixture and ancestry on eQTL analysis and GWAS colocalization in GTEx](https://www.biorxiv.org/content/10.1101/836825v1) by Nicole Gay, et al. The author of all code is Nicole Gay (nicolerg@stanford.edu) unless otherwise noted. Please see the manuscript for context.   
 
