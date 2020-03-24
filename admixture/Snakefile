@@ -1,0 +1,76 @@
+#!/bin/python3
+'''
+Intersect and merge GTEx v8 and 1000 Genomes VCFs for input into local ancestry inference tools
+'''
+
+# 1000 Genomes VCFs, already split by chromosome:
+tg_dir="/projects/1KG/hg38" # indir for 1000 Genomes VCFs (hg38)
+# GTEx VCF, needs to be split by chromosome:
+gtex_vcf="/projects/GTEx_Analysis_2017-06-05_v8/genotypes/WGS/variant_calls/GTEx_Analysis_2017-06-05_v8_WholeGenomeSeq_838Indiv_Analysis_Freeze.SHAPEIT2_phased.MAF01.vcf.gz"
+# output directory:
+outdir="/projects/nicolerg/gtex-tg-merged"
+
+import os
+os.chdir(outdir)
+
+CHROMOSOMES = [ str(x) for x in range(1,23) ]
+
+rule all:
+	input:
+		expand("merged/merged_hg38_chr{chrom}.vcf.gz", chrom=CHROMOSOMES)
+
+rule split_genome:
+	input:
+		gtex_vcf
+	output:
+		"gtex_phased_chr{chrom}_MAF05.vcf.gz"
+	shell:
+		"bcftools view -r chr{wildcards.chrom} --min-af 0.05 -Oz -o {output} {input}"
+
+rule initial_maf_filter:
+	input:
+		tg_dir+"/ALL.chr{chrom}_GRCh38.genotypes.20170504.vcf.gz"
+	output:
+		"tg_phased_chr{chrom}_MAF05_misnamed.vcf.gz"
+	shell:
+		"bcftools view --min-af 0.05 -Oz -o {output} {input}"
+
+rule make_map:
+	output:
+		"chr_name_conv.txt"
+	shell:
+		'for c in {{1..22}}; do echo "${{c}} chr${{c}}" >> {output}; done'
+
+rule prepend_chr:
+	input:
+		vcf="tg_phased_chr{chrom}_MAF05_misnamed.vcf.gz",
+		mapfile="chr_name_conv.txt"
+	output:
+		"tg_phased_chr{chrom}_MAF05.vcf.gz"
+	shell:
+		"bcftools annotate --rename-chrs {input.mapfile} -Oz -o {output} {input.vcf}"
+
+rule intersect_vcf:
+	input:
+		tg="tg_phased_chr{chrom}_MAF05.vcf.gz",
+		gtex="gtex_phased_chr{chrom}_MAF05.vcf.gz"
+	output:
+		"chr{chrom}/0002.vcf.gz",
+		"chr{chrom}/0003.vcf.gz"
+	shell:
+		'''
+		tabix -p vcf {input.tg}
+		tabix -p vcf {input.gtex}
+		bcftools isec --collapse none -Oz -p chr{wildcards.chrom} {input.tg} {input.gtex}
+		'''
+
+rule merge_datasets:
+	input:
+		tg="chr{chrom}/0002.vcf.gz",
+		gtex="chr{chrom}/0003.vcf.gz"
+	output:
+		"merged/merged_hg38_chr{chrom}.vcf.gz"
+	shell:
+		'''
+		bcftools merge -0 -m none -Oz -o {output} {input.tg} {input.gtex}
+		'''
