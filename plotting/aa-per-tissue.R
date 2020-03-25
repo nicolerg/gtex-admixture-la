@@ -2,11 +2,6 @@
 library(data.table)
 library(ggplot2)
 
-#pheno <- "/mnt/lab_data/montgomery/shared/datasets/gtex/GTEx_Analysis_2017-06-05_v8/sample_annotations/GTEx_Analysis_2017-06-05_v8_Annotations_SubjectPhenotypesDS.txt"
-# pheno <- fread(pheno, sep='\t', header=TRUE)
-# # aa <- pheno[RACE==2|RACE==1,SUBJID] # AA or Asian
-# aa <- pheno[RACE==2,SUBJID] # AA or Asian
-
 admixed <- fread('/mnt/lab_data/montgomery/nicolerg/rfmix-admixed/combined/gtex-admixed0.9.txt', sep='\t', header=FALSE)
 aa <- admixed[,V1]
 

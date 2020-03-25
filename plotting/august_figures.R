@@ -10,11 +10,36 @@ library(gridExtra)
 library(gtable)
 library(grid)
 
-master_data_dir <- "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/merged/"
-plot_dir <- "/users/nicolerg/gtex-admix/plots/september"
-supp_dir <- "/users/nicolerg/gtex-admix/plots/supplementary_figures"
+master_data_dir <- "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/"
+plot_dir <- "/users/nicolerg/gtex-admix/plots/REVISIONS"
+supp_dir <- "/users/nicolerg/gtex-admix/plots/REVISIONS/supplement"
 
 parser <- ArgumentParser()
+# individual figures 
+parser$add_argument("--genotype_pc", action="store_true")
+parser$add_argument("--admix_per_tissue_short", action="store_true")
+parser$add_argument("--rfmix_pc_cor", action="store_true")
+parser$add_argument("--local_block_trunc", action="store_true")
+parser$add_argument("--qq", action="store_true")
+parser$add_argument("--egene_discovery", action="store_true")
+parser$add_argument("--venn", action="store_true")
+parser$add_argument("--pval_distn", action="store_true")
+parser$add_argument("--gtex_r2", action="store_true")
+parser$add_argument("--gtex_esnps_r2_high", action="store_true")
+parser$add_argument("--coloc", action="store_true")
+parser$add_argument("--fst_distn", action="store_true")
+parser$add_argument("--max_fst_pop", action="store_true")
+parser$add_argument("--regression_res", action="store_true")
+parser$add_argument("--ve_expr_ancestry", action="store_true")
+# supplement
+parser$add_argument("--admix_per_tissue", action="store_true")
+parser$add_argument("--locus_plots", action="store_true")
+parser$add_argument("--tg_gtex_pca", action="store_true")
+# main figures
+parser$add_argument("--figure1", action="store_true")
+parser$add_argument("--figure2", action="store_true")
+parser$add_argument("--figure3", action="store_true")
+parser$add_argument("--figure4", action="store_true")
 parser$add_argument("--cutoff", default=1e-06)
 
 methodcols <- c(global='#81c0c7',LAVA='#CC7EAB')
@@ -25,7 +50,8 @@ tissues <- c('Nerve_Tibial',
 	'Adipose_Subcutaneous',
 	'Muscle_Skeletal',
 	'Skin_Not_Sun_Exposed_Suprapubic',
-	'Lung'
+	'Lung',
+	'Whole_Blood'
 	)
 
 shortlab <- c(Adipose_Subcutaneous='Subc.\nadipose',
@@ -33,21 +59,24 @@ shortlab <- c(Adipose_Subcutaneous='Subc.\nadipose',
 	Lung='Lung',
 	Muscle_Skeletal='Skeletal\nmuscle',
 	Nerve_Tibial='Tibial\nnerve',
-	Skin_Not_Sun_Exposed_Suprapubic='NSE\nskin')
+	Skin_Not_Sun_Exposed_Suprapubic='NSE\nskin',
+	Whole_Blood='Blood')
 
 tissuelabs <- c(Adipose_Subcutaneous="Subc. adipose",
 	Artery_Tibial="Tibial artery",
 	Lung="Lung",
 	Muscle_Skeletal="Skeletal muscle",
 	Nerve_Tibial="Tibial nerve",
-	Skin_Not_Sun_Exposed_Suprapubic="NSE skin")
+	Skin_Not_Sun_Exposed_Suprapubic="NSE skin",
+	Whole_Blood='Whole blood')
 
 tissuetextcol <- c(Adipose_Subcutaneous="#FF6600",
 	Lung="#99FF00",
 	Nerve_Tibial="#c6a700",
 	Muscle_Skeletal="#AAAAFF",
 	Skin_Not_Sun_Exposed_Suprapubic="#0000FF",
-	Artery_Tibial="#FF0000")
+	Artery_Tibial="#FF0000",
+	Whole_Blood="#FF00BB")
 
 tissuecols <- c(Adipose_Subcutaneous="#FF6600",
 	Adipose_Visceral_Omentum="#FFAA00",
@@ -147,7 +176,7 @@ tissize <- c(Adipose_Subcutaneous=10,
 	Thyroid=8,
 	Uterus=8,
 	Vagina=8,
-	Whole_Blood=8)
+	Whole_Blood=10)
 
 face <- c(Adipose_Subcutaneous='bold',
 	Adipose_Visceral_Omentum='plain',
@@ -197,7 +226,7 @@ face <- c(Adipose_Subcutaneous='bold',
 	Thyroid='plain',
 	Uterus='plain',
 	Vagina='plain',
-	Whole_Blood='plain')
+	Whole_Blood='bold')
 
 all_labs <- c(Adipose_Subcutaneous="Subc. adipose",
 	Adipose_Visceral_Omentum="Visceral omentum",
@@ -1484,54 +1513,6 @@ regression_res <- function(w=3,h=4){
 	return(p)
 }
 
-# corr_gene_ancestry <- function(w=5,h=3){
-
-# 	# look at correlation between each PC and each local ancestry variable 
-
-# 	i <-1 
-# 	dt_list <- list()
-# 	for (t in tissues){
-# 		dt <- fread(sprintf('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/tss/%s_var_ancestry_correlation.tsv',t),sep='\t',header=T)
-# 		dt[,tissue := t]
-# 		dt_list[[i]] <- dt
-# 		i <- i + 1
-# 	}
-
-# 	corr <- rbindlist(dt_list)
-# 	head(corr)
-
-# 	corr <- unique(corr, by='gene')
-# 	corr_melted <- melt(corr, id.var=c('gene','tissue'))
-
-# 	print(head(corr_melted))
-
-# 	corr_melted[,x := sapply(variable, function(j) unname(unlist(strsplit(as.character(j), '_')))[1])]
-# 	corr_melted[,x := paste0('g',x)]
-# 	corr_melted[,group := sapply(variable, function(j) unname(unlist(strsplit(as.character(j), '_')))[2])]
-
-# 	g <- ggplot(corr_melted, aes(x=factor(x), y=value, fill=factor(group))) + 
-# 		geom_hline(yintercept=0,linetype='dashed') +
-# 		geom_boxplot(colour='black') + 
-# 		theme_bw() + 
-# 		scale_fill_manual(values=c(ASN="#ADFF33", AFR="#FF9900")) +
-# 		labs(x='gPC',y='r of LA at TSS and gPC') +
-# 		theme(axis.title.x=element_blank(),
-# 			axis.text.x=element_text(colour='black'),
-# 			legend.title=element_blank(),
-# 			legend.direction='horizontal',
-# 			legend.position=c(0.87,0.9),
-# 			panel.border = element_rect(colour = "black", fill=NA, size=1),
-# 			legend.box.background = element_rect(colour = "black", size=1),
-# 			legend.margin = margin(1, 1, 1, 1)) +
-# 		ylim(c(-1,1))
-
-# 	pdf('~/gtex-admix/plots/august/ancestry-cor-per-gene.pdf',width=w,height=h)
-# 	print(g)
-# 	dev.off()
-
-# 	return(g)
-# }
-
 ve_expr_ancestry <- function(w=5,h=5){
 
 	# variance_explained_ancesrty_gene_expression.R; plot_var_expression_ancestry.R
@@ -1871,15 +1852,81 @@ figure3 <- function(cutoff=1e-6){
 
 }
 
-# figure2()
-# figure3()
-# figure4()
-figure1()
-
 # supplement
 # tg_gtex_pca()
 # admix_per_tissue()
 # locus_plots()
 
+args <- parser$parse_args()
+
+c <- as.numeric(args$cutoff)
+
+if(args$genotype_pc){
+	g <- genotype_pc()
+}
+if(args$admix_per_tissue_short){
+	g <- admix_per_tissue_short()
+}
+if(args$rfmix_pc_cor){
+	g <- rfmix_pc_cor()
+}
+if(args$local_block_trunc){
+	g <- local_block_trunc(1,4)
+	g <- local_block_trunc(19,22,h=1)
+}
+if(args$qq){
+	g <- qq()
+}
+if(args$egene_discovery){
+	g <- egene_discovery(cutoff=c)
+}
+if(args$venn){
+	g <- venn(cutoff=c)
+}
+if(args$pval_distn){
+	g <- pval_distn(cutoff=c)
+}
+if(args$gtex_r2){
+	g <- gtex_r2()
+}
+if(args$gtex_esnps_r2_high){
+	g <- gtex_esnps_r2_high()
+}
+if(args$coloc){
+	g <- coloc()
+}
+if(args$fst_distn){
+	g <- fst_distn()
+}
+if(args$max_fst_pop){
+	g <- max_fst_pop()
+}
+if(args$regression_res){
+	g <- regression_res()
+}
+if(args$ve_expr_ancestry){
+	g <- ve_expr_ancestry()
+}
+if(args$tg_gtex_pca){
+	g <- tg_gtex_pca()
+}
+if(args$admix_per_tissue){
+	g <- admix_per_tissue()
+}
+if(args$locus_plots){
+	g <- locus_plots()
+}
+if(args$figure1){
+	g <- figure1()
+}
+if(args$figure2){
+	g <- figure2()
+}
+if(args$figure3){
+	g <- figure3(cutoff=c)
+}
+if(args$figure4){
+	g <- figure4()
+}
 
 
