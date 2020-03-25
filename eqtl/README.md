@@ -76,3 +76,13 @@ The input should be the **unfiltered** allpairs file for a given tissue. There a
   - `gtex.admix.lava.egenes.tied.txt.gz`: Lead SNPs according to LocalAA  
 
 ## Generate some eGene sets that are repeatedly used in downstream analyses
+
+[`get_uniq_egenes.R`](get_uniq_egenes.R) generates a few files, a few of which are specific to a particular nominal p-value cutoff:
+  - `egenes_master.RData`: Lead SNPs for all tested genes; the union of `gtex.admix.global.egenes.tied.txt.gz` and `gtex.admix.lava.egenes.tied.txt.gz` for all tissues. One line per gene-SNP pair per ancestry adjustment method
+  - `allp_master.RData`: Any gene-SNP pair with a nominal p-value < 0.05 (either LocalAA or GlobalAA)
+
+Then a few files that are specific to a given nominal p-value cutoff, e.g. 1e-06:  
+  - `uniq_egene_${cutoff}.RData`: For each tissue, genes that have a nominal eQTL p-value less than the cutoff for only one ancestry adjustment method. Results for all tissues are concatenated  
+  - `diff_lead_${cutoff}.RData`: For each tissue, genes that have a nominal eQTL p-value less than the cutoff for BOTH ancestry adjustment methods but have different lead SNPs. Results for all tissues are concatenated  
+  - `same_egene_diff_lead_${cutoff}.txt`: Unique genes from `diff_lead_${cutoff}.RData`; used to filter loci for colocalization analyses later on 
+

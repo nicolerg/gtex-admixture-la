@@ -11,9 +11,7 @@ library(data.table)
 
 args <- commandArgs(trailingOnly=TRUE)
 base <- args[1] # /mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed
-
-outdir <- paste0(base,'/merged')
-system(sprintf('mkdir -p %s',outdir))
+outdir <- args[2] # /mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged
 
 tissues <- c('Adipose_Subcutaneous',
 	'Nerve_Tibial',
@@ -70,37 +68,36 @@ if(!file.exists(paste0(outdir,'/egenes_master.RData')) | !file.exists(paste0(out
 	load(paste0(outdir,'/egenes_master.RData'))
 }
 
-get_egenes <- function(cutoff){
-	egenes_master <- egenes_master[pval_nominal < cutoff]
+# get_egenes <- function(cutoff){
+# 	egenes_master <- egenes_master[pval_nominal < cutoff]
 
-	global <- egenes_master[method=='global']
-	lava <- egenes_master[method=='LAVA']
+# 	global <- egenes_master[method=='global']
+# 	lava <- egenes_master[method=='LAVA']
 
-	global <- global[,.(gene_id, pval_nominal, tissue, method)]
-	lava <- lava[,.(gene_id, pval_nominal, tissue, method)]
+# 	global <- global[,.(gene_id, pval_nominal, tissue, method)]
+# 	lava <- lava[,.(gene_id, pval_nominal, tissue, method)]
 
-	uniq_df <- list()
-	i <- 1
-	for (t in tissues){
-		g_uniq <- global[tissue==t & !(gene_id %in% lava[tissue==t, gene_id])]
-		l_uniq <- lava[tissue==t & !(gene_id %in% global[tissue==t, gene_id])]
-		g_uniq <- unique(g_uniq)
-		l_uniq <- unique(l_uniq)
-		m <- data.table(rbind(g_uniq,l_uniq))
-		uniq_df[[i]] <- m
-		i <- i+1
-	}
+# 	uniq_df <- list()
+# 	i <- 1
+# 	for (t in tissues){
+# 		g_uniq <- global[tissue==t & !(gene_id %in% lava[tissue==t, gene_id])]
+# 		l_uniq <- lava[tissue==t & !(gene_id %in% global[tissue==t, gene_id])]
+# 		g_uniq <- unique(g_uniq)
+# 		l_uniq <- unique(l_uniq)
+# 		m <- data.table(rbind(g_uniq,l_uniq))
+# 		uniq_df[[i]] <- m
+# 		i <- i+1
+# 	}
 
-	master_uniq_per_tissue <- data.table(rbindlist(uniq_df))
-	master_uniq_genes <- data.frame(gene_id=unique(master_uniq_per_tissue[,gene_id]))
+# 	master_uniq_per_tissue <- data.table(rbindlist(uniq_df))
+# 	master_uniq_genes <- data.frame(gene_id=unique(master_uniq_per_tissue[,gene_id]))
 
-	#write.table(master_uniq_per_tissue, paste0(outdir,'/uniq_egenes_per_tissue_',cutoff,'.tsv'), col.names=TRUE, row.names=FALSE, sep='\t', quote=FALSE)
-	write.table(master_uniq_genes, paste0(outdir,'/uniq_egenes_list_',cutoff,'.tsv'), col.names=FALSE, row.names=FALSE, sep='\t', quote=FALSE)
-}
+# 	#write.table(master_uniq_per_tissue, paste0(outdir,'/uniq_egenes_per_tissue_',cutoff,'.tsv'), col.names=TRUE, row.names=FALSE, sep='\t', quote=FALSE)
+# 	write.table(master_uniq_genes, paste0(outdir,'/uniq_egenes_list_',cutoff,'.tsv'), col.names=FALSE, row.names=FALSE, sep='\t', quote=FALSE)
+# }
 
-get_egenes(1e-4)
-get_egenes(1e-5)
-get_egenes(1e-6)
+#get_egenes(1e-4)
+#get_egenes(1e-6)
 
 filter_master <- function(cutoff){
 	
@@ -121,7 +118,7 @@ filter_master <- function(cutoff){
 		repeats <- lava[ pair %in% global[,pair] , gene_id ]
 		lava <- lava[!(gene_id %in% repeats)]
 		global <- global[!(gene_id %in% repeats)]
-		uniq_eqtl[[i]] <- data.table(rbind(global, lava))
+		#uniq_eqtl[[i]] <- data.table(rbind(global, lava)) # this doesn't test the case if one method's eSNP is a significant but not lead SNP in the other method 
 
 		# now only same eGenes, different lead SNPs 
 		l <- lava[gene_id %in% global[,gene_id]]
@@ -138,11 +135,11 @@ filter_master <- function(cutoff){
 	}
 
 	uniq_egene <- data.table(rbindlist(uniq_egene))
-	uniq_eqtl <- data.table(rbindlist(uniq_eqtl))
+	#uniq_eqtl <- data.table(rbindlist(uniq_eqtl))
 	diff_lead <- data.table(rbindlist(diff_lead))
 
 	save(uniq_egene,file=paste0(outdir,'/uniq_egene_',cutoff,'.RData'))
-	save(uniq_eqtl,file=paste0(outdir,'/uniq_eqtl_',cutoff,'.RData'))
+	#save(uniq_eqtl,file=paste0(outdir,'/uniq_eqtl_',cutoff,'.RData'))
 	save(diff_lead,file=paste0(outdir,'/diff_lead_',cutoff,'.RData'))
 
 	# write out a file of same egenes, different lead SNP 
@@ -153,5 +150,4 @@ filter_master <- function(cutoff){
 
 filter_master(1e-4)
 filter_master(1e-6)
-filter_master(1e-5)
 
