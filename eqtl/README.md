@@ -60,9 +60,10 @@ It has a few outputs:
 
 Now let's assume that, for each tissue, you have a master allpairs file called `${tissue}-LocalAA-GlobalAA-allpairs-merged.tsv.gz`. These files are very large. Some of the downstream steps are facilitated by having a filtered allpairs file that only includes tests where either the GlobalAA or LocalAA nominal p-value is less than 0.05. Generate this filtered allpairs file as follows:  
 ```bash
+zcat zcat ${tissue}-LocalAA-GlobalAA-allpairs-merged.tsv.gz | head -1 > ${tissue}-LocalAA-GlobalAA-allpairs-merged-filt.tsv
 zcat ${tissue}-LocalAA-GlobalAA-allpairs-merged.tsv.gz | \
   awk -F "\t" '{ if(($6 < 0.05) || ($9 < 0.05)) { print } }' \
-  > ${tissue}-LocalAA-GlobalAA-allpairs-merged-filt.tsv
+  >> ${tissue}-LocalAA-GlobalAA-allpairs-merged-filt.tsv
 gzip ${tissue}-LocalAA-GlobalAA-allpairs-merged-filt.tsv
 ```
 
