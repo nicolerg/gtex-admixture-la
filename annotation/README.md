@@ -8,5 +8,5 @@ First, use [`interpolate-tss-la.py`](interpolate-tss-la.py) to extract local anc
 2. Prepare input files for PLINK: 
   - `cut -f 3,4 evariant_pairs_test_ld.txt | sed "s/  / /g" > pairs_in.txt`  
   - `split -d -n l/15 pairs_in.txt pairs_in_`
-3. Run [`plink_ld.sh`](plink_ld.sh) on each `pairs_in_*` chunk to calculate LD between pairs of SNPs using PLINK: 
+3. Run [`plink_ld.sh`](plink_ld.sh) on each `pairs_in_*` chunk to calculate LD between pairs of SNPs using PLINK: `for file in pairs_in_*; do bash plink_ld.sh ${file} & done`
 
