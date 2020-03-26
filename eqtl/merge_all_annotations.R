@@ -8,7 +8,7 @@ master_data_dir = '/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged
 
 if(!file.exists(sprintf("%s/f_all-merged-collapsed-wide.RData",master_data_dir))){
 
-	if(!file.exists(sprintf('%s/f_all-merged-tmp.RData'))){
+	if(!file.exists(sprintf('%s/f_all-merged-tmp.RData',master_data_dir))){
 
 		# eQTL results (top for each gene; no cutoff)
 		load(sprintf("%s/egenes_master.RData",master_data_dir))
