@@ -363,7 +363,8 @@ genotype_pc <- function(w=4,h=4){
 		scale_size_manual(values=c('1'=2,'2'=1), guide='none') +
 		scale_shape_manual(values=c('1'=21,'2'=16), breaks='2', limits='2', labels='117 admixed (117AX)') +
 		scale_alpha_manual(values=c('1'=0.8,'2'=0.6), guide='none') +
-		geom_point(data=m[shape==1],colour='black',shape=21,alpha=0.8,size=2) +
+		geom_point(data=m[shape==1],colour='black',shape=21,alpha=1,size=2,aes(fill=factor(RACE))) +
+		geom_point(data=m[shape==1],colour='black',shape=21,alpha=1,size=2,fill=NA) +
 		theme_classic() +
 		theme(legend.justification=c(0,0), 
 			legend.position=c(0.01,0.51),
@@ -413,12 +414,12 @@ admix_per_tissue_short <- function(w=4,h=4){
 		geom_bar(stat="identity",aes(colour=colour)) +
 		scale_fill_manual(values=tcols,guide='none') +
 		scale_colour_manual(values=c(black='black','NA'=NA),guide='none') +
-		scale_x_discrete(labels=labs,limits=limits) +
+		scale_x_discrete(labels=all_labs,limits=limits) +
 		labs(y="N admixed individuals (117AX)") +
 		theme_classic() +
 		theme(axis.text.y = element_text(hjust=1,vjust=0.5,
-			# size=tissize[match(limits, names(tissize))],
-			# face=face[match(limits, names(face))],
+			size=tissize[match(limits, names(tissize))],
+			face=face[match(limits, names(face))],
 			colour='black'),
 			axis.title.y=element_blank()) +
 	 	scale_y_continuous(expand = c(0,0), limits=c(0,115)) +
@@ -585,7 +586,7 @@ local_block_trunc <- function(chr_start,chr_stop,w=7.5,h=2){
 			scale_fill_manual(name="Local Ancestry", 
 				values = c(ASN="green3",EUR="#0000FF",AFR="#FF9900",UNK="gray"), 
 				breaks=c('AFR','EUR','ASN',"UNK"),
-				labels=c(ASN="Asian (7.3%)",EUR="European (30.3%)",AFR="African (61.2%)",UNK="Unknown (<1%)")) +
+				labels=c(ASN="East Asian (7.3%)",EUR="European (30.3%)",AFR="African (61.2%)",UNK="Unknown (<1%)")) +
 			geom_vline(xintercept=-dict$Stop[1:nrow(dict)-1], size=0.5) + 
 			scale_x_discrete(limits=-((dict$Start+dict$Stop)/2),
 		        labels=c(chr_start:chr_stop),
@@ -1344,178 +1345,12 @@ regression_res <- function(w=3,h=4){
 	print(p)
 	dev.off()
 
-
-
-
-	# # original method
-	# dt1 = dt[type=='original']
-	# print(dt1)
-
-	# # rename facets
-	# dt1[variable == 'max_within_continent_fst_local', name := 'F[ST*","*within]']
-	# dt1[variable == 'max_within_continent_fst_global', name := 'F[ST*","*within]']
-	# dt1[variable == 'WEIR_AND_COCKERHAM_FST_local', name := 'F[ST*","*between]']
-	# dt1[variable == 'WEIR_AND_COCKERHAM_FST_global', name := 'F[ST*","*between]']
-
-	# dt1[variable == 'max_within_continent_fst_local', colour := 'LAVA']
-	# dt1[variable == 'max_within_continent_fst_global', colour := 'global']
-	# dt1[variable == 'WEIR_AND_COCKERHAM_FST_local', colour := 'LAVA']
-	# dt1[variable == 'WEIR_AND_COCKERHAM_FST_global', colour := 'global']
-
-	# # # rename facets
-	# # dt1[variable == 'within', name := 'Delta*F[ST*","*within]']
-	# # dt1[variable == 'between', name := 'Delta*F[ST*","*between]']
-	# # # dt[variable == 'within_global', name := 'F[ST*","*within*","*GlobalAA]']
-	# # # dt[variable == 'between_local', name := 'F[ST*","*between*","*LocalAA]']
-	# # # dt[variable == 'within_local', name := 'F[ST*","*within*","*LocalAA]']
-
-	# dt1[pvalue < 0.05, label := '*']
-	# dt1[pvalue < 0.01, label := '**']
-	# dt1[pvalue < 1e-3, label := '***']
-	# dt1[pvalue >= 0.05, label := '']
-
-	# # get_range <- function(var){
-	# #   sub = dt[variable == var]
-	# #   range = abs(max(sub[,ymax]) - min(sub[,ymin]))
-	# #   return(range)
-	# # }
-
-	# # for (var in unique(dt1[,variable])){
-	# #   print(var)
-	# #   print(get_range(var))
-	# #   dt1[variable==var, range := get_range(var)]
-	# # }
-
-	# dt1[colour=='global',label_pos := ymax + 0.1]
-	# dt1[colour=='LAVA',label_pos := ymin - 0.3]
-
-	# print(dt1)
-
-	# # change facet colors
-
-	# p <- ggplot(dt1, aes(x=filter)) +
-	#   geom_point(aes(y=estimate, colour=colour)) +
-	#   theme_bw() + 
-	#   facet_wrap(~name,ncol=1, labeller = label_parsed) +
-	#   geom_errorbar(aes(ymin=ymin, ymax=ymax, colour=colour),width=0.02) +
-	#   labs(x='PP4 threshold',y='Coefficient estimate') +
-	#   geom_text(aes(label=label,y=label_pos,colour=colour),show.legend=F) +
-	#   geom_hline(yintercept=0,linetype='dashed') + 
-	#   theme(panel.border = element_rect(colour = "black", fill=NA, size=1),
-	# 		strip.background = element_rect(size=1, colour='black', fill=NA),
-	# 		panel.grid = element_blank(),
-	# 		axis.text=element_text(colour='black'),
-	# 		legend.title=element_blank(),
-	# 		legend.position=c(0.75,0.9),
-	# 		legend.background=element_blank()) +
-	#   scale_colour_manual(values=methodcols, labels=methodlabs) +
-	#   guides(text=FALSE)
-
-	# g <- ggplot_gtable(ggplot_build(p))
-	# strip_t <- which(grepl('strip-t', g$layout$name))
-	# fills <- unname(rep(methodcols,2))
-	# k <- 1
-	# for (i in strip_t) {
-	#   j <- which(grepl('rect', g$grobs[[i]]$grobs[[1]]$childrenOrder))
-	#   g$grobs[[i]]$grobs[[1]]$children[[j]]$gp$fill <- fills[k]
-	#   k <- k+1
-	# }
-
-	# pdf(paste0(plot_dir,'/coloc-fst-regression-3.pdf'), width=w, height=h)
-	# print(p)
-	# dev.off()
-
-	# # also print plots for LocalAA and GlobalAA #####################################################
-
-	# # GlobalAA
-	# dt1 = dt[type=='GlobalAA']
-
-	# 	# rename facets
-	# dt1[variable == 'max_within_continent_fst_global', name := 'GlobalAA~F[ST*","*within]']
-	# dt1[variable == 'WEIR_AND_COCKERHAM_FST_global', name := 'GlobalAA~F[ST*","*between]']
-	# # dt[variable == 'within_global', name := 'F[ST*","*within*","*GlobalAA]']
-	# # dt[variable == 'between_local', name := 'F[ST*","*between*","*LocalAA]']
-	# # dt[variable == 'within_local', name := 'F[ST*","*within*","*LocalAA]']
-
-	# dt1[pvalue < 0.01, label := '*']
-	# dt1[pvalue < 1e-3, label := '**']
-	# dt1[pvalue < 1e-5, label := '***']
-	# dt1[pvalue >= 0.05, label := '']
-
-	# for (var in unique(dt1[,variable])){
-	#   print(var)
-	#   print(get_range(var))
-	#   dt1[variable==var, range := get_range(var)]
-	# }
-
-	# dt1[,label_pos := ymax + 0.05*range]
-
-	# # change facet colors
-
-	# global <- ggplot(dt1, aes(x=filter)) +
-	#   geom_point(aes(y=estimate)) +
-	#   theme_bw() + 
-	#   facet_wrap(~name,ncol=1, labeller = label_parsed) +
-	#   geom_errorbar(aes(ymin=ymin, ymax=ymax),width=0.02) +
-	#   labs(x='PP4 threshold',y='Coefficient estimate') +
-	#   geom_text(aes(label=label,y=label_pos)) +
-	#   geom_hline(yintercept=0,linetype='dashed') + 
-	#   theme(panel.border = element_rect(colour = "black", fill=NA, size=1),
-	# 		strip.background = element_rect(size=1, colour='black', fill=methodcols[['global']]),
-	# 		#axis.title=element_text(size=14),
-	# 		panel.grid = element_blank(),
-	# 		axis.text=element_text(colour='black'))
-
-	# # LocalAA
-	# dt1 = dt[type=='LocalAA']
-
-	# 	# rename facets
-	# dt1[variable == 'max_within_continent_fst_local', name := 'LocalAA~F[ST*","*within]']
-	# dt1[variable == 'WEIR_AND_COCKERHAM_FST_local', name := 'LocalAA~F[ST*","*between]']
-	# # dt[variable == 'within_global', name := 'F[ST*","*within*","*GlobalAA]']
-	# # dt[variable == 'between_local', name := 'F[ST*","*between*","*LocalAA]']
-	# # dt[variable == 'within_local', name := 'F[ST*","*within*","*LocalAA]']
-
-	# dt1[pvalue < 0.01, label := '*']
-	# dt1[pvalue < 1e-3, label := '**']
-	# dt1[pvalue < 1e-5, label := '***']
-	# dt1[pvalue >= 0.05, label := '']
-
-	# for (var in unique(dt1[,variable])){
-	#   print(var)
-	#   print(get_range(var))
-	#   dt1[variable==var, range := get_range(var)]
-	# }
-
-	# dt1[,label_pos := ymax + 0.05*range]
-
-	# # change facet colors
-
-	# local <- ggplot(dt1, aes(x=filter)) +
-	#   geom_point(aes(y=estimate)) +
-	#   theme_bw() + 
-	#   facet_wrap(~name,ncol=1, labeller = label_parsed) +
-	#   geom_errorbar(aes(ymin=ymin, ymax=ymax),width=0.02) +
-	#   labs(x='PP4 threshold',y='Coefficient estimate') +
-	#   geom_text(aes(label=label,y=label_pos)) +
-	#   geom_hline(yintercept=0,linetype='dashed') + 
-	#   theme(panel.border = element_rect(colour = "black", fill=NA, size=1),
-	# 		strip.background = element_rect(size=1, colour='black', fill=methodcols[['LAVA']]),
-	# 		#axis.title=element_text(size=14),
-	# 		panel.grid = element_blank(),
-	# 		axis.text=element_text(colour='black'))
-
-	# pdf(paste0(plot_dir,'/coloc-fst-regression-local-global.pdf'), width=w, height=h)
-	# print(global)
-	# print(local)
-	# dev.off()
-
 	return(p)
 }
 
 ve_expr_ancestry <- function(w=5,h=5){
 
-	# variance_explained_ancesrty_gene_expression.R; plot_var_expression_ancestry.R
+	# variance_explained_ancestry_gene_expression.R; plot_var_expression_ancestry.R
 
 	i <-1 
 	dt_list <- list()
@@ -1549,20 +1384,36 @@ ve_expr_ancestry <- function(w=5,h=5){
 	collapsed <- collapsed[order(diff,decreasing=T)]
 	print(collapsed[1:20])
 
-	g <- ggplot(merged, aes(x=variance_explained_ga*100, y=variance_explained_la*100, label=gene_name)) +
-		geom_point(alpha=0.5,aes(colour=factor(tissue))) +
+	merged[,colour := tissue]
+	merged[gene_name=='TBC1D3L', colour := 'black']
+	merged[,size := ifelse(gene_name=='TBC1D3L', 2, 1)]
+	merged[,alpha := ifelse(gene_name=='TBC1D3L', 2, 1)]
+
+	m1 = merged[gene_name=='TBC1D3L']
+	m2 = merged[gene_name != 'TBC1D3L']
+	merged = rbind(m2, m1)
+
+	g <- ggplot(merged, aes(x=variance_explained_ga*100, y=variance_explained_la*100)) +
+		geom_point(aes(colour=factor(colour), 
+			size=factor(size), 
+			fill=factor(tissue), 
+			alpha=factor(alpha)), 
+		shape=21) +
 		theme_classic() + 
 		labs(x='% of residual expr. VE by GA',y='% of residual expr. VE by LA') +
-		scale_colour_manual(values=tissuecols, labels=shortlab, guide='none') +
+		scale_fill_manual(values=tissuecols, guide='none') +
+		scale_colour_manual(values=c(tissuecols, black='black'),
+			breaks='black',
+			labels='TBC1D3L') +
 		theme(legend.title = element_blank(), 
-			legend.position='top',
-			legend.margin=margin(b = -3, unit='mm'),
-			legend.direction='horizontal') +
-		scale_fill_manual(values=tissuecols, guide='none', limits=tissues) +
-		geom_abline(linetype='dashed') 
-		#guides(colour = guide_legend(override.aes=list(alpha=1,shape=19,size=2),ncol=6))
+			legend.position=c(0.83,0.67),
+			legend.background=element_blank()) +
+		geom_abline(linetype='dashed') +
+		scale_size_manual(values=c('1'=1,'2'=2), guide='none') +
+		scale_alpha_manual(values=c('1'=0.5,'2'=1), guide='none') +
+		guides(colour = guide_legend(override.aes=list(shape=21,size=2)))
 
-	pdf('~/gtex-admix/plots/august/var-explained-expression-ancestry-scatter-combined-nolab.pdf',width=w,height=h)
+	png(paste0(plot_dir,'/var-explained.png'),width=w,height=h,unit='in',res=300)
 	print(g)
 	dev.off()
 
@@ -1811,18 +1662,8 @@ figure2 <- function(){
 	
 	r <- rectGrob(gp=gpar(fill="white",colour='white'))
 
-	# pdf(sprintf("%s/figure2-tmp.pdf",plot_dir),width=7.5,height=6)
-	# grid.arrange(egene_discovery(cutoff=1e-06), r, venn(cutoff=1e-06), pval_distn(cutoff=1e-06),
-	# 	layout_matrix = rbind(c(2,2,2,1,1,1,1),
-	# 						c(2,2,2,1,1,1,1),
-	# 						c(3,3,3,3,4,4,4),
-	# 						c(3,3,3,3,4,4,4),
-	# 						c(3,3,3,3,4,4,4))
-	# )
-	# dev.off()
-
-	png(sprintf("%s/figure2.png",plot_dir),width=7.5,height=6,units='in',res=300)
-	grid.arrange(egene_discovery(cutoff=1e-06), qq(), venn(cutoff=1e-06), pval_distn(cutoff=1e-06),
+	pdf(sprintf("%s/figure2-tmp.pdf",plot_dir),width=7.5,height=6)
+	grid.arrange(egene_discovery(cutoff=1e-06), r, venn(cutoff=1e-06), pval_distn(cutoff=1e-06),
 		layout_matrix = rbind(c(2,2,2,1,1,1,1),
 							c(2,2,2,1,1,1,1),
 							c(3,3,3,3,4,4,4),
@@ -1830,6 +1671,16 @@ figure2 <- function(){
 							c(3,3,3,3,4,4,4))
 	)
 	dev.off()
+
+	# png(sprintf("%s/figure2.png",plot_dir),width=7.5,height=6,units='in',res=300)
+	# grid.arrange(egene_discovery(cutoff=1e-06), qq(), venn(cutoff=1e-06), pval_distn(cutoff=1e-06),
+	# 	layout_matrix = rbind(c(2,2,2,1,1,1,1),
+	# 						c(2,2,2,1,1,1,1),
+	# 						c(3,3,3,3,4,4,4),
+	# 						c(3,3,3,3,4,4,4),
+	# 						c(3,3,3,3,4,4,4))
+	# )
+	# dev.off()
 
 }
 
