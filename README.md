@@ -15,3 +15,4 @@ Note that code is primarily provided to replicate analyses in the manuscript. Ho
 - [**eQTL calling:**](eqtl) Perform eQTL calling with both Global Ancestry Adjustment (GlobalAA) and Local Ancestry Adjustment (LocalAA)  
 - [**Colocalization:**](colocalization) Perform colocalization between eQTL summary statistics (GlobalAA and LocalAA) and each of 114 GWAS (see [this preprint](https://www.biorxiv.org/content/10.1101/814350v1))
 - [**Global ancestry inference with ADMIXTURE:**](admixture) Compare global ancestry fractions estimated from RFMix to ADMIXTURE global ancestry inference  
+- [**SNP annotations:**](annotation) Annotate SNPs with characteristics include within- and between- continent Fst, variance in genotype explained by local ancestry, CADD scores, variance in gene expression explained by ancestry, etc.  
