@@ -2,7 +2,7 @@ library(data.table)
 
 # calculate LD from a pair of variants from ALL genes
 
-load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/merged/egenes_master.RData')
+load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/egenes_master.RData')
 
 # remove eGenes with overlapping lead SNP sets
 tissues <- c('Adipose_Subcutaneous',
@@ -10,7 +10,8 @@ tissues <- c('Adipose_Subcutaneous',
 	'Artery_Tibial',
 	'Muscle_Skeletal',
 	'Lung',
-	'Skin_Not_Sun_Exposed_Suprapubic')
+	'Skin_Not_Sun_Exposed_Suprapubic',
+	'Whole_Blood')
 
 dflist <- list()
 i <- 1 

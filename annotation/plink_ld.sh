@@ -2,8 +2,8 @@
 
 infile=$1
 
-vcfdir=/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/geno
-outdir=/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/plink-r2/20191030
+indir=/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/plink-r2/20191030/plink_files
+outdir=/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/plink-r2/20200325
 
 cd ${outdir}
 
@@ -22,7 +22,7 @@ while IFS= read -r line; do
 	var2=$(echo $line | cut -f2 -d' ')
 
 	chrom=$(echo ${var1} | cut -f1 -d'_')
-	bed=plink_files/gtex.admixed.MAC10.phased.${chrom}
+	bed=${indir}/gtex.admixed.MAC10.phased.${chrom}
 
 	d=$(plink --bfile ${bed} --ld ${var1} ${var2} --threads 2 | grep -m1 "R-sq" | sed "s/.*= //")
 	if [ -z "$d" ]; then
