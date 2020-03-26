@@ -2,8 +2,6 @@ library(data.table)
 
 master_data_dir = '/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged'
 
-#### 10/30/19 Re-run this if you want to use it
-
 # make a master file of eQTLs, AFR-EUR Fst, within-AFR Fst, within-EUR Fst, r2 with local ancestry
 # match results by gene and tissue for each method 
 # what about CADD, TF binding, coloc, het_fraction?
@@ -15,7 +13,7 @@ if(!file.exists(sprintf("%s/f_all-merged-collapsed-wide.RData",master_data_dir))
 		# eQTL results (top for each gene; no cutoff)
 		load(sprintf("%s/egenes_master.RData",master_data_dir))
 
-		# within-continent Fst
+		# within-continent Fst - all SNPs
 		writeLines('merge eGenes with within-continent Fst...')
 		load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/merged-all_no_max.RData')
 		egenes_master[,CHROM := sapply(variant_id, function(x) unname(unlist(strsplit(x, '_')))[1])]
@@ -26,7 +24,7 @@ if(!file.exists(sprintf("%s/f_all-merged-collapsed-wide.RData",master_data_dir))
 
 		print(head(f))
 
-		# AFR-v-EUR Fst
+		# AFR-v-EUR Fst - all SNPs
 		writeLines('merge result with EUR-AFR Fst...')
 		afr_eur <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/high_local_fst/EUR_AFR.weir.fst',sep='\t',header=T)
 		colnames(afr_eur) <- c('CHROM','POS','EUR_AFR_FST')
@@ -60,34 +58,35 @@ if(!file.exists(sprintf("%s/f_all-merged-collapsed-wide.RData",master_data_dir))
 		
 		print(head(f))
 
-		# # TF binding
-		# writeLines('merge result with ENCODE TF binding...')
-		# # gastroc
-		# gastroc <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/encode-tf/gastrocnemius_medialis/gastrocnemius_medialis.tf.binding.tsv',sep='\t',header=F)
-		# head(gastroc)
-		# gastroc[,tissue := 'Muscle_Skeletal']
-		# gastroc <- gastroc[,.(V3, V7, tissue)]
-		# # adipose
-		# adipose <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/encode-tf/subcutaneous_adipose_tissue/subcutaneous_adipose_tissue.tf.binding.tsv',sep='\t',header=F)
-		# adipose[,tissue := 'Adipose_Subcutaneous']
-		# adipose <- adipose[,.(V3, V7, tissue)]
-		# # nerve
-		# nerve <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/encode-tf/tibial_nerve/tibial_nerve.tf.binding.tsv',sep='\t',header=F)
-		# nerve[,tissue := 'Nerve_Tibial']
-		# nerve <- nerve[,.(V3, V7, tissue)]
-		# # artery 
-		# artery <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/encode-tf/tibial_artery/tibial_artery.tf.binding.tsv',sep='\t',header=F)
-		# artery[,tissue := 'Artery_Tibial']
-		# artery <- artery[,.(V3, V7, tissue)]
-		# # lung 
-		# lung <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/encode-tf/lung/lung.tf.binding.tsv',sep='\t',header=F)
-		# lung[,tissue := 'Lung']
-		# lung <- lung[,.(V3, V7, tissue)]
-		# tf_binding <- data.table(rbindlist(list(gastroc, adipose, nerve, artery, lung)))
-		# colnames(tf_binding) <- c('variant_id','tf_binding_annotation','tissue')
-		# tf_binding <- unique(tf_binding)
+		# TF binding
+		writeLines('merge result with ENCODE TF binding...')
+		# gastroc
+		gastroc <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/encode-tf/gastrocnemius_medialis/gastrocnemius_medialis.tf.binding.tsv',sep='\t',header=F)
+		head(gastroc)
+		gastroc[,tissue := 'Muscle_Skeletal']
+		gastroc <- gastroc[,.(V3, V7, tissue)]
+		# adipose
+		adipose <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/encode-tf/subcutaneous_adipose_tissue/subcutaneous_adipose_tissue.tf.binding.tsv',sep='\t',header=F)
+		adipose[,tissue := 'Adipose_Subcutaneous']
+		adipose <- adipose[,.(V3, V7, tissue)]
+		# nerve
+		nerve <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/encode-tf/tibial_nerve/tibial_nerve.tf.binding.tsv',sep='\t',header=F)
+		nerve[,tissue := 'Nerve_Tibial']
+		nerve <- nerve[,.(V3, V7, tissue)]
+		# artery 
+		artery <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/encode-tf/tibial_artery/tibial_artery.tf.binding.tsv',sep='\t',header=F)
+		artery[,tissue := 'Artery_Tibial']
+		artery <- artery[,.(V3, V7, tissue)]
+		# lung 
+		lung <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/encode-tf/lung/lung.tf.binding.tsv',sep='\t',header=F)
+		lung[,tissue := 'Lung']
+		lung <- lung[,.(V3, V7, tissue)]
+		tf_binding <- data.table(rbindlist(list(gastroc, adipose, nerve, artery, lung)))
+		colnames(tf_binding) <- c('variant_id','tf_binding_annotation','tissue')
+		tf_binding <- unique(tf_binding)
 
-		# f <- merge(f, tf_binding, by=c('variant_id','tissue'), all.x=T)
+		# no TF binding for blood
+		f <- merge(f, tf_binding, by=c('variant_id','tissue'), all.x=T)
 		
 		print(head(f))
 
@@ -227,20 +226,8 @@ if(!file.exists(sprintf("%s/f_all-merged-collapsed-wide.RData",master_data_dir))
 
 nrow(f)
 
-# # coloc (for now, just best coloc per gene per tissue -- ?)
-# load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/master_coloc-1e-04.RData')
-
-# # collapse down to best coloc per gene/tissue, for this purpose
-# coloc <- master_coloc[,list(best_gwas_coloc.global = gwas_trait[which.max(clpp_h4_global)],
-# 	best_gwas_coloc.local = gwas_trait[which.max(clpp_h4_local)],
-# 	best_clpp_h4.global = max(clpp_h4_global),
-# 	best_clpp_h4.local = max(clpp_h4_local)), by=c('feature','tissue')]
-
-# f <- merge(f, coloc, by.x=c('gene_id','tissue'), by.y=c('feature','tissue'), all.x=T)
-# head(f)
-
 # merge with D of SNP pairs, when possible 
-load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/merged/egenes_master-20191030.RData')
+load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/egenes_master-20200326.RData')
 egenes_master = egenes_master[,.(gene_id,tissue,LD,overlapping_lead_variants)]
 colnames(egenes_master) = c('gene_id','tissue','lead_variants_LD','overlapping_lead_variants')
 
@@ -287,7 +274,6 @@ writeLines(colnames(la_summary))
 # min_CADD_score.global
 # which_min_CADD_score.global
 # tf_binding_annotation.global
-# frac_heterozygous_genotypes.global
 # max_EUR_fst.global
 # which_max_EUR_fst.global
 # max_AFR_fst.global
@@ -326,7 +312,6 @@ writeLines(colnames(la_summary))
 # min_CADD_score.local
 # which_min_CADD_score.local
 # tf_binding_annotation.local
-# frac_heterozygous_genotypes.local
 # max_EUR_fst.local
 # which_max_EUR_fst.local
 # max_AFR_fst.local

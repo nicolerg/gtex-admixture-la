@@ -48,10 +48,10 @@ methodlabs <- c(global='GlobalAA',LAVA='LocalAA')
 tissues <- c('Nerve_Tibial',
 	'Artery_Tibial',
 	'Adipose_Subcutaneous',
+	'Whole_Blood',
 	'Muscle_Skeletal',
 	'Skin_Not_Sun_Exposed_Suprapubic',
-	'Lung',
-	'Whole_Blood'
+	'Lung'
 	)
 
 shortlab <- c(Adipose_Subcutaneous='Subc.\nadipose',
@@ -60,7 +60,7 @@ shortlab <- c(Adipose_Subcutaneous='Subc.\nadipose',
 	Muscle_Skeletal='Skeletal\nmuscle',
 	Nerve_Tibial='Tibial\nnerve',
 	Skin_Not_Sun_Exposed_Suprapubic='NSE\nskin',
-	Whole_Blood='Blood')
+	Whole_Blood='Whole\nblood')
 
 tissuelabs <- c(Adipose_Subcutaneous="Subc. adipose",
 	Artery_Tibial="Tibial artery",
@@ -688,7 +688,7 @@ qq <- function(w=5,h=4){
 
 egene_discovery <- function(h=3,w=5,cutoff=1e-6){
 
-	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/merged/egenes_master-20191030.RData')
+	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/egenes_master-20200326.RData')
 	#egenes_master <- egenes_master_fixed 
 	egenes_master <- egenes_master[pval_nominal_global < cutoff | pval_nominal_local < cutoff]
 
@@ -725,7 +725,7 @@ egene_discovery <- function(h=3,w=5,cutoff=1e-6){
 
 venn <- function(h=3.5,w=5,cutoff=1e-6){
 
-	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/merged/egenes_master-20191030.RData')
+	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/egenes_master-20200326.RData')
 	egenes_master <- egenes_master[pval_nominal_local < cutoff | pval_nominal_global < cutoff]
 
 	counts <- data.table(TISSUE=tissues)
@@ -781,10 +781,10 @@ venn <- function(h=3.5,w=5,cutoff=1e-6){
 	                                      N_same_lead_snp='gray',
 	                                      N_global_only=unname(methodcols['global']),
 	                                      N_local_only=unname(methodcols['LAVA'])),
-	                             labels=c(N_diff_lead_snp='  Same eGene,\n  different lead eVariant',
-	                                      N_same_lead_snp='  Same eGene,\n  same lead eVariant',
-	                                      N_global_only='  eGene in GlobalAA only ',
-	                                      N_local_only='  eGene in LocalAA only'),
+	                             labels=c(N_diff_lead_snp=' Same eGene,\n different lead eVariant',
+	                                      N_same_lead_snp=' Same eGene,\n same lead eVariant',
+	                                      N_global_only=' eGene in GlobalAA only ',
+	                                      N_local_only=' eGene in LocalAA only'),
 	                             breaks=c('N_local_only', 'N_global_only', 'N_same_lead_snp', 'N_diff_lead_snp')) +
 	         theme_classic() +
 	         scale_x_discrete(labels=shortlab,limits=tissues) +
@@ -792,7 +792,8 @@ venn <- function(h=3.5,w=5,cutoff=1e-6){
 	               axis.text.x=element_text(colour='black'),
 	               #legend.text=element_text(size=10),
 	               legend.title=element_blank(),
-	               legend.position=c(0.5,0.85)) +
+	               legend.position=c(0.5,0.87),
+	               legend.key.height=unit(1.75, 'lines')) +
 	         labs(y='N eGenes') +
 	         ylim(c(0,max(dt[,local_y])+0.5*(max(dt[,local_y])))) +
 	         guides(fill=guide_legend(ncol=2))
@@ -807,7 +808,7 @@ venn <- function(h=3.5,w=5,cutoff=1e-6){
 
 pval_distn <- function(cutoff=1e-6,w=6,h=5){
 
-	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/merged/egenes_master-20191030.RData')
+	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/egenes_master-20200326.RData')
 	#load("/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/merged/mx_merged-all-annotations-v2.RData")
 
 	# ID genes unique to one method at given cutoff 
@@ -829,7 +830,7 @@ pval_distn <- function(cutoff=1e-6,w=6,h=5){
 		labs(x=expression('GlobalAA'~italic(P)*'-value (-log10)'), y=expression('LocalAA'~italic(P)*'-value (-log10)')) +
 		scale_shape_manual(values=c('0'=21,'1'=24),name='Same lead\neVariant', labels=c('0'='No','1'='Yes')) +
 		scale_fill_manual(values=tissuecols, guide='none') +
-		theme(legend.position=c(0.8,0.8),
+		theme(legend.position=c(0.8,0.81),
 			panel.grid = element_blank()) +
 		geom_abline(intercept=2, slope=1, linetype='dotted') +
 		geom_abline(intercept=-2, slope=1, linetype='dotted') +
@@ -1662,18 +1663,8 @@ figure2 <- function(){
 	
 	r <- rectGrob(gp=gpar(fill="white",colour='white'))
 
-	pdf(sprintf("%s/figure2-tmp.pdf",plot_dir),width=7.5,height=6)
-	grid.arrange(egene_discovery(cutoff=1e-06), r, venn(cutoff=1e-06), pval_distn(cutoff=1e-06),
-		layout_matrix = rbind(c(2,2,2,1,1,1,1),
-							c(2,2,2,1,1,1,1),
-							c(3,3,3,3,4,4,4),
-							c(3,3,3,3,4,4,4),
-							c(3,3,3,3,4,4,4))
-	)
-	dev.off()
-
-	# png(sprintf("%s/figure2.png",plot_dir),width=7.5,height=6,units='in',res=300)
-	# grid.arrange(egene_discovery(cutoff=1e-06), qq(), venn(cutoff=1e-06), pval_distn(cutoff=1e-06),
+	# pdf(sprintf("%s/figure2-tmp.pdf",plot_dir),width=7.5,height=6)
+	# grid.arrange(egene_discovery(cutoff=1e-06), r, venn(cutoff=1e-06), pval_distn(cutoff=1e-06),
 	# 	layout_matrix = rbind(c(2,2,2,1,1,1,1),
 	# 						c(2,2,2,1,1,1,1),
 	# 						c(3,3,3,3,4,4,4),
@@ -1681,6 +1672,16 @@ figure2 <- function(){
 	# 						c(3,3,3,3,4,4,4))
 	# )
 	# dev.off()
+
+	png(sprintf("%s/figure2.png",plot_dir),width=7.5,height=6,units='in',res=300)
+	grid.arrange(egene_discovery(cutoff=1e-06), qq(), venn(cutoff=1e-06), pval_distn(cutoff=1e-06),
+		layout_matrix = rbind(c(2,2,2,1,1,1,1),
+							c(2,2,2,1,1,1,1),
+							c(3,3,3,3,4,4,4),
+							c(3,3,3,3,4,4,4),
+							c(3,3,3,3,4,4,4))
+	)
+	dev.off()
 
 }
 
