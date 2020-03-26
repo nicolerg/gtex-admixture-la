@@ -36,7 +36,7 @@ if(!file.exists(sprintf("%s/f_all-merged-collapsed-wide.RData",master_data_dir))
 		
 		# r2 with local ancestry 
 		writeLines('merge result with R-sq with LA...')
-		r2 <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/r2/all_lead_snp_r2.txt.gz',sep='\t',header=T)
+		r2 <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/r2/REVISIONS/REVISED_all_lead_snp_r2.txt.gz',sep='\t',header=T)
 		colnames(r2) <- c('variant_id','rsq_genotype_local_ancestry')
 		f <- merge(f, r2, by='variant_id',all.x=T)
 

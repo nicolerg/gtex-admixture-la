@@ -689,7 +689,6 @@ qq <- function(w=5,h=4){
 egene_discovery <- function(h=3,w=5,cutoff=1e-6){
 
 	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/egenes_master-20200326.RData')
-	#egenes_master <- egenes_master_fixed 
 	egenes_master <- egenes_master[pval_nominal_global < cutoff | pval_nominal_local < cutoff]
 
 	counts <- data.table(TISSUE=tissues)
@@ -790,7 +789,6 @@ venn <- function(h=3.5,w=5,cutoff=1e-6){
 	         scale_x_discrete(labels=shortlab,limits=tissues) +
 	         theme(axis.title.x=element_blank(),
 	               axis.text.x=element_text(colour='black'),
-	               #legend.text=element_text(size=10),
 	               legend.title=element_blank(),
 	               legend.position=c(0.5,0.87),
 	               legend.key.height=unit(1.75, 'lines')) +
@@ -809,7 +807,6 @@ venn <- function(h=3.5,w=5,cutoff=1e-6){
 pval_distn <- function(cutoff=1e-6,w=6,h=5){
 
 	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/egenes_master-20200326.RData')
-	#load("/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/merged/mx_merged-all-annotations-v2.RData")
 
 	# ID genes unique to one method at given cutoff 
 	la <- egenes_master[,.(gene_id, tissue, pval_nominal_global, pval_nominal_local, LD, overlapping_lead_variants)]	
@@ -845,6 +842,7 @@ pval_distn <- function(cutoff=1e-6,w=6,h=5){
 }
 
 gtex_r2 <- function(w=4,h=3){
+	
 	# plot_gtex_la_r2.R, r2_gtex_lead_snps.R
 	gtex_r2 <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/r2/gtex/results/unique_lead_snp_r2.txt',sep='\t',header=FALSE)
 
