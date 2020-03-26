@@ -9,8 +9,10 @@
 ## Calculate LD between pairs of lead SNPs that are different between LocalAA and GlobalAA  
 1. Run [`pairs_for_ld.R`](pairs_for_ld.R) to generate a file `evariant_pairs_test_ld.txt` which includes all of the pairs of SNPs for which to calculate LD  
 2. Prepare input files for PLINK: 
-  - `cut -f 3,4 evariant_pairs_test_ld.txt | sed "s/  / /g" > pairs_in.txt`  
-  - `split -d -n l/15 pairs_in.txt pairs_in_`
+    ```bash 
+    cut -f 3,4 evariant_pairs_test_ld.txt | sed "s/ / /g" > pairs_in.txt
+    split -d -n l/15 pairs_in.txt pairs_in_
+    ```
 3. Run [`plink_ld.sh`](plink_ld.sh) on each `pairs_in_*` chunk to calculate LD between pairs of SNPs using PLINK: `for file in pairs_in_*; do bash plink_ld.sh ${file} & done`
 4. Concatenate results  
 5. Run [`define_diff_lead_by_ld.R`](define_diff_lead_by_ld.R) to restrict the definition of "different lead SNPs" to those with LD < 1  
