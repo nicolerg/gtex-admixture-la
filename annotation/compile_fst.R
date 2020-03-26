@@ -5,8 +5,9 @@ library(data.table)
 
 indir <- '/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/'
 
-eur <- system(sprintf('ls %s | grep "weir" | grep "EUR"',indir),intern=TRUE)
-afr <- system(sprintf('ls %s | grep "weir" | grep "AFR"',indir),intern=TRUE)
+# within-continent Fst first
+eur <- system(sprintf('ls %s | grep "weir" | grep "EUR_"',indir),intern=TRUE)
+afr <- system(sprintf('ls %s | grep "weir" | grep "AFR_"',indir),intern=TRUE)
 
 for (pop in c('eur', 'afr')){
 	
@@ -77,39 +78,6 @@ merged <- merged[,.(CHROM, POS, max_fst, which_max_fst)]
 master <- merge(merged, snps, by=c('CHROM','POS'))
 print(head(master))
 save(master, file=paste0(indir, '/master_all.RData'))
-
-
-# if(!file.exists(paste0(indir, '/master_afr.RData'))){
-# 	afr <- fread(paste0(indir,'/afr-merged-fst.tsv'), sep='\t', header=TRUE)
-# 	afr[ , (colnames(afr)) := lapply(.SD, as.numeric), .SDcols = colnames(afr)]
-# 	# get max Fst per row
-# 	mycols = colnames(afr)[3:ncol(afr)]
-# 	afr[,max_fst := max(abs(.SD)), by=c('CHROM','POS'), .SDcols = mycols]
-# 	afr[,which_max_fst := colnames(.SD)[max.col(.SD)], .SDcols = mycols]
-
-# 	afr <- afr[,.(CHROM, POS, max_fst, which_max_fst)]
-# 	# merge with variant_id
-# 	master_afr <- merge(afr, snps, by=c('CHROM','POS'))
-# 	print(head(master_afr))
-# 	save(master_afr, file=paste0(indir, '/master_afr.RData'))
-# }
-# warnings()
-
-# if(!file.exists(paste0(indir, '/master_eur.RData'))){
-# 	eur <- fread(paste0(indir,'/eur-merged-fst.tsv'), sep='\t', header=TRUE)
-# 	eur[ , (colnames(eur)) := lapply(.SD, as.numeric), .SDcols = colnames(eur)]
-# 	# get max Fst per row
-# 	mycols = colnames(eur)[3:ncol(eur)]
-# 	eur[,max_fst := max(abs(.SD)), by=c('CHROM','POS'), .SDcols = mycols]
-# 	eur[,which_max_fst := colnames(.SD)[max.col(.SD)], .SDcols = mycols]
-
-# 	eur <- eur[,.(CHROM, POS, max_fst, which_max_fst)]
-# 	# merge with variant_id
-# 	master_eur <- merge(eur, snps, by=c('CHROM','POS'))
-# 	print(head(master_eur))
-# 	save(master_eur, file=paste0(indir, '/master_eur.RData'))
-# } 
-# warnings()
 
 # outputs used in compile_coloc.R
 

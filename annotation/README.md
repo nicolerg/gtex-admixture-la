@@ -18,10 +18,10 @@
 5. Run [`define_diff_lead_by_ld.R`](define_diff_lead_by_ld.R) to restrict the definition of "different lead SNPs" to those with LD < 1  
 
 ## Calculate Fst (between- and within- continent)
+See [`calc_fst.sh`](calc_fst.sh), which also calls [`compile_fst.R`].  
 
 ## CADD scores for all SNPs
-
-## EUR-vs-AFR Fst 
+Download [CADD GRCh38-v1.4](https://cadd.gs.washington.edu/download). Then run [`parse_cadd.py`](parse_cadd.py).  
 
 ## Allele frequencies from 1000 Genomes 
 See [`get_1kg_af.sh`](get_1kg_af.sh), which calls [`match_af_gtex_id.py`](match_af_gtex_id.py).  

@@ -1,15 +1,19 @@
 #!/bin/bash 
 
-############################################################################################################################
-## get pairwise Fst values between EUR subpops and AFR subpops
-############################################################################################################################ 
+set -e 
 
 outdir=/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst
 srcdir=/users/nicolerg/gtex-admix/scripts/LAVA
 
 snp_list=${outdir}/rsid_list.txt # RSIDs for all tested GTEx SNPs according to dbsnp
 
-# # pop1.txt:
+############################################################################################################################
+## get pairwise Fst values between EUR subpops and AFR subpops (within-continent Fst)
+############################################################################################################################ 
+
+# corresponding rows of pop1.txt and pop2.txt are pairs of populations for which to calculate within-continent Fst
+
+# # pop1.txt: # each of these files has the list of samples corresponding to the 1000 Genomes population
 # AFR_ESN_subjs.txt
 # AFR_YRI_subjs.txt
 # AFR_YRI_subjs.txt
@@ -42,7 +46,7 @@ snp_list=${outdir}/rsid_list.txt # RSIDs for all tested GTEx SNPs according to d
 # EUR_GBR_subjs.txt
 # EUR_GBR_subjs.txt
 
-# # pop2.txt:
+# # pop2.txt: # each of these files has the list of samples corresponding to the 1000 Genomes population 
 # AFR_ACB_subjs.txt
 # AFR_MSL_subjs.txt
 # AFR_LWK_subjs.txt
@@ -131,6 +135,26 @@ done
 rm ${outdir}/*-chr{1..22}.weir.fst
 mkdir -p ${outdir}/log 
 mv ${outdir}/*.log ${outdir}/log
+
 Rscript ${srcdir}/annotation/compile_fst.R 
 
-# merge new and old results --> ${outdir}/master-merged_eur_afr_all_snps.RData
+############################################################################################################################
+## get Fst values between EUR and AFR (between-continent Fst)
+############################################################################################################################ 
+
+pop1=EUR_subjs.txt # CEU, FIN, GBR, IBS, TSI
+pop2=AFR_subjs.txt # ESN, GWD, LWK, MSL, YRI
+
+for chr in {1..22}; do 
+	taskset -c 0-21 vcftools \
+		--gzvcf /mnt/lab_data/montgomery/shared/1KG/hg38/ALL.chr${chr}_GRCh38.genotypes.20170504.vcf.gz \
+		--snps ${snp_list} \
+		--weir-fst-pop $pop1 --weir-fst-pop $pop2 \
+		--out ${outdir}/EUR-AFR-chr${chr} &
+done 
+wait 
+
+cat ${outdir}/EUR_AFR-chr{1..22}.weir.fst >> ${outdir}/EUR_AFR.weir.fst
+rm ${outdir}/*-chr{1..22}.weir.fst
+mkdir -p ${outdir}/log 
+mv ${outdir}/*.log ${outdir}/log
