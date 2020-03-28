@@ -206,7 +206,9 @@
             "gwas_format": "pval_only",
             "N": 33904,
             "type": "quant"
-        },
+        }
+    }, 
+    
     "eqtl_experiments":
     {
         "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Lung.filtered.global.allpairs.sorted.tsv.gz":

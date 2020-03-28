@@ -3,20 +3,21 @@
 ## Download GWAS summary statistics 
 GWAS summary statistics were downloaded from two sources: 
   - 28 GWAS from the PAGE Consortium, presented in ["Genetic analyses of diverse populations improves discovery for complex traits"](https://www-nature-com.stanford.idm.oclc.org/articles/s41586-019-1310-4), available through the [GWAS Catalog](https://www.ebi.ac.uk/gwas/downloads/summary-statistics)
-  - 114 GWAS from ["Widespread dose-dependent effects of RNA expression and splicing on complex diseases and traits"](https://www.biorxiv.org/content/10.1101/814350v1) (download links provided in Supplementary Table 2; also see [`download_gwas.sh`](download_gwas.sh))
+  - 114 GWAS from ["Widespread dose-dependent effects of RNA expression and splicing on complex diseases and traits"](https://www.biorxiv.org/content/10.1101/814350v1) (available [here](https://zenodo.org/record/3629742#.Xn-eedNKhQJ))
 
 ## Format the GWAS summary statistics 
 [`format_gtex_gwas.sh`](format_coloc.sh) was used to convert the 114 "Widespread..." GWAS summary statistics to the format required by the coloc wrapper pipeline.  
 
 [`format_page_gwas.sh`](format_page_gwas.sh) was used to covert the PAGE GWAS summary statistics to the format required by the coloc wrapper pipeline.  
 
+## Run the colocalization pipeline (COLOC and FINEMAP)  
 Follow [`coloc_pipeline.sh`](coloc_pipeline.sh) to do the following:  
   1. Calculate SNP allele frequencies for all tested SNPs based on 117AX genotypes (`snp_to_effect_af.tsv.gz`) 
   2. [`parse_allpairs_for_coloc.py`](parse_allpairs_for_coloc.py): parse allpairs files to include only tests for "same eGene, different lead SNP" genes at a nominal p-value of 1e-04. (This could be optimized by making these gene lists tissue-specific. More tests are currently performed than necessary.)  
   3. Sort, `bgzip`, and `tabix`-index filterd allpairs files  
-  4. Make config file for the coloc wrapper pipeline 
-  5. Make `n_gwas.txt` and `n_eqtl.txt` sample size files manually
-  6. Run COLOC with the coloc wrapper pipeline 
+  4. Make config file for the coloc wrapper pipeline (see [`gwas_char.txt`](config/gwas_char.txt) and [`config.json`](config/config.json); all config files used are available [here](config))    
+  5. Make `n_gwas.txt` and `n_eqtl.txt` sample size files manually (or include sample sizes in the config file)
+  6. Run COLOC and FINEMAP with the colocalization wrapper pipeline 
   7. Merge results  
 
 Contact Mike Gloudemans about access to the colocalization wrapper pipeline: mgloud@stanford.edu
