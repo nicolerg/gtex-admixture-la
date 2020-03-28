@@ -1,10 +1,10 @@
 import sys
 
 infile = 'gwas_char.txt'
-all_gwas = 'config.json'
+all_gwas = 'gwas_experiments.json'
 cc_only = 'gtex_cc.json'
 
-with open(infile, 'rb') as meta, open(all_gwas, 'wb') as out:
+with open(infile, 'rb') as meta, open(all_gwas, 'wb') as out, open(cc_only, 'wb') as cc:
 	next(meta)
 	for line in meta:
 		l = line.strip().split()
@@ -29,23 +29,17 @@ with open(infile, 'rb') as meta, open(all_gwas, 'wb') as out:
 		out.write('    "type": "{}"\n'.format(gwas_type))
 		out.write('},\n')
 
-# only GTEx GWAS, type "cc" only (to rerun coloc on first 6 tissues)
-with open(infile, 'rb') as meta, open(cc_only, 'wb') as out:
-	next(meta)
-	for line in meta:
-		l = line.strip().split()
-		# file path 
-		if l[1].startswith('WojcikG'):
-			next
+		## cc only:
+		if not file.startswith('WojcikG'):
 
-		if l[3] == 'cc':
+			if l[3] == 'cc':
 
-			out.write('"{}/{}":\n'.format(l[0], file))
-			out.write('{\n')
+				cc.write('"{}/{}":\n'.format(l[0], file))
+				cc.write('{\n')
+				cc.write('    "ref": "{}",\n'.format(l[5]))
+				cc.write('    "gwas_format": "{}",\n'.format(l[6]))
+				cc.write('    "N": {},\n'.format(l[2]))
+				cc.write('    "s": {},\n'.format(l[4]))
+				cc.write('    "type": "cc"\n')
+				cc.write('},\n')
 
-			out.write('    "ref": "{}",\n'.format(l[5]))
-			out.write('    "gwas_format": "{}",\n'.format(l[6]))
-			out.write('    "N": {},\n'.format(l[2]))
-			out.write('    "s": {},\n'.format(l[4]))
-			out.write('    "type": "cc"\n')
-			out.write('},\n')

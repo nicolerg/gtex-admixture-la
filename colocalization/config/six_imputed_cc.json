@@ -1,0 +1,562 @@
+{
+    "out_dir_group": "six_imputed_gwas_cc",
+    "out_dir": "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/output",
+    "tmp_dir": "/srv/tmp",
+
+    "eqtl_sample_sizes": "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/config/n_eqtl.txt",
+
+    "gwas_experiments":
+    {
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1094_self_reported_deep_venous_thrombosis_dvt.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.020073031,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1111_self_reported_asthma.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.115831502,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1154_self_reported_irritable_bowel_syndrome.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.023819482,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1222_self_reported_type_1_diabetes.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.000848365,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1223_self_reported_type_2_diabetes.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.006327143,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1225_self_reported_hyperthyroidism_or_thyrotoxicosis.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.007555196,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1226_self_reported_hypothyroidism_or_myxoedema.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.048576319,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1243_self_reported_psychological_or_psychiatric_problem.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.000958119,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1261_self_reported_multiple_sclerosis.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.003642631,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1262_self_reported_parkinsons_disease.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.001791652,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1265_self_reported_migraine.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.02968388,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1289_self_reported_schizophrenia.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.000999647,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1309_self_reported_osteoporosis.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.015620597,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1313_self_reported_ankylosing_spondylitis.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.00287139,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1452_self_reported_eczema_or_dermatitis.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.025860305,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1453_self_reported_psoriasis.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.011482592,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1461_self_reported_inflammatory_bowel_disease.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.000382654,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1462_self_reported_crohns_disease.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.083819067,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1463_self_reported_ulcerative_colitis.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.005324529,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1464_self_reported_rheumatoid_arthritis.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.011064342,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1466_self_reported_gout.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.01425906,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1473_self_reported_high_cholesterol.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.122496804,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1616_self_reported_insomnia.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.000952186,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_2395_2_Hair_or_balding_pattern_Pattern_2.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.105490939,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_2395_3_Hair_or_balding_pattern_Pattern_3.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.123351102,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_2395_4_Hair_or_balding_pattern_Pattern_4.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.08421062,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_6150_1_Vascular_or_heart_problems_diagnosed_by_doctor_Heart_attack.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.023107567,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_6152_5_diagnosed_by_doctor_Blood_clot_in_the_leg_DVT.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.020482382,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_6152_7_diagnosed_by_doctor_Blood_clot_in_the_lung.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.008270077,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_6152_8_diagnosed_by_doctor_Asthma.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.115066193,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_6152_9_diagnosed_by_doctor_Hayfever_allergic_rhinitis_or_eczema.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.231048977,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_G40_Diagnoses_main_ICD10_G40_Epilepsy.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.001761989,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_G43_Diagnoses_main_ICD10_G43_Migraine.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.002177273,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1065_self_reported_hypertension.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 337119,
+            "s": 0.260115864,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_CARDIoGRAM_C4D_CAD_ADDITIVE.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 184305,
+            "s": 0.329893383,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_CNCR_Insomnia_all.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 113006,
+            "s": 0.286568855,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_DIAGRAM_T2D_TRANS_ETHNIC.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 149461,
+            "s": 0.233104288,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_EAGLE_Eczema.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 116863,
+            "s": 0.183111849,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GABRIEL_Asthma.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 26475,
+            "s": 0.391501416,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IBD.EUR.Crohns_Disease.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 20833,
+            "s": 0.285892574,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IBD.EUR.Inflammatory_Bowel_Disease.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 34652,
+            "s": 0.371753434,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IBD.EUR.Ulcerative_Colitis.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 27432,
+            "s": 0.254009915,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IGAP_Alzheimer.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 54162,
+            "s": 0.3140209,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_ILAE_Genetic_generalised_epilepsy.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 28763,
+            "s": 0.09060251,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IMMUNOBASE_Celiac_disease_hg19.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 15283,
+            "s": 0.29660407,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IMMUNOBASE_Multiple_sclerosis_hg19.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 27098,
+            "s": 0.358771865,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IMMUNOBASE_Systemic_lupus_erythematosus_hg19.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 23210,
+            "s": 0.311029729,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_ISGC_Malik_2016_METASTROKE_all_strokes.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 29633,
+            "s": 0.347821685,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_PGC_ADHD_EUR_2017.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 53293,
+            "s": 0.358377273,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_PGC_ASD_2017_CEU.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 15954,
+            "s": 0.463018679,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_pgc.scz2.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 150064,
+            "s": 0.246488165,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_RA_OKADA_TRANS_ETHNIC.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 80799,
+            "s": 0.238047501,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_TAGC_Asthma_EUR.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 127669,
+            "s": 0.156294794,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_BCAC_ER_negative_BreastCancer_EUR.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 120000,
+            "s": 0.258333333,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_BCAC_ER_positive_BreastCancer_EUR.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 120000,
+            "s": 0.1,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_BCAC_Overall_BreastCancer_EUR.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 120000,
+            "s": 0.516666667,
+            "type": "cc"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_tag.evrsmk.tbl.formatted.txt.gz":
+        {
+            "ref": "117_admix",
+            "gwas_format": "pval_only",
+            "N": 74035,
+            "s": 0.566880529,
+            "type": "cc"
+        }
+    },
+
+    "eqtl_experiments":
+    {
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Lung.filtered.global.allpairs.sorted.tsv.gz":
+        {
+            "ref": "117_admix",
+            "eqtl_format": "effect_size"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Lung.filtered.local.allpairs.sorted.tsv.gz":
+        {
+            "ref": "117_admix",
+            "eqtl_format": "effect_size"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Muscle_Skeletal.filtered.global.allpairs.sorted.tsv.gz":
+        {
+            "ref": "117_admix",
+            "eqtl_format": "effect_size"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Muscle_Skeletal.filtered.local.allpairs.sorted.tsv.gz":
+        {
+            "ref": "117_admix",
+            "eqtl_format": "effect_size"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Adipose_Subcutaneous.filtered.global.allpairs.sorted.tsv.gz":
+        {
+            "ref": "117_admix",
+            "eqtl_format": "effect_size"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Adipose_Subcutaneous.filtered.local.allpairs.sorted.tsv.gz":
+        {
+            "ref": "117_admix",
+            "eqtl_format": "effect_size"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Nerve_Tibial.filtered.global.allpairs.sorted.tsv.gz":
+        {
+            "ref": "117_admix",
+            "eqtl_format": "effect_size"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Nerve_Tibial.filtered.local.allpairs.sorted.tsv.gz":
+        {
+            "ref": "117_admix",
+            "eqtl_format": "effect_size"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Artery_Tibial.filtered.global.allpairs.sorted.tsv.gz":
+        {
+            "ref": "117_admix",
+            "eqtl_format": "effect_size"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Artery_Tibial.filtered.local.allpairs.sorted.tsv.gz":
+        {
+            "ref": "117_admix",
+            "eqtl_format": "effect_size"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Skin_Not_Sun_Exposed_Suprapubic.filtered.global.allpairs.sorted.tsv.gz":
+        {
+            "ref": "117_admix",
+            "eqtl_format": "effect_size"
+        },
+        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Skin_Not_Sun_Exposed_Suprapubic.filtered.local.allpairs.sorted.tsv.gz":
+        {
+            "ref": "117_admix",
+            "eqtl_format": "effect_size"
+        }
+    },
+    
+    "methods":
+    {
+        "coloc": {},
+        "finemap": {}
+    },
+
+    "ref_genomes":
+    {
+        "117_admix":
+        {
+            "file": "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/geno/hg38/gtex.admixed.MAC10.phased.hg38.recode.sorted.vcf.gz",
+            "N": 117,
+            "af_attribute": "AF"
+        }
+    },
+
+    "selection_basis": "gwas",
+
+    "selection_thresholds":
+    {
+        "eqtl": 1e-4,
+        "gwas": 1e-5
+    },
+
+    "screening_thresholds":
+    {
+    },
+
+    "plot_none": "True"
+}
+
