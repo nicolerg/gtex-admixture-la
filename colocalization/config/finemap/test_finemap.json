@@ -1,9 +1,9 @@
 {
     "out_dir_group": "test_finemap",
-    "out_dir": "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/output",
-    "tmp_dir": "/srv/tmp",
+    "out_dir": "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/output",
+    "tmp_dir": "/labs/smontgom/nicolerg/tmp",
 
-    "eqtl_sample_sizes": "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/config/n_eqtl.txt",
+    "eqtl_sample_sizes": "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/config/n_eqtl.txt",
 
     "methods":
     {
@@ -14,7 +14,7 @@
     {
         "117_admix":
         {
-            "file": "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/geno/hg38/gtex.admixed.MAC10.phased.hg38.recode.sorted.vcf.gz",
+            "file": "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/geno/gtex.admixed.MAC10.phased.hg38.recode.sorted.vcf.gz",
             "N": 117,
             "af_attribute": "AF"
         }
@@ -36,7 +36,7 @@
 
     "eqtl_experiments":
     {
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Skin_Not_Sun_Exposed_Suprapubic.filtered.global.allpairs.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/allpairs_difflead/Skin_Not_Sun_Exposed_Suprapubic.filtered.global.allpairs.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "eqtl_format": "effect_size"
@@ -45,7 +45,7 @@
 
     "gwas_experiments":
     {
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_1160_Sleep_duration.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_1160_Sleep_duration.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",

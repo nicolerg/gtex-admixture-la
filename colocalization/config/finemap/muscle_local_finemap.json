@@ -1,9 +1,9 @@
 {
     "out_dir_group": "muscle_local_finemap",
-    "out_dir": "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/output",
-    "tmp_dir": "/srv/tmp",
+    "out_dir": "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/output",
+    "tmp_dir": "/labs/smontgom/nicolerg/tmp",
 
-    "eqtl_sample_sizes": "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/config/n_eqtl.txt",
+    "eqtl_sample_sizes": "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/config/n_eqtl.txt",
 
     "methods":
     {
@@ -14,7 +14,7 @@
     {
         "117_admix":
         {
-            "file": "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/geno/hg38/gtex.admixed.MAC10.phased.hg38.recode.sorted.vcf.gz",
+            "file": "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/geno/gtex.admixed.MAC10.phased.hg38.recode.sorted.vcf.gz",
             "N": 117,
             "af_attribute": "AF"
         }
@@ -36,7 +36,7 @@
 
     "eqtl_experiments":
     {
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/allpairs_difflead/Muscle_Skeletal.filtered.local.allpairs.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/allpairs_difflead/Muscle_Skeletal.filtered.local.allpairs.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "eqtl_format": "effect_size"
@@ -45,35 +45,35 @@
 
     "gwas_experiments":
     {
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_1160_Sleep_duration.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_1160_Sleep_duration.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 337119,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_1180_Morning_or_evening_person_chronotype.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_1180_Morning_or_evening_person_chronotype.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 337119,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_1200_Sleeplessness_or_insomnia.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_1200_Sleeplessness_or_insomnia.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 337119,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_1807_Fathers_age_at_death.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_1807_Fathers_age_at_death.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 337119,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1094_self_reported_deep_venous_thrombosis_dvt.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1094_self_reported_deep_venous_thrombosis_dvt.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -81,7 +81,7 @@
             "s": 0.020073031,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1111_self_reported_asthma.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1111_self_reported_asthma.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -89,7 +89,7 @@
             "s": 0.115831502,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1154_self_reported_irritable_bowel_syndrome.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1154_self_reported_irritable_bowel_syndrome.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -97,7 +97,7 @@
             "s": 0.023819482,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1222_self_reported_type_1_diabetes.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1222_self_reported_type_1_diabetes.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -105,7 +105,7 @@
             "s": 0.000848365,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1223_self_reported_type_2_diabetes.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1223_self_reported_type_2_diabetes.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -113,7 +113,7 @@
             "s": 0.006327143,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1225_self_reported_hyperthyroidism_or_thyrotoxicosis.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1225_self_reported_hyperthyroidism_or_thyrotoxicosis.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -121,7 +121,7 @@
             "s": 0.007555196,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1226_self_reported_hypothyroidism_or_myxoedema.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1226_self_reported_hypothyroidism_or_myxoedema.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -129,7 +129,7 @@
             "s": 0.048576319,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1243_self_reported_psychological_or_psychiatric_problem.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1243_self_reported_psychological_or_psychiatric_problem.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -137,7 +137,7 @@
             "s": 0.000958119,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1261_self_reported_multiple_sclerosis.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1261_self_reported_multiple_sclerosis.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -145,7 +145,7 @@
             "s": 0.003642631,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1262_self_reported_parkinsons_disease.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1262_self_reported_parkinsons_disease.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -153,7 +153,7 @@
             "s": 0.001791652,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1265_self_reported_migraine.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1265_self_reported_migraine.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -161,7 +161,7 @@
             "s": 0.02968388,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1289_self_reported_schizophrenia.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1289_self_reported_schizophrenia.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -169,7 +169,7 @@
             "s": 0.000999647,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1309_self_reported_osteoporosis.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1309_self_reported_osteoporosis.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -177,7 +177,7 @@
             "s": 0.015620597,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1313_self_reported_ankylosing_spondylitis.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1313_self_reported_ankylosing_spondylitis.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -185,7 +185,7 @@
             "s": 0.00287139,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1452_self_reported_eczema_or_dermatitis.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1452_self_reported_eczema_or_dermatitis.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -193,7 +193,7 @@
             "s": 0.025860305,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1453_self_reported_psoriasis.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1453_self_reported_psoriasis.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -201,7 +201,7 @@
             "s": 0.011482592,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1461_self_reported_inflammatory_bowel_disease.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1461_self_reported_inflammatory_bowel_disease.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -209,7 +209,7 @@
             "s": 0.000382654,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1462_self_reported_crohns_disease.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1462_self_reported_crohns_disease.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -217,7 +217,7 @@
             "s": 0.083819067,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1463_self_reported_ulcerative_colitis.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1463_self_reported_ulcerative_colitis.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -225,7 +225,7 @@
             "s": 0.005324529,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1464_self_reported_rheumatoid_arthritis.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1464_self_reported_rheumatoid_arthritis.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -233,7 +233,7 @@
             "s": 0.011064342,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1466_self_reported_gout.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1466_self_reported_gout.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -241,7 +241,7 @@
             "s": 0.01425906,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1473_self_reported_high_cholesterol.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1473_self_reported_high_cholesterol.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -249,7 +249,7 @@
             "s": 0.122496804,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1616_self_reported_insomnia.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1616_self_reported_insomnia.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -257,42 +257,42 @@
             "s": 0.000952186,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20016_Fluid_intelligence_score.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20016_Fluid_intelligence_score.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 337119,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20022_Birth_weight.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20022_Birth_weight.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 337119,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20127_Neuroticism_score.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20127_Neuroticism_score.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 337119,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_21001_Body_mass_index_BMI.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_21001_Body_mass_index_BMI.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 337119,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_23099_Body_fat_percentage.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_23099_Body_fat_percentage.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 337119,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_2395_2_Hair_or_balding_pattern_Pattern_2.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_2395_2_Hair_or_balding_pattern_Pattern_2.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -300,7 +300,7 @@
             "s": 0.105490939,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_2395_3_Hair_or_balding_pattern_Pattern_3.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_2395_3_Hair_or_balding_pattern_Pattern_3.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -308,7 +308,7 @@
             "s": 0.123351102,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_2395_4_Hair_or_balding_pattern_Pattern_4.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_2395_4_Hair_or_balding_pattern_Pattern_4.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -316,21 +316,21 @@
             "s": 0.08421062,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_3526_Mothers_age_at_death.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_3526_Mothers_age_at_death.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 337119,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_50_Standing_height.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_50_Standing_height.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 337119,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_6150_1_Vascular_or_heart_problems_diagnosed_by_doctor_Heart_attack.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_6150_1_Vascular_or_heart_problems_diagnosed_by_doctor_Heart_attack.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -338,7 +338,7 @@
             "s": 0.023107567,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_6152_5_diagnosed_by_doctor_Blood_clot_in_the_leg_DVT.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_6152_5_diagnosed_by_doctor_Blood_clot_in_the_leg_DVT.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -346,7 +346,7 @@
             "s": 0.020482382,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_6152_7_diagnosed_by_doctor_Blood_clot_in_the_lung.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_6152_7_diagnosed_by_doctor_Blood_clot_in_the_lung.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -354,7 +354,7 @@
             "s": 0.008270077,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_6152_8_diagnosed_by_doctor_Asthma.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_6152_8_diagnosed_by_doctor_Asthma.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -362,7 +362,7 @@
             "s": 0.115066193,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_6152_9_diagnosed_by_doctor_Hayfever_allergic_rhinitis_or_eczema.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_6152_9_diagnosed_by_doctor_Hayfever_allergic_rhinitis_or_eczema.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -370,7 +370,7 @@
             "s": 0.231048977,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_G40_Diagnoses_main_ICD10_G40_Epilepsy.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_G40_Diagnoses_main_ICD10_G40_Epilepsy.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -378,7 +378,7 @@
             "s": 0.001761989,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_G43_Diagnoses_main_ICD10_G43_Migraine.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_G43_Diagnoses_main_ICD10_G43_Migraine.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -386,7 +386,7 @@
             "s": 0.002177273,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_UKB_20002_1065_self_reported_hypertension.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_UKB_20002_1065_self_reported_hypertension.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -394,112 +394,112 @@
             "s": 0.260115864,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_ADIPOGen_Adiponectin.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_ADIPOGen_Adiponectin.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 39883,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_Eosinophil_counts.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_Eosinophil_counts.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_Granulocyte_count.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_Granulocyte_count.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_High_light_scatter_reticulocyte_count.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_High_light_scatter_reticulocyte_count.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_Lymphocyte_counts.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_Lymphocyte_counts.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_Monocyte_count.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_Monocyte_count.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_Myeloid_white_cell_count.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_Myeloid_white_cell_count.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_Neutrophil_count.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_Neutrophil_count.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_Platelet_count.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_Platelet_count.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_Red_blood_cell_count.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_Red_blood_cell_count.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_Reticulocyte_count.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_Reticulocyte_count.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_Sum_basophil_neutrophil_counts.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_Sum_basophil_neutrophil_counts.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_Sum_eosinophil_basophil_counts.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_Sum_eosinophil_basophil_counts.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_Sum_neutrophil_eosinophil_counts.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_Sum_neutrophil_eosinophil_counts.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Astle_et_al_2016_White_blood_cell_count.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Astle_et_al_2016_White_blood_cell_count.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 173480,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_CARDIoGRAM_C4D_CAD_ADDITIVE.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_CARDIoGRAM_C4D_CAD_ADDITIVE.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -507,14 +507,14 @@
             "s": 0.329893383,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_CKDGen_Chronic_Kidney_Disease.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_CKDGen_Chronic_Kidney_Disease.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 70484,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_CNCR_Insomnia_all.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_CNCR_Insomnia_all.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -522,7 +522,7 @@
             "s": 0.286568855,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_DIAGRAM_T2D_TRANS_ETHNIC.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_DIAGRAM_T2D_TRANS_ETHNIC.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -530,7 +530,7 @@
             "s": 0.233104288,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_EAGLE_Eczema.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_EAGLE_Eczema.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -538,49 +538,49 @@
             "s": 0.183111849,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_EGG_BL.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_EGG_BL.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 28459,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_EGG_BMI_HapMapImputed.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_EGG_BMI_HapMapImputed.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 35668,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_EGG_BW3_EUR.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_EGG_BW3_EUR.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 143677,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_EGG_Pubertal_growth_10F.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_EGG_Pubertal_growth_10F.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 6974,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_EGG_Pubertal_growth_12M.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_EGG_Pubertal_growth_12M.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 6986,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_ENIGMA_Intracraneal_Volume.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_ENIGMA_Intracraneal_Volume.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 30717,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GABRIEL_Asthma.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_GABRIEL_Asthma.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -588,91 +588,91 @@
             "s": 0.391501416,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GEFOS_Forearm.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_GEFOS_Forearm.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 49988,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GIANT_2017_BMI_Active_EUR.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_GIANT_2017_BMI_Active_EUR.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 180423,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GIANT_2015_BMI_EUR.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_GIANT_2015_BMI_EUR.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 322154,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GIANT_HEIGHT.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_GIANT_HEIGHT.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 253288,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GIANT_HIP_Combined_EUR.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_GIANT_HIP_Combined_EUR.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 142762,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GIANT_WC_Combined_EUR.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_GIANT_WC_Combined_EUR.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 232101,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GIANT_WHR_Combined_EUR.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_GIANT_WHR_Combined_EUR.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 212248,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GLGC_Mc_HDL.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_GLGC_Mc_HDL.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 188578,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GLGC_Mc_LDL.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_GLGC_Mc_LDL.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 188578,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GLGC_Mc_TG.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_GLGC_Mc_TG.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 188578,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_GPC-NEO-NEUROTICISM.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_GPC-NEO-NEUROTICISM.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 17375,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_HRGene_HeartRate.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_HRGene_HeartRate.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 85787,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IBD.EUR.Crohns_Disease.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_IBD.EUR.Crohns_Disease.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -680,7 +680,7 @@
             "s": 0.285892574,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IBD.EUR.Inflammatory_Bowel_Disease.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_IBD.EUR.Inflammatory_Bowel_Disease.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -688,7 +688,7 @@
             "s": 0.371753434,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IBD.EUR.Ulcerative_Colitis.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_IBD.EUR.Ulcerative_Colitis.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -696,7 +696,7 @@
             "s": 0.254009915,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IGAP_Alzheimer.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_IGAP_Alzheimer.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -704,7 +704,7 @@
             "s": 0.3140209,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_ILAE_Genetic_generalised_epilepsy.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_ILAE_Genetic_generalised_epilepsy.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -712,7 +712,7 @@
             "s": 0.09060251,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IMMUNOBASE_Celiac_disease_hg19.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_IMMUNOBASE_Celiac_disease_hg19.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -720,7 +720,7 @@
             "s": 0.29660407,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IMMUNOBASE_Multiple_sclerosis_hg19.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_IMMUNOBASE_Multiple_sclerosis_hg19.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -728,7 +728,7 @@
             "s": 0.358771865,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_IMMUNOBASE_Systemic_lupus_erythematosus_hg19.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_IMMUNOBASE_Systemic_lupus_erythematosus_hg19.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -736,7 +736,7 @@
             "s": 0.311029729,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_ISGC_Malik_2016_METASTROKE_all_strokes.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_ISGC_Malik_2016_METASTROKE_all_strokes.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -744,63 +744,63 @@
             "s": 0.347821685,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Jones_et_al_2016_Chronotype.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Jones_et_al_2016_Chronotype.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 128266,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_Jones_et_al_2016_SleepDuration.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_Jones_et_al_2016_SleepDuration.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 128266,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_MAGIC_FastingGlucose.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_MAGIC_FastingGlucose.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 46186,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_MAGIC_ln_FastingInsulin.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_MAGIC_ln_FastingInsulin.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 38238,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_MAGNETIC_CH2.DB.ratio.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_MAGNETIC_CH2.DB.ratio.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 24154,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_MAGNETIC_HDL.C.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_MAGNETIC_HDL.C.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 19270,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_MAGNETIC_IDL.TG.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_MAGNETIC_IDL.TG.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 21559,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_MAGNETIC_LDL.C.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_MAGNETIC_LDL.C.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 13527,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_PGC_ADHD_EUR_2017.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_PGC_ADHD_EUR_2017.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -808,7 +808,7 @@
             "s": 0.358377273,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_PGC_ASD_2017_CEU.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_PGC_ASD_2017_CEU.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -816,7 +816,7 @@
             "s": 0.463018679,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_pgc.scz2.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_pgc.scz2.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -824,7 +824,7 @@
             "s": 0.246488165,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_RA_OKADA_TRANS_ETHNIC.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_RA_OKADA_TRANS_ETHNIC.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -832,21 +832,21 @@
             "s": 0.238047501,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_SSGAC_Depressive_Symptoms.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_SSGAC_Depressive_Symptoms.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 180866,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_SSGAC_Education_Years_Pooled.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_SSGAC_Education_Years_Pooled.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 293723,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_TAGC_Asthma_EUR.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_TAGC_Asthma_EUR.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -854,21 +854,21 @@
             "s": 0.156294794,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_ICBP_SystolicPressure.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_ICBP_SystolicPressure.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 203056,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_ICBP_DiastolicPressure.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_ICBP_DiastolicPressure.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 203056,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_BCAC_ER_negative_BreastCancer_EUR.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_BCAC_ER_negative_BreastCancer_EUR.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -876,7 +876,7 @@
             "s": 0.258333333,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_BCAC_ER_positive_BreastCancer_EUR.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_BCAC_ER_positive_BreastCancer_EUR.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -884,7 +884,7 @@
             "s": 0.1,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_BCAC_Overall_BreastCancer_EUR.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_BCAC_Overall_BreastCancer_EUR.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -892,7 +892,7 @@
             "s": 0.516666667,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/gtex_gwas/coloc_input/imputed_tag.evrsmk.tbl.formatted.txt.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/imputed_tag.evrsmk.tbl.formatted.txt.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -900,98 +900,98 @@
             "s": 0.566880529,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_lncrp.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_lncrp.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 28520,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_lnwbc.out.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_lnwbc.out.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 28608,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_mchc.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_mchc.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 19803,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_platelets.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_platelets.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 29328,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_hdl_adjmeds.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_hdl_adjmeds.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 33063,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_ldl_adjmeds.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_ldl_adjmeds.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 32221,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_lntriglycerides_adjmeds.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_lntriglycerides_adjmeds.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 33096,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_tc_adjmeds.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_tc_adjmeds.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 33185,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_lncigs_per_day_excl_nonsmk.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_lncigs_per_day_excl_nonsmk.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 15862,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_lncoffee.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_lncoffee.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 35902,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_HbA1c.adjBMI.invn.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_HbA1c.adjBMI.invn.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 11178,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_lnFI.adjBMI.invn.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_lnFI.adjBMI.invn.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 21551,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_FG.adjBMI.invn.out.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_FG.adjBMI.invn.out.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 23911,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_T2D_bmi.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_T2D_bmi.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -999,42 +999,42 @@
             "s": 0.307096774,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_qt_interval.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_qt_interval.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 17348,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_qrs_interval.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_qrs_interval.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 17046,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_pr_interval.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_pr_interval.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 17422,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_sbp_adjmeds_win.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_sbp_adjmeds_win.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 35433,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_dbp_adjmeds_win.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_dbp_adjmeds_win.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 35433,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_htn.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_htn.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -1042,35 +1042,35 @@
             "s": 0.55194237,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_invn_rwhrbmi_fs.out.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_invn_rwhrbmi_fs.out.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 24838,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_invn_rwhrbmi_ms.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_invn_rwhrbmi_ms.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 9066,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_invn_rheight_alls.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_invn_rheight_alls.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 49796,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_invn_rbmi_alls.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_invn_rbmi_alls.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 49335,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_ckd_analysis.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_ckd_analysis.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -1078,7 +1078,7 @@
             "s": 0.090843484,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_esrd_analysis.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_esrd_analysis.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
@@ -1086,14 +1086,14 @@
             "s": 0.018208766,
             "type": "cc"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_egfrckdepi.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_egfrckdepi.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
             "N": 27900,
             "type": "quant"
         },
-        "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/coloc/PAGE/coloc_input/WojcikG_PMID_invn_rwhrbmi_alls.hg38.formatted.sorted.tsv.gz":
+        "/labs/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas/WojcikG_PMID_invn_rwhrbmi_alls.hg38.formatted.sorted.tsv.gz":
         {
             "ref": "117_admix",
             "gwas_format": "pval_only",
