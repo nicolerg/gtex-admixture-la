@@ -6,7 +6,7 @@ GWAS summary statistics were downloaded from two sources:
   - 114 GWAS from ["Widespread dose-dependent effects of RNA expression and splicing on complex diseases and traits"](https://www.biorxiv.org/content/10.1101/814350v1) (available [here](https://zenodo.org/record/3629742#.Xn-eedNKhQJ))
 
 ## Format the GWAS summary statistics 
-[`format_gtex_gwas.sh`](format_coloc.sh) was used to convert the 114 "Widespread..." GWAS summary statistics to the format required by the coloc wrapper pipeline.  
+[`format_gtex_gwas.sh`](format_coloc.sh) was used to convert the 114 imputed GWAS summary statistics to the format required by the coloc wrapper pipeline.  
 
 [`format_page_gwas.sh`](format_page_gwas.sh) was used to covert the PAGE GWAS summary statistics to the format required by the coloc wrapper pipeline.  
 
