@@ -28,7 +28,7 @@ module load plink/1.90b6.13 # PLINK v1.90b
 module load tabix # tabix
 ```
 
-You will also need to install [`FINEMAP`](http://www.christianbenner.com/) and add an alias to `~/.bashrc` so that the `finemap` command points to the `FINEMAP` executable.  
+You will also need to install [`FINEMAP`](http://www.christianbenner.com/), soft-link the executable to a file named `finemap`, and add the directory with the `finemap` soft link to your PATH. 
 
 Contact Mike Gloudemans about access to the colocalization wrapper pipeline: mgloud@stanford.edu
 
