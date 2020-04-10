@@ -36,6 +36,7 @@ cols <- c("#chr","start","end","gene_id",subjs)
 expr <- expr[,cols,with=FALSE]
 # filter geno file
 geno <- geno[,c(colnames(geno)[1:9], subjs), with=FALSE]
+setnames(geno, "ID", "VARIANT_ID")
 # filter global cov file
 globalcov <- globalcov[,c("ID",subjs),with=FALSE]
 
@@ -143,7 +144,7 @@ for(j in 1:nrow(geno)){
 	}
 
 	# make data table for local covariates
-	variant_id = geno[j,ID]
+	variant_id = geno[j,VARIANT_ID]
 	local <- localcov[SNP_ID == variant_id] # this should be the biggest time saver
 	local <- local[ UNK == 0 ]
 	local <- local[,.(SUBJID,AFR,ASN)]
