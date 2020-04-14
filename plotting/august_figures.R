@@ -10,9 +10,10 @@ library(gridExtra)
 library(gtable)
 library(grid)
 
-master_data_dir <- "/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/"
-plot_dir <- "/users/nicolerg/gtex-admix/plots/REVISIONS"
-supp_dir <- "/users/nicolerg/gtex-admix/plots/REVISIONS/supplement"
+master_data_dir = "/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/merged/"
+plot_dir = "/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/plots/"
+supp_dir = "/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/plots/supplement/"
+meta_dir = "/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/metadata/"
 
 parser <- ArgumentParser()
 # individual figures 
@@ -332,9 +333,9 @@ genotype_pc <- function(w=4,h=4){
 
 	# genotype PC plot with selected individuals shown 
 
-	pop <- fread('/users/nicolerg/gtex-admix/metadata/GTEx_Analysis_2017-06-05_v8_Annotations_SubjectPhenotypesDS.txt', sep='\t', header=TRUE)
+	pop <- fread(sprintf('%s/GTEx_Analysis_2017-06-05_v8_Annotations_SubjectPhenotypesDS.txt',meta_dir), sep='\t', header=TRUE)
 	pop <- pop[,list(SUBJID,RACE)]
-	pc <- fread('/users/nicolerg/gtex-admix/metadata/GTEx_Analysis_2017-06-05_v8_WholeGenomeSeq_838Indiv_Analysis_Freeze_20genotPCs.txt', header=TRUE, sep='\t')
+	pc <- fread(sprintf('%s/GTEx_Analysis_2017-06-05_v8_WholeGenomeSeq_838Indiv_Analysis_Freeze_20genotPCs.txt',meta_dir), header=TRUE, sep='\t')
 	pc <- pc[,list(FID,PC1,PC2)]
 	split <- function(x){
 		return(paste(unlist(unname(strsplit(x,'-')))[1:2], collapse='-'))
@@ -342,7 +343,7 @@ genotype_pc <- function(w=4,h=4){
 	pc[,FID:=sapply(FID,split)]
 	m <- merge(pop, pc, by.x="SUBJID", by.y="FID")
 
-	admixed <- fread('/mnt/lab_data/montgomery/nicolerg/admixed-ancestry/gtex-admixed0.9.txt',sep='\t',header=FALSE)
+	admixed <- fread(sprintf('%s/gtex-admixed0.9.txt',meta_dir),sep='\t',header=FALSE)
 	m[,shape:=ifelse(SUBJID %in% admixed[,V1],1,2)]
 
 	m <- data.table(rbind(m, data.table(SUBJID='filler',
@@ -392,7 +393,7 @@ genotype_pc <- function(w=4,h=4){
 
 admix_per_tissue_short <- function(w=4,h=4){
 
-	aa <- '/mnt/lab_data/montgomery/nicolerg/local-eqtl/aa-per-tissue.tsv'
+	aa <- sprintf('%s/aa-per-tissue.tsv',meta_dir)
 	aa <- fread(aa, sep='\t', header=TRUE)
 
 	print(head(aa))
@@ -436,8 +437,8 @@ admix_per_tissue_short <- function(w=4,h=4){
 
 rfmix_pc_cor <- function(w=6,h=2){
 	
-	pcs <- fread('~/gtex-admix/metadata/GTEx_Analysis_2017-06-05_v8_WholeGenomeSeq_838Indiv_Analysis_Freeze_20genotPCs.txt',sep='\t',header=T)
-	global_ai <- fread('~/gtex-admix/metadata/gtex_ai_global_all.txt',sep='\t',header=T)
+	pcs <- fread(sprintf('%s/GTEx_Analysis_2017-06-05_v8_WholeGenomeSeq_838Indiv_Analysis_Freeze_20genotPCs.txt',meta_dir),sep='\t',header=T)
+	global_ai <- fread(sprintf('%s/gtex_ai_global_all.txt',meta_dir),sep='\t',header=T)
 	pcs[,SUBJID := sapply(FID, function(x) paste(unname(unlist(strsplit(x,'-')))[1:2],collapse='-'))]
 	m <- merge(pcs, global_ai, by.x='SUBJID', by.y='ID')
 	m[,UNK := NULL]
@@ -688,7 +689,7 @@ qq <- function(w=5,h=4){
 
 egene_discovery <- function(h=3,w=5,cutoff=1e-6){
 
-	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/egenes_master-20200326.RData')
+	load(sprintf('%s/egenes_master-20200326.RData',master_data_dir))
 	egenes_master <- egenes_master[pval_nominal_global < cutoff | pval_nominal_local < cutoff]
 
 	counts <- data.table(TISSUE=tissues)
@@ -724,7 +725,7 @@ egene_discovery <- function(h=3,w=5,cutoff=1e-6){
 
 venn <- function(h=3.5,w=5,cutoff=1e-6){
 
-	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/egenes_master-20200326.RData')
+	load(sprintf('%s/egenes_master-20200326.RData',master_data_dir))
 	egenes_master <- egenes_master[pval_nominal_local < cutoff | pval_nominal_global < cutoff]
 
 	counts <- data.table(TISSUE=tissues)
@@ -806,7 +807,7 @@ venn <- function(h=3.5,w=5,cutoff=1e-6){
 
 pval_distn <- function(cutoff=1e-6,w=6,h=5){
 
-	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/egenes_master-20200326.RData')
+	load(sprintf('%s/egenes_master-20200326.RData',master_data_dir))
 
 	# ID genes unique to one method at given cutoff 
 	la <- egenes_master[,.(gene_id, tissue, pval_nominal_global, pval_nominal_local, LD, overlapping_lead_variants)]	
@@ -844,7 +845,8 @@ pval_distn <- function(cutoff=1e-6,w=6,h=5){
 gtex_r2 <- function(w=4,h=3){
 	
 	# plot_gtex_la_r2.R, r2_gtex_lead_snps.R
-	gtex_r2 <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/r2/gtex/results/unique_lead_snp_r2.txt',sep='\t',header=FALSE)
+	#gtex_r2 <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/r2/gtex/results/unique_lead_snp_r2.txt',sep='\t',header=FALSE)
+	gtex_r2 = fread(sprintf('%s/unique_lead_snp_r2.txt',master_data_dir), sep='\t', header=T)
 
 	g <- ggplot(gtex_r2, aes(V2)) +
 		geom_histogram(bins=40,colour='black',fill='white') +
@@ -883,14 +885,14 @@ gtex_esnps_r2_high <- function(w=10,h=7){
 	# m <- merge(msub, gtex_coloc, by=c('gene_id','tissue'), all.x=TRUE)
 
 	# save(m, file='/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/r2/gtex/results/m_merged-gtex-eqtl-coloc.RData')
-	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/r2/gtex/results/m_merged-gtex-eqtl-coloc.RData')
+	load(sprintf('%s/m_merged-gtex-eqtl-coloc.RData',master_data_dir))
 	
 	m <- m[order(local_rsq, decreasing=T)]
 	print(head(m))
 	print(nrow(m))
-	write.table(m,'~/gtex-admix/metadata/gtex_esnps_high_r2_with_la.txt',sep='\t',col.names=T,row.names=F,quote=F)
+	#write.table(m,'~/gtex-admix/metadata/gtex_esnps_high_r2_with_la.txt',sep='\t',col.names=T,row.names=F,quote=F)
 
-	gene_names <- fread('~/gtex-admix/metadata/gene_name_map.tsv', sep='\t', header=TRUE)
+	gene_names <- fread(sprintf('%s/gene_name_map.tsv',meta_dir), sep='\t', header=TRUE)
 	m[,gene_stable_id := sapply(gene_id, function(x) gsub("\\..*","",x))]
 	m <- merge(m, gene_names, by='gene_stable_id', all.m=T)
 
@@ -990,7 +992,7 @@ coloc <- function(w=11,h=8){
 
 	# output of compile_coloc.R --> now reformat_coloc.R
 	# already excludes loci with lead variants in LD of 1
-	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/master_coloc-20191030.RData')
+	load(sprintf('%s/master_coloc-1e-04-20200410.RData',master_data_dir))
 
 	# master_coloc[,line_colour := ifelse(clpp_h4_global > clpp_h4_local, 'global', 'LAVA')]
 	#master_coloc[, label:= ifelse((clpp_h4_global < 0.60 & clpp_h4_local > 0.75) | (clpp_h4_local < 0.60 & clpp_h4_global > 0.75), paste0(feature,':',gwas_trait), NA)]
@@ -1003,7 +1005,7 @@ coloc <- function(w=11,h=8){
 	# master_coloc <- merge(master_coloc, la, by.x=c('feature','tissue'), by.y=c('gene_id','tissue'))
 	# master_coloc <- master_coloc[lead_snp_D < 1]
 
-	gene_names <- fread('~/gtex-admix/metadata/gene_name_map.tsv', sep='\t', header=TRUE)
+	gene_names <- fread(sprintf('%s/gene_name_map.tsv',meta_dir), sep='\t', header=TRUE)
 
 	master_coloc[, gene_stable_id := sapply(gene_id, function(x) unname(unlist(strsplit(x, '[.]')))[1])]
 	master_coloc <- merge(master_coloc, gene_names, by='gene_stable_id', all.x=TRUE)
@@ -1183,7 +1185,7 @@ fst_distn <- function(w=3,h=5){
 
 	# save(master, file='/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/master_fst-distn-plot.RData')
 
-	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/master_fst-distn-plot.RData')
+	load(sprintf('%s/master_fst-distn-plot.RData',master_data_dir))
 	print(max(master[group=='Europe'&variable=="Max. within-continent Fst",value], na.rm=T))
 	print(max(master[group=='Africa'&variable=='Max. within-continent Fst',value], na.rm=T))
 
@@ -1235,7 +1237,8 @@ fst_distn <- function(w=3,h=5){
 
 max_fst_pop <- function(w=5,h=4){
 	# compile_coloc.R
-	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/master_all.RData')
+	#load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/master_all.RData')
+	load(sprintf('%s/master_all_fst.RData',master_data_dir))
 
 	table <- data.table(table(master[,which_max_fst]))
 	print(table)
@@ -1268,84 +1271,86 @@ max_fst_pop <- function(w=5,h=4){
 	return(g)
 }
 
-regression_res <- function(w=3,h=4){
+# need to redo this 
 
-	dt = fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/merged-regression-results6.txt',sep='\t',header=T)
-	print(dt)
-	dt <- dt[variable!='(Intercept)']
+# regression_res <- function(w=3,h=4){
 
-	dt[,ymin := estimate - stderr]
-	dt[,ymax := estimate + stderr]
+# 	dt = fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/merged-regression-results6.txt',sep='\t',header=T)
+# 	print(dt)
+# 	dt <- dt[variable!='(Intercept)']
 
-	dt1 = dt
+# 	dt[,ymin := estimate - stderr]
+# 	dt[,ymax := estimate + stderr]
 
-	# rename facets
-	dt1[variable == 'max_within_continent_fst_local', name := 'F[ST*","*within]']
-	dt1[variable == 'max_within_continent_fst_global', name := 'F[ST*","*within]']
-	dt1[variable == 'WEIR_AND_COCKERHAM_FST_local', name := 'F[ST*","*between]']
-	dt1[variable == 'WEIR_AND_COCKERHAM_FST_global', name := 'F[ST*","*between]']
+# 	dt1 = dt
 
-	dt1[variable == 'max_within_continent_fst_local', colour := 'LAVA']
-	dt1[variable == 'max_within_continent_fst_global', colour := 'global']
-	dt1[variable == 'WEIR_AND_COCKERHAM_FST_local', colour := 'LAVA']
-	dt1[variable == 'WEIR_AND_COCKERHAM_FST_global', colour := 'global']
+# 	# rename facets
+# 	dt1[variable == 'max_within_continent_fst_local', name := 'F[ST*","*within]']
+# 	dt1[variable == 'max_within_continent_fst_global', name := 'F[ST*","*within]']
+# 	dt1[variable == 'WEIR_AND_COCKERHAM_FST_local', name := 'F[ST*","*between]']
+# 	dt1[variable == 'WEIR_AND_COCKERHAM_FST_global', name := 'F[ST*","*between]']
 
-	# # rename facets
-	# dt1[variable == 'within', name := 'Delta*F[ST*","*within]']
-	# dt1[variable == 'between', name := 'Delta*F[ST*","*between]']
-	# # dt[variable == 'within_global', name := 'F[ST*","*within*","*GlobalAA]']
-	# # dt[variable == 'between_local', name := 'F[ST*","*between*","*LocalAA]']
-	# # dt[variable == 'within_local', name := 'F[ST*","*within*","*LocalAA]']
+# 	dt1[variable == 'max_within_continent_fst_local', colour := 'LAVA']
+# 	dt1[variable == 'max_within_continent_fst_global', colour := 'global']
+# 	dt1[variable == 'WEIR_AND_COCKERHAM_FST_local', colour := 'LAVA']
+# 	dt1[variable == 'WEIR_AND_COCKERHAM_FST_global', colour := 'global']
 
-	dt1[pvalue < 0.01, label := '*']
-	dt1[pvalue < 1e-3, label := '**']
-	dt1[pvalue < 1e-5, label := '***']
-	dt1[pvalue >= 0.05, label := '']
+# 	# # rename facets
+# 	# dt1[variable == 'within', name := 'Delta*F[ST*","*within]']
+# 	# dt1[variable == 'between', name := 'Delta*F[ST*","*between]']
+# 	# # dt[variable == 'within_global', name := 'F[ST*","*within*","*GlobalAA]']
+# 	# # dt[variable == 'between_local', name := 'F[ST*","*between*","*LocalAA]']
+# 	# # dt[variable == 'within_local', name := 'F[ST*","*within*","*LocalAA]']
 
-	# get_range <- function(var){
-	#   sub = dt[variable == var]
-	#   range = abs(max(sub[,ymax]) - min(sub[,ymin]))
-	#   return(range)
-	# }
+# 	dt1[pvalue < 0.01, label := '*']
+# 	dt1[pvalue < 1e-3, label := '**']
+# 	dt1[pvalue < 1e-5, label := '***']
+# 	dt1[pvalue >= 0.05, label := '']
 
-	# for (var in unique(dt1[,variable])){
-	#   print(var)
-	#   print(get_range(var))
-	#   dt1[variable==var, range := get_range(var)]
-	# }
+# 	# get_range <- function(var){
+# 	#   sub = dt[variable == var]
+# 	#   range = abs(max(sub[,ymax]) - min(sub[,ymin]))
+# 	#   return(range)
+# 	# }
 
-	dt1[,label_pos := ymax + 0.02]
+# 	# for (var in unique(dt1[,variable])){
+# 	#   print(var)
+# 	#   print(get_range(var))
+# 	#   dt1[variable==var, range := get_range(var)]
+# 	# }
 
-	print(dt1)
+# 	dt1[,label_pos := ymax + 0.02]
 
-	# change facet colors
+# 	print(dt1)
 
-	p <- ggplot(dt1, aes(x=colour)) +
-	  geom_bar(aes(y=estimate, alpha=name, fill=colour),position='dodge',stat='identity',colour='black') +
-	  theme_classic() + 
-	  geom_errorbar(aes(ymin=ymin, ymax=ymax, group=name),width=0.1,position=position_dodge(width=0.9)) +
-	  labs(x='Lead eVariant',y='Coefficient estimate') +
-	  geom_text(aes(label=label,y=label_pos,group=name),show.legend=F,position=position_dodge(width=0.9),vjust=0.7) +
-	  theme(axis.text=element_text(colour='black'),
-			legend.title=element_blank(),
-			legend.text=element_text(hjust=0),
-			legend.position=c(0.75,0.15),
-			axis.title.y=element_blank()) +
-	  scale_fill_manual(values=methodcols, labels=methodlabs) +
-	  scale_x_discrete(labels=methodlabs)+
-	  guides(text=FALSE,fill=F) +
-	  scale_alpha_manual(values=c('F[ST*","*within]'=0.6,'F[ST*","*between]'=1), 
-	  	labels=c('F[ST*","*within]'=expression(F[ST*","*within]),'F[ST*","*between]'=expression(F[ST*","*between])),
-	  	limits=c('F[ST*","*within]', 'F[ST*","*between]')) +
-	  coord_flip()
+# 	# change facet colors
+
+# 	p <- ggplot(dt1, aes(x=colour)) +
+# 	  geom_bar(aes(y=estimate, alpha=name, fill=colour),position='dodge',stat='identity',colour='black') +
+# 	  theme_classic() + 
+# 	  geom_errorbar(aes(ymin=ymin, ymax=ymax, group=name),width=0.1,position=position_dodge(width=0.9)) +
+# 	  labs(x='Lead eVariant',y='Coefficient estimate') +
+# 	  geom_text(aes(label=label,y=label_pos,group=name),show.legend=F,position=position_dodge(width=0.9),vjust=0.7) +
+# 	  theme(axis.text=element_text(colour='black'),
+# 			legend.title=element_blank(),
+# 			legend.text=element_text(hjust=0),
+# 			legend.position=c(0.75,0.15),
+# 			axis.title.y=element_blank()) +
+# 	  scale_fill_manual(values=methodcols, labels=methodlabs) +
+# 	  scale_x_discrete(labels=methodlabs)+
+# 	  guides(text=FALSE,fill=F) +
+# 	  scale_alpha_manual(values=c('F[ST*","*within]'=0.6,'F[ST*","*between]'=1), 
+# 	  	labels=c('F[ST*","*within]'=expression(F[ST*","*within]),'F[ST*","*between]'=expression(F[ST*","*between])),
+# 	  	limits=c('F[ST*","*within]', 'F[ST*","*between]')) +
+# 	  coord_flip()
 
 
-	pdf(paste0(plot_dir,'/coloc-fst-regression-6.pdf'), width=w, height=h)
-	print(p)
-	dev.off()
+# 	pdf(paste0(plot_dir,'/coloc-fst-regression-6.pdf'), width=w, height=h)
+# 	print(p)
+# 	dev.off()
 
-	return(p)
-}
+# 	return(p)
+# }
 
 ve_expr_ancestry <- function(w=5,h=5){
 
@@ -1354,7 +1359,8 @@ ve_expr_ancestry <- function(w=5,h=5){
 	i <-1 
 	dt_list <- list()
 	for (t in tissues){
-		dt <- fread(sprintf('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/tss/%s_var_explained_by_ancestry.tsv',t),sep='\t',header=T)
+		#dt <- fread(sprintf('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/tss/%s_var_explained_by_ancestry.tsv',t),sep='\t',header=T)
+		dt = fread(sprintf('%s/expr_ve/%s_var_explained_by_ancestry.tsv',master_data_dir, t),sep='\t',header=T)
 		dt[,tissue := t]
 		dt_list[[i]] <- dt
 		i <- i + 1
@@ -1369,7 +1375,7 @@ ve_expr_ancestry <- function(w=5,h=5){
 	merged <- merged[sample(1:nrow(merged),nrow(merged),replace=F)]
 
 	# add gene names
-	gene_names <- fread('~/gtex-admix/metadata/gene_name_map.tsv', sep='\t', header=TRUE)
+	gene_names <- fread(sprintf('%s/gene_name_map.tsv',meta_dir), sep='\t', header=TRUE)
 	merged <- merge(merged, gene_names, by.x='gene', by.y='gene_stable_id', all.x=TRUE)
 
 	print(mean(merged[,variance_explained_la]))
@@ -1424,7 +1430,7 @@ ve_expr_ancestry <- function(w=5,h=5){
 
 admix_per_tissue <- function(w=4,h=6){
 	
-	aa <- '/mnt/lab_data/montgomery/nicolerg/local-eqtl/aa-per-tissue.tsv'
+	aa <- sprintf('%s/aa-per-tissue.tsv',meta_dir)
 	aa <- fread(aa, sep='\t', header=TRUE)
 
 	aa[,colour := ifelse(tissue %in% tissues, 'black', NA)]
@@ -1467,7 +1473,8 @@ admix_per_tissue <- function(w=4,h=6){
 
 tg_gtex_pca <- function(){
 
-	infile <- '/mnt/lab_data/montgomery/nicolerg/pca-subset/gtexV8-PC12-df.tsv'
+	#infile <- '/mnt/lab_data/montgomery/nicolerg/pca-subset/gtexV8-PC12-df.tsv'
+	infile = sprintf('%s/gtexV8-PC12-df.tsv',master_data_dir)
 	dat <- fread(infile, sep='\t', header=TRUE)
 
 	group.colors <- c(ESN="#FFCD00",
@@ -1546,71 +1553,72 @@ tg_gtex_pca <- function(){
 }
 
 # from locus_plots.R
+# this needs to be rerun first 
 
-locus_plots <- function(){
+# locus_plots <- function(){
 	
-	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/master-locus_plots_v3.RData')
-	#master[,p4_lab := sapply(p4_lab, function(x) gsub('p4','PP4',p4_lab))]
-	print(head(master))
+# 	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/master-locus_plots_v3.RData')
+# 	#master[,p4_lab := sapply(p4_lab, function(x) gsub('p4','PP4',p4_lab))]
+# 	print(head(master))
 
-	# first just where Local is better (7 out of 23)
-	local <- master[global_p4 < local_p4]
-	g <- ggplot(local) +
-		geom_point(data=local[!is.na(variant_id)&global_p4 < local_p4],colour='black',size=2,aes(x=pvalue_gwas,y=pvalue_eqtl)) +
-		geom_point(aes(colour=method,x=pvalue_gwas,y=pvalue_eqtl),alpha=0.7,size=0.5) +
-		scale_colour_manual(name='eQTL ancestry adjustment',values=c(Global=methodcols[['global']],Local=methodcols[['LAVA']]), labels=c(Global='GlobalAA',Local='LocalAA')) +
-		theme_bw() +
-		guides(color = guide_legend(override.aes = (list(size=2)), title.position = "top", 
-									title.hjust = 0.5)) +
-		theme(legend.position='top',
-			legend.margin=margin(b = -2, unit='mm'),
-			strip.text = element_text(size=8),
-			panel.border = element_rect(colour = "black", fill=NA, size=1),
-			strip.background = element_rect(size=1, colour='black',fill=NA),
-			panel.grid = element_blank()) +
-		labs(x=expression('GWAS'~italic(P)*'-value (-log10)'),y=expression('eQTL'~italic(P)*'-value (-log10)')) +
-		facet_wrap(~description,scales='free',ncol=4,labeller = label_wrap_gen()) 
-	g1 <- g + geom_text(data = unique(local,by=c('description','p4_lab')), mapping = aes(x = -Inf, y = Inf, label = p4_lab),hjust = -0.1,vjust = 1.2,size=2.5)
+# 	# first just where Local is better (7 out of 23)
+# 	local <- master[global_p4 < local_p4]
+# 	g <- ggplot(local) +
+# 		geom_point(data=local[!is.na(variant_id)&global_p4 < local_p4],colour='black',size=2,aes(x=pvalue_gwas,y=pvalue_eqtl)) +
+# 		geom_point(aes(colour=method,x=pvalue_gwas,y=pvalue_eqtl),alpha=0.7,size=0.5) +
+# 		scale_colour_manual(name='eQTL ancestry adjustment',values=c(Global=methodcols[['global']],Local=methodcols[['LAVA']]), labels=c(Global='GlobalAA',Local='LocalAA')) +
+# 		theme_bw() +
+# 		guides(color = guide_legend(override.aes = (list(size=2)), title.position = "top", 
+# 									title.hjust = 0.5)) +
+# 		theme(legend.position='top',
+# 			legend.margin=margin(b = -2, unit='mm'),
+# 			strip.text = element_text(size=8),
+# 			panel.border = element_rect(colour = "black", fill=NA, size=1),
+# 			strip.background = element_rect(size=1, colour='black',fill=NA),
+# 			panel.grid = element_blank()) +
+# 		labs(x=expression('GWAS'~italic(P)*'-value (-log10)'),y=expression('eQTL'~italic(P)*'-value (-log10)')) +
+# 		facet_wrap(~description,scales='free',ncol=4,labeller = label_wrap_gen()) 
+# 	g1 <- g + geom_text(data = unique(local,by=c('description','p4_lab')), mapping = aes(x = -Inf, y = Inf, label = p4_lab),hjust = -0.1,vjust = 1.2,size=2.5)
 
-	png(sprintf('%s/coloc-locus-compare-wrapped-better-local.png',supp_dir),width=8,height=5,units='in',res=300)
-	print(g1)
-	dev.off()
+# 	png(sprintf('%s/coloc-locus-compare-wrapped-better-local.png',supp_dir),width=8,height=5,units='in',res=300)
+# 	print(g1)
+# 	dev.off()
 
-	# now just where Global is better (16 out of 23)
-	global <- master[global_p4 > local_p4]
-	g <- ggplot(global) +
-		geom_point(data=global[!is.na(variant_id)&global_p4 > local_p4],colour='black',size=2,aes(x=pvalue_gwas,y=pvalue_eqtl)) +
-		geom_point(aes(colour=method,x=pvalue_gwas,y=pvalue_eqtl),alpha=0.7,size=0.5) +
-		scale_colour_manual(name='eQTL ancestry adjustment',values=c(Global=methodcols[['global']],Local=methodcols[['LAVA']]), labels=c(Global='GlobalAA',Local='LocalAA')) +
-		theme_bw() +
-		guides(color = guide_legend(override.aes = (list(size=2)), title.position = "top", 
-									title.hjust = 0.5)) +
-		theme(legend.position='top',
-			legend.margin=margin(b = -2, unit='mm'),
-			strip.text = element_text(size=8),
-			panel.border = element_rect(colour = "black", fill=NA, size=1),
-			strip.background = element_rect(size=1, colour='black',fill=NA),
-			panel.grid = element_blank()) +
-		labs(x=expression('GWAS'~italic(P)*'-value (-log10)'),y=expression('eQTL'~italic(P)*'-value (-log10)')) +
-		facet_wrap(~description,scales='free',ncol=4,labeller = label_wrap_gen()) 
-	g2 <- g + geom_text(data = unique(global,by=c('description','p4_lab')), mapping = aes(x = -Inf, y = Inf, label = p4_lab),hjust = -0.1,vjust = 1.2, size=2.5)
+# 	# now just where Global is better (16 out of 23)
+# 	global <- master[global_p4 > local_p4]
+# 	g <- ggplot(global) +
+# 		geom_point(data=global[!is.na(variant_id)&global_p4 > local_p4],colour='black',size=2,aes(x=pvalue_gwas,y=pvalue_eqtl)) +
+# 		geom_point(aes(colour=method,x=pvalue_gwas,y=pvalue_eqtl),alpha=0.7,size=0.5) +
+# 		scale_colour_manual(name='eQTL ancestry adjustment',values=c(Global=methodcols[['global']],Local=methodcols[['LAVA']]), labels=c(Global='GlobalAA',Local='LocalAA')) +
+# 		theme_bw() +
+# 		guides(color = guide_legend(override.aes = (list(size=2)), title.position = "top", 
+# 									title.hjust = 0.5)) +
+# 		theme(legend.position='top',
+# 			legend.margin=margin(b = -2, unit='mm'),
+# 			strip.text = element_text(size=8),
+# 			panel.border = element_rect(colour = "black", fill=NA, size=1),
+# 			strip.background = element_rect(size=1, colour='black',fill=NA),
+# 			panel.grid = element_blank()) +
+# 		labs(x=expression('GWAS'~italic(P)*'-value (-log10)'),y=expression('eQTL'~italic(P)*'-value (-log10)')) +
+# 		facet_wrap(~description,scales='free',ncol=4,labeller = label_wrap_gen()) 
+# 	g2 <- g + geom_text(data = unique(global,by=c('description','p4_lab')), mapping = aes(x = -Inf, y = Inf, label = p4_lab),hjust = -0.1,vjust = 1.2, size=2.5)
 
-	png(sprintf('%s/coloc-locus-compare-wrapped-better-global.png',supp_dir),width=8,height=9,units='in',res=300)
-	print(g2)
-	dev.off()
+# 	png(sprintf('%s/coloc-locus-compare-wrapped-better-global.png',supp_dir),width=8,height=9,units='in',res=300)
+# 	print(g2)
+# 	dev.off()
 
-	# split into two pages (one where local better; one where global better)
+# 	# split into two pages (one where local better; one where global better)
 
-	# pdf(sprintf("%s/coloc-locus-compare.pdf",supp_dir),width=15, height=15)
-	# grid.arrange(g1, g2,
-	# 	layout_matrix = rbind(c(1,1),
-	# 						c(2,2),
-	# 						c(2,2),
-	# 						c(2,2))
-	# )
-	# dev.off()
+# 	# pdf(sprintf("%s/coloc-locus-compare.pdf",supp_dir),width=15, height=15)
+# 	# grid.arrange(g1, g2,
+# 	# 	layout_matrix = rbind(c(1,1),
+# 	# 						c(2,2),
+# 	# 						c(2,2),
+# 	# 						c(2,2))
+# 	# )
+# 	# dev.off()
 
-}
+# }
 
 ########################################################################################################################################
 # put them together 
@@ -1624,7 +1632,7 @@ g_legend <- function(a.gplot){
 
 figure1 <- function(){
 
-	g <- local_block_trunc(1,4)
+	g <- local_block_trunc(1,2)
 
 	pdf(sprintf("%s/figure1-tmp.pdf",plot_dir),width=8, height=8)
 	grid.arrange(genotype_pc(), admix_per_tissue_short(), rfmix_pc_cor(), g, ve_expr_ancestry(),
@@ -1638,7 +1646,7 @@ figure1 <- function(){
 	dev.off()
 
 	
-	g <- local_block_trunc(19,22,h=1.2)
+	g <- local_block_trunc(21,22,h=1)
 	# add 19-22 manually 
 }
 
