@@ -7,120 +7,160 @@ library(data.table)
 indir = '/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC'
 setwd(indir)
 
-fixed = fread(cmd=sprintf('zcat cc_fixed_coloc.tsv.gz'), sep='\t', header=T)
-nrow(fixed)
-head(fixed)
-# make tissue column
-fixed[, tissue := sapply(eqtl_file, function(x) unname(unlist(strsplit(x, '_filtered')))[1])]
-fixed[, method := sapply(eqtl_file, function(x) ifelse(grepl('global',x), 'global','local'))]
-table(fixed[,tissue])
-table(fixed[,method])
-fixed[,eqtl_file := NULL]
-fixed[,gwas := sapply(gwas_trait, function(x) gsub('\\.formatted.*','',x))]
-fixed[,c('base_gwas_file','gwas_trait'):=NULL]
-fixed = fixed[order(tissue, feature, gwas)]
-
-depr = fread(cmd=sprintf('zcat all_coloc_results.tsv.gz'), sep='\t', header=T)
-# format 
-depr[, tissue := sapply(eqtl_file, function(x) unname(unlist(strsplit(x, '_filtered')))[1])]
-depr[, method := sapply(eqtl_file, function(x) ifelse(grepl('global',x), 'global','local'))]
-depr[,eqtl_file := NULL]
-depr[,gwas := sapply(gwas_trait, function(x) gsub('\\.formatted.*','',x))]
-depr[,gwas := sapply(gwas, function(x) gsub('\\.txt\\.gz','',x))]
-depr[,gwas := sapply(gwas, function(x) gsub('coloc_imputed_','imputed_',x))]
-depr[,c('base_gwas_file','gwas_trait'):=NULL]
-depr = depr[order(tissue, feature, gwas)]
-
-# now remove gwas present in "fixed"
-gwas_fixed = unique(fixed[,gwas])
-length(unique(depr[,gwas]))
-depr = depr[!gwas %in% gwas_fixed]
-merged = rbind(depr, fixed)
-
-merged = merged[order(tissue, feature, gwas)]
-table(merged[,gwas])
-table(merged[,method], merged[,tissue])
-
-head(merged)
-setnames(merged, "gwas", "gwas_trait")
-
-# split local and global 
-l = merged[method=='local']
-g = merged[method=='global']
-l = unique(l)
-g = unique(g)
-
-l[,method := NULL]
-g[,method := NULL]
-
-merged = merge(g, l, by=c('ref_snp','n_snps','tissue','gwas_trait','feature'), suffixes=c('_global','_local'), all=T)
-write.table(merged, 'merged_coloc_results.tsv', sep='\t', col.names=T, row.names=F)
-
-# how many genes are excluded if we remove incomplete cases?
-incomplete = merged[!complete.cases(merged)]
-incomplete = incomplete[,.(tissue, feature, gwas_trait)]
-incomplete = unique(incomplete)
-nrow(incomplete)
-merged_complete = merged[complete.cases(merged)]
-rows = c()
-for (i in 1:nrow(incomplete)){
-  if(nrow(merged_complete[tissue == incomplete[i,tissue] & feature == incomplete[i,feature] & gwas_trait == incomplete[i,gwas_trait]]) == 0){
-    rows = c(rows, i)
-  }
+if(!file.exists('merged_coloc_results.tsv')){
+  
+  fixed = fread(cmd=sprintf('zcat cc_fixed_coloc.tsv.gz'), sep='\t', header=T)
+  nrow(fixed)
+  head(fixed)
+  # make tissue column
+  fixed[, tissue := sapply(eqtl_file, function(x) unname(unlist(strsplit(x, '_filtered')))[1])]
+  fixed[, method := sapply(eqtl_file, function(x) ifelse(grepl('global',x), 'global','local'))]
+  table(fixed[,tissue])
+  table(fixed[,method])
+  fixed[,eqtl_file := NULL]
+  fixed[,gwas := sapply(gwas_trait, function(x) gsub('\\.formatted.*','',x))]
+  fixed[,c('base_gwas_file','gwas_trait'):=NULL]
+  fixed = fixed[order(tissue, feature, gwas)]
+  
+  depr = fread(cmd=sprintf('zcat all_coloc_results.tsv.gz'), sep='\t', header=T)
+  # format 
+  depr[, tissue := sapply(eqtl_file, function(x) unname(unlist(strsplit(x, '_filtered')))[1])]
+  depr[, method := sapply(eqtl_file, function(x) ifelse(grepl('global',x), 'global','local'))]
+  depr[,eqtl_file := NULL]
+  depr[,gwas := sapply(gwas_trait, function(x) gsub('\\.formatted.*','',x))]
+  depr[,gwas := sapply(gwas, function(x) gsub('\\.txt\\.gz','',x))]
+  depr[,gwas := sapply(gwas, function(x) gsub('coloc_imputed_','imputed_',x))]
+  depr[,c('base_gwas_file','gwas_trait'):=NULL]
+  depr = depr[order(tissue, feature, gwas)]
+  
+  # now remove gwas present in "fixed"
+  gwas_fixed = unique(fixed[,gwas])
+  length(unique(depr[,gwas]))
+  depr = depr[!gwas %in% gwas_fixed]
+  merged = rbind(depr, fixed)
+  
+  merged = merged[order(tissue, feature, gwas)]
+  table(merged[,gwas])
+  table(merged[,method], merged[,tissue])
+  
+  head(merged)
+  setnames(merged, "gwas", "gwas_trait")
+  
+  # split local and global 
+  l = merged[method=='local']
+  g = merged[method=='global']
+  l = unique(l)
+  g = unique(g)
+  
+  l[,method := NULL]
+  g[,method := NULL]
+  
+  merged = merge(g, l, by=c('ref_snp','n_snps','tissue','gwas_trait','feature'), suffixes=c('_global','_local'), all=T)
+  write.table(merged, 'merged_coloc_results.tsv', sep='\t', col.names=T, row.names=F)
+}else{
+  merged = fread('merged_coloc_results.tsv', sep='\t', header=T)
 }
-incomplete = incomplete[rows]
-# are these genes I even wanted to test?
-inc = unique(incomplete[,.(tissue, feature)])
 
+if(!file.exists('merged_finemap_results.tsv')){
+  # now add in finemap
+  finemap=fread(cmd='zcat all_finemap_results.tsv.gz', sep='\t', header=T)
+  finemap[, tissue := sapply(eqtl_file, function(x) unname(unlist(strsplit(x, '_filtered')))[1])]
+  finemap[, method := sapply(eqtl_file, function(x) ifelse(grepl('global',x), 'global','local'))]
+  table(finemap[,tissue])
+  table(finemap[,method])
+  finemap[,eqtl_file := NULL]
+  finemap[,gwas := sapply(gwas_trait, function(x) gsub('\\.formatted.*','',x))]
+  length(unique(finemap[,gwas]))
+  finemap[,c('base_gwas_file','gwas_trait'):=NULL]
+  finemap = finemap[order(tissue, feature, gwas)]
+  setnames(finemap, "gwas", "gwas_trait")
+  setnames(finemap, "feature", "gene_id")
+  
+  g = finemap[method=='global']
+  l = finemap[method=='local']
+  l[,method:=NULL]
+  g[,method:=NULL]
+  
+  merged_finemap = merge(g, l, by=c('ref_snp','n_snps','tissue','gwas_trait','gene_id'), suffixes=c('_global','_local'), all=T)
+  write.table(merged_finemap, 'merged_finemap_results.tsv', sep='\t', col.names=T, row.names=F)
+}else{
+  merged_finemap = fread('merged_finemap_results.tsv', sep='\t', header=T)
+}
+
+# merge finemap and coloc
+setnames(merged, "clpp_h4_global", "coloc_h4_global")
+setnames(merged, "clpp_h4_local", "coloc_h4_local")
+setnames(merged, "feature", "gene_id")
+setnames(merged_finemap, "clpp_global", "finemap_clpp_global")
+setnames(merged_finemap, "clpp_local", "finemap_clpp_local")
+all_merged = merge(master_coloc, f, by=c('gene_id','tissue','gwas_trait'), suffixes=c('_coloc','_finemap'), all.x=T)
+table(all_merged[,ref_snp_local_finemap] == all_merged[,ref_snp_global_finemap])
+
+m = merge(merged, merged_finemap, by=c('ref_snp','tissue','gwas_trait','gene_id'), all=T, suffixes=c('_coloc','_finemap'))
+
+# subset down to genes of interest
+# merge with egenes 
 load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/merged/egenes_master-20200326.RData')
 egenes = egenes_master[pval_nominal_global < 1e-4 & pval_nominal_local < 1e-4]
 egenes = egenes[overlapping_lead_variants==0]
+egenes = egenes[LD < 1]
+egenes = egenes[,.(gene_id,tissue,pval_nominal_local,pval_nominal_global,lead_variants_global,lead_variants_local,LD)]
+nrow(egenes)
+master_coloc = merge(egenes,m, by=c('gene_id','tissue'), all.x=T)
+nrow(master_coloc)
 
-missing = 0
-for (i in 1:nrow(inc)){
-  if(nrow(egenes[tissue == inc[i,tissue] & gene_id == inc[i,feature]]) > 0){
-    missing = missing + 1
+# when possible, keep the coloc result from the same seed snp 
+indexes = (1:nrow(master_coloc))[!duplicated(master_coloc[,.(gene_id, tissue, gwas_trait)])]
+keep_list = list()
+x = 1 
+for (i in indexes){
+  sub = master_coloc[gene_id == gene_id[i] & tissue == tissue[i] & gwas_trait== gwas_trait[i]]
+  sub = sub[ (is.na(`-log_eqtl_pval_global`) | `-log_eqtl_pval_global` > 4) & (is.na(`-log_eqtl_pval_local`) | `-log_eqtl_pval_local` > 4) ]
+  if(nrow(sub) == 1){
+    # just one line
+    keep_list[[x]] = sub
+  }else if(nrow(sub[complete.cases(sub)])>=1){
+    # at least one case is complete 
+    sub = sub[complete.cases(sub)]
+    # pick ref_snp closest to global or local lead variant 
+    # 7_8015011 chr7_7794838_A_G_b38
+    sub[,pos_diff := mean(abs((as.numeric(unname(unlist(strsplit(ref_snp,'_')))[2]))-(as.numeric(unname(unlist(strsplit(unname(unlist(strsplit(lead_variants_local,';')))[1], '_')))[2]))), abs((as.numeric(unname(unlist(strsplit(ref_snp,'_')))[2]))-(as.numeric(unname(unlist(strsplit(unname(unlist(strsplit(lead_variants_global,';')))[1], '_')))[2]))))]
+    sub = sub[which.min(pos_diff)]
+    sub[,pos_diff := NULL]
+    keep_list[[x]] = sub
+  }else if(nrow(sub[complete.cases(sub)])==0){
+    # no cases are complete 
+    # first, narrow down to the most complete ref_snp(s)
+    sub[,na_sum := is.na(coloc_h4_local) + is.na(coloc_h4_global) + is.na(finemap_clpp_global) + is.na(finemap_clpp_local)]
+    sub = sub[which.min(na_sum)]
+    sub[,na_sum := NULL]
+    if(nrow(sub) > 1){
+      sub[,pos_diff := mean(abs((as.numeric(unname(unlist(strsplit(ref_snp,'_')))[2]))-(as.numeric(unname(unlist(strsplit(unname(unlist(strsplit(lead_variants_local,';')))[1], '_')))[2]))), abs((as.numeric(unname(unlist(strsplit(ref_snp,'_')))[2]))-(as.numeric(unname(unlist(strsplit(unname(unlist(strsplit(lead_variants_global,';')))[1], '_')))[2]))))]
+      sub = sub[which.min(pos_diff)]
+      sub[,pos_diff := NULL]
+    }
+    keep_list[[x]] = sub
   }
+  x = x + 1
 }
-missing # I have no idea why these loci were skipped for only one adjustment method (N = 38)
 
-# in some cases, the same gene is tested for coloc twice
-# this is an artifact of collaping eGene on both 'pval_nominal' and 'slope' upstream
-# cases where two lead p-values were the same but had opposite directions of effect (same magnitude) were tested twice 
-# take the coloc where the most SNPs were tested
-m = merged[,list(n_snps=max(n_snps),
-		ref_snp = ref_snp[which.max(n_snps)],
-		clpp_h0_global = clpp_h0_global[which.max(n_snps)],
-		clpp_h1_global = clpp_h1_global[which.max(n_snps)],
-		clpp_h2_global = clpp_h2_global[which.max(n_snps)],
-		clpp_h3_global = clpp_h3_global[which.max(n_snps)],
-		clpp_h4_global = clpp_h4_global[which.max(n_snps)],
-		clpp_h0_local = clpp_h0_local[which.max(n_snps)],
-		clpp_h1_local = clpp_h1_local[which.max(n_snps)],
-		clpp_h2_local = clpp_h2_local[which.max(n_snps)],
-		clpp_h3_local = clpp_h3_local[which.max(n_snps)],
-		clpp_h4_local = clpp_h4_local[which.max(n_snps)]), 
-	by = c('tissue','gwas_trait','feature') ]
+pruned = rbindlist(keep_list)
+pruned = pruned[,.(gene_id, tissue, ref_snp, gwas_trait, n_snps_coloc, coloc_h4_global, coloc_h4_local, 
+                   n_snps_finemap, finemap_clpp_global, finemap_clpp_local, 
+                   `-log_gwas_pval_global`, `-log_eqtl_pval_global`,
+                   `-log_gwas_pval_local`, `-log_eqtl_pval_local`)]
 
-coloc = m
+p = merge(egenes, pruned, by=c('gene_id','tissue'), all.x=T)
+nrow(unique(p[,.(gene_id, tissue, gwas_trait, ref_snp)])) - nrow(unique(p[,.(gene_id, tissue, gwas_trait)])) # 0 
 
-# use LD (PLINK) to filter out loci where R^2==1
-
-load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/merged/egenes_master-20200326.RData')
-egenes_master = egenes_master[,.(gene_id,tissue,LD,overlapping_lead_variants,pval_nominal_local,pval_nominal_global)]
-egenes_master = egenes_master[pval_nominal_local < 1e-4 & pval_nominal_global < 1e-4]
-
-nrow(coloc)
-master_coloc = merge(egenes_master,coloc, by.x=c('gene_id','tissue'), by.y=c('feature','tissue'), all.y=T)
-nrow(master_coloc)
-master_coloc = master_coloc[LD < 1 & overlapping_lead_variants == 0]
-nrow(master_coloc)
-
+master_coloc = p
 head(master_coloc)
+nrow(master_coloc)
+nrow(master_coloc[complete.cases(master_coloc)])
 
 # check for duplicates
 master_coloc = unique(master_coloc)
 nrow(master_coloc)
 print(nrow(unique(master_coloc[,.(tissue,gwas_trait,gene_id)])))
 
-save(master_coloc, file='master_coloc-1e-04-20200410.RData')
+save(master_coloc, file='master_coloc-1e-04-20200414.RData')
