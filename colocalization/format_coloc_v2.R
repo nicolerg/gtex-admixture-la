@@ -134,6 +134,43 @@ nrow(unique(master_coloc[,.(gene_id,tissue)])) == nrow(egenes)
 
 save(master_coloc, file='master_coloc-1e-04-20200417.RData')
 
+#####################################################################
+
+# compare finemap GTEx vs 1KG VCF:
+kg = fread('finemap_1000G_test.tsv',sep='\t',header=T)
+kg[, tissue := sapply(eqtl_file, function(x) unname(unlist(strsplit(x, '_filtered')))[1])]
+kg[, method := sapply(eqtl_file, function(x) ifelse(grepl('global',x), 'global','local'))]
+table(kg[,tissue])
+table(kg[,method])
+kg[,eqtl_file := NULL]
+kg[,gwas := sapply(gwas_trait, function(x) gsub('\\.formatted.*','',x))]
+kg[,c('base_gwas_file','gwas_trait'):=NULL]
+setnames(kg, "gwas", "gwas_trait")
+setnames(kg, "feature", "gene_id")
+
+# now add in finemap
+finemap=fread(cmd='zcat all_finemap_results.tsv.gz', sep='\t', header=T)
+finemap[, tissue := sapply(eqtl_file, function(x) unname(unlist(strsplit(x, '_filtered')))[1])]
+finemap[, method := sapply(eqtl_file, function(x) ifelse(grepl('global',x), 'global','local'))]
+table(finemap[,tissue])
+table(finemap[,method])
+finemap[,eqtl_file := NULL]
+finemap[,gwas := sapply(gwas_trait, function(x) gsub('\\.formatted.*','',x))]
+length(unique(finemap[,gwas]))
+finemap[,c('base_gwas_file','gwas_trait'):=NULL]
+finemap = finemap[order(tissue, feature, gwas)]
+setnames(finemap, "gwas", "gwas_trait")
+setnames(finemap, "feature", "gene_id")
+
+f = merge(finemap, kg, by=c('tissue','gwas_trait','gene_id','ref_snp','method'), suffixes=c('_gtex','_1000G'))
+
+library(ggplot2)
+
+ggplot(f, aes(x=clpp_gtex, y=clpp_1000G)) +
+  geom_point() +
+  theme_classic() + 
+  geom_abline(linetype='dashed')
+
 # DEPRECATED:
 # # when possible, keep the coloc result from the same seed snp 
 # indexes = (1:nrow(master_coloc))[!duplicated(master_coloc[,.(gene_id, tissue, gwas_trait)])]
