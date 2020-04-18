@@ -985,6 +985,9 @@ gtex_esnps_r2_high <- function(w=10,h=7){
 fix_label = function(x){
 	y = gsub('self_reported','SR',x)
 	y = gsub('diagnosed_by_doctor','DBD',y)
+	y = gsub('imputed_','',y)
+	y = gsub('_et_al_2016','',y)
+	y = gsub('.*_[0-9]','UKB',y)
 	return(y)
 }
 
