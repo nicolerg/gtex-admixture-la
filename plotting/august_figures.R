@@ -27,7 +27,8 @@ parser$add_argument("--venn", action="store_true")
 parser$add_argument("--pval_distn", action="store_true")
 parser$add_argument("--gtex_r2", action="store_true")
 parser$add_argument("--gtex_esnps_r2_high", action="store_true")
-parser$add_argument("--coloc", action="store_true")
+parser$add_argument("--COLOC", action="store_true")
+parser$add_argument("--FINEMAP", action="store_true")
 parser$add_argument("--fst_distn", action="store_true")
 parser$add_argument("--max_fst_pop", action="store_true")
 parser$add_argument("--regression_res", action="store_true")
@@ -991,6 +992,269 @@ fix_label = function(x){
 	return(y)
 }
 
+COLOC = function(){
+  
+  load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc-for-plotting.RData')
+  
+  # ID subset of loci 
+  m_sub = copy(master_coloc)
+  m_sub[,coloc_sig := coloc_h4_global > 0.5 | coloc_h4_local > 0.5]
+  m_sub[,finemap_sig := finemap_clpp_global > 0.01 | finemap_clpp_local > 0.01]
+  nrow(m_sub[coloc_sig | finemap_sig])
+  m_sub = m_sub[coloc_sig & finemap_sig]
+  nrow(m_sub)
+  m_sub[,coloc_global_better := ifelse(coloc_h4_global > coloc_h4_local, 1, 0)]
+  m_sub[,finemap_global_better := ifelse(finemap_clpp_global > finemap_clpp_local, 1, 0)]
+  table(m_sub[finemap_sig==T,finemap_global_better])
+  m_sub = m_sub[(coloc_global_better == 1 & finemap_global_better == 1) | (coloc_global_better == 0 & finemap_global_better == 0)]
+  table(m_sub[coloc_sig==T,coloc_global_better])
+  # remove cases where both are significant 
+  m_sub = m_sub[!(coloc_h4_global > 0.5 & coloc_h4_local > 0.5)]
+  m_sub = m_sub[!(finemap_clpp_global > 0.01 & finemap_clpp_local > 0.01)]
+  nrow(m_sub) # 31
+  # for locus plots 
+  #write.table(m_sub, file='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/better_with_one_AA_method.tsv',sep='\t', col.names=T, row.names=F, quote=F)
+  
+  master_coloc[,c('label','shortl') := NULL]
+  master_coloc[, sig := ifelse(pheno %in% m_sub[,pheno], 1, NA)]
+  master_coloc[gene_name == 'AP3S2' & tissue == 'Adipose_Subcutaneous' & grepl('DIAGRAM', gwas_trait), label := 'AP3S2:T2D']
+  master_coloc[gene_name == 'AP3S2' & tissue == 'Adipose_Subcutaneous' & grepl('DIAGRAM', gwas_trait), sig := 1]
+  
+  g <- ggplot() +
+    
+    geom_hline(yintercept=0.5, colour=methodcols[['LAVA']]) +
+    geom_vline(xintercept=0.5, colour=methodcols[['global']]) +
+    
+    geom_point(data=master_coloc[coloc_h4_global < 0.5 & coloc_h4_local < 0.5], aes(x=coloc_h4_global, y=coloc_h4_local, shape=factor(EUR)), fill='gray', colour='gray', alpha=0.3,size=1) +
+    geom_point(data=master_coloc[coloc_h4_global > 0.5 | coloc_h4_local > 0.5], aes(x=coloc_h4_global, y=coloc_h4_local, fill=tissue, shape=factor(EUR), colour=tissue),alpha=0.7,size=1) +
+    geom_point(data=master_coloc[!is.na(sig)],alpha=1,aes(fill=tissue, x=coloc_h4_global, y=coloc_h4_local, shape=factor(EUR)),colour='black',size=2.5) +
+    
+    scale_shape_manual(values=c('1'=21,'0'=24)) +
+    
+    # fill
+    geom_label_repel(data=master_coloc[!is.na(label)],
+                     aes(x=coloc_h4_global,y=coloc_h4_local,label=label,fill=tissue,colour=tissue),
+                     nudge_x = -0.15,
+                     nudge_y = 0.05,
+                     seed=1,
+                     alpha=0.4,
+                     size=3,
+                     show.legend=F) + 
+    
+    # no fill
+    geom_label_repel(data=master_coloc[!is.na(label)],
+                     nudge_x = -0.15,
+                     nudge_y = 0.05,
+                     aes(x=coloc_h4_global,y=coloc_h4_local,label=label,colour=tissue),
+                     seed=1,
+                     fill=NA,
+                     size=3,
+                     show.legend=F) + 
+    
+    # black text 
+    geom_label_repel(data=master_coloc[!is.na(label)],
+                     nudge_x = -0.15,
+                     nudge_y = 0.05,
+                     aes(x=coloc_h4_global,y=coloc_h4_local,label=label),
+                     seed=1,
+                     fill=NA,
+                     colour='black',
+                     label.size=NA,
+                     segment.size = NA,
+                     size=3,
+                     show.legend=F) + 
+    
+    scale_colour_manual(values=tissuecols, labels=tissuelabs, name='Tissue', limits=tissues) +
+    scale_fill_manual(values=tissuecols, labels=tissuelabs, name='Tissue',guide='none') +
+    
+    labs(x='GlobalAA COLOC PP4', y='LocalAA COLOC PP4') +
+    theme_classic() +
+    
+    scale_x_continuous(breaks=c(0, 0.25, 0.5, 0.75, 1), limits=c(0, 1), expand = c(0,0), labels=c('0','0.25','0.5','0.75','1')) +
+    scale_y_continuous(breaks=c(0, 0.25, 0.5, 0.75, 1), limits=c(0, 1), expand = c(0,0), labels=c('0','0.25','0.5','0.75','1')) +
+    guides(colour = guide_legend(override.aes=list(alpha=0.7,shape=19,size=2),ncol=4),
+           fill=FALSE,
+           label=F,
+           shape = F) + 
+    theme(panel.grid=element_blank(),
+          legend.position = 'none',
+          legend.title=element_blank(),
+          legend.margin=margin(b = -2, unit='mm'),
+          legend.direction='horizontal',
+          legend.text=element_text(size=7)) +
+    geom_abline(linetype='dashed')
+  
+  png(paste0(plot_dir,'/fig4_COLOC.png'), width=5,height=5,unit='in',res=300)
+  print(g)
+  dev.off()
+  
+  j = ggplot() +
+    geom_point(data=master_coloc[coloc_h4_global > 0.5 | coloc_h4_local > 0.5], aes(x=coloc_h4_global, y=coloc_h4_local, fill=tissue, shape=factor(EUR), colour=tissue),alpha=0.7,size=1) +
+    geom_point(data=master_coloc[!is.na(label)],alpha=1,aes(fill=tissue, x=coloc_h4_global, y=coloc_h4_local, shape=factor(EUR)),colour='black',size=2) +
+
+    scale_colour_manual(values=tissuecols, labels=tissuelabs, name='Tissue', limits=tissues) +
+    scale_fill_manual(values=tissuecols, labels=tissuelabs, name='Tissue',guide='none') +
+    scale_shape_manual(values=c('1'=21,'0'=24), labels=c('1'='European','0'='Mixed ancestry')) +
+    guides(colour = guide_legend(override.aes=list(alpha=0.7,shape=19,size=2),ncol=7),
+           shape = guide_legend(override.aes=list(alpha=1,size=2,colour='black',fill='black')),
+           fill=FALSE,label=FALSE) +
+    theme_classic() +
+    theme(panel.grid=element_blank(),
+          legend.position = 'top',
+          legend.title=element_blank(),
+          legend.direction='horizontal',
+          legend.text=element_text(size=7))
+  pdf(paste0(plot_dir,'/legend_only.pdf'), width=12,height=5)
+  print(j)
+  dev.off()
+  
+  # # make legend for labels 
+  # sub = master_coloc[!is.na(shortl)]
+  # sub = sub[order(shortl)]
+  # sub[,y := rev(1:6)]
+  # sub[,x := 1:6]
+  # j = ggplot(sub, aes(x=x, y=y, colour=tissue)) +
+  #   geom_point() +
+  #   theme_classic() +
+  #   theme(legend.position = 'none') +
+  #   coord_cartesian(xlim=c(6,30)) +
+  #   geom_label_repel(aes(label=shortl, colour=tissue, fill=tissue),
+  #                    nudge_x=8-sub[,x],
+  #                    segment.size = NA,
+  #                    seed=1, 
+  #                    alpha=0.4,
+  #                    show.legend = F) +
+  #   geom_label_repel(aes(label=shortl, colour=tissue),
+  #                    nudge_x=8-sub[,x],
+  #                    segment.size = NA,
+  #                    seed=1, 
+  #                    alpha=0.4,
+  #                    show.legend = F,
+  #                    fill=NA) +
+  #   geom_label_repel(aes(label=shortl),
+  #                    nudge_x=8-sub[,x],
+  #                    segment.size = NA,
+  #                    seed=1, 
+  #                    label.size=NA,
+  #                    colour='black',
+  #                    show.legend = F,
+  #                    fill=NA) +
+  #   scale_colour_manual(values=tissuecols, labels=shortlab, name='Tissue', guide='none') +
+  #   scale_fill_manual(values=tissuecols, labels=tissuelabs, name='Tissue',guide='none') +
+  #   geom_text(aes(label=label,x=10), colour='black', hjust=0)
+  # pdf(paste0(plot_dir,'/Fig4-text-legend.pdf'), width=10,height=4)
+  # print(j)
+  # dev.off()
+  
+  return(g)
+  
+}
+
+#################################################################################################
+
+FINEMAP = function(){
+  
+  load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc-for-plotting.RData')
+  
+  # ID subset of loci 
+  m_sub = copy(master_coloc)
+  m_sub[,coloc_sig := coloc_h4_global > 0.5 | coloc_h4_local > 0.5]
+  m_sub[,finemap_sig := finemap_clpp_global > 0.01 | finemap_clpp_local > 0.01]
+  nrow(m_sub[coloc_sig | finemap_sig])
+  m_sub = m_sub[coloc_sig & finemap_sig]
+  nrow(m_sub)
+  m_sub[,coloc_global_better := ifelse(coloc_h4_global > coloc_h4_local, 1, 0)]
+  m_sub[,finemap_global_better := ifelse(finemap_clpp_global > finemap_clpp_local, 1, 0)]
+  table(m_sub[finemap_sig==T,finemap_global_better])
+  m_sub = m_sub[(coloc_global_better == 1 & finemap_global_better == 1) | (coloc_global_better == 0 & finemap_global_better == 0)]
+  table(m_sub[coloc_sig==T,coloc_global_better])
+  # remove cases where both are significant 
+  m_sub = m_sub[!(coloc_h4_global > 0.5 & coloc_h4_local > 0.5)]
+  m_sub = m_sub[!(finemap_clpp_global > 0.01 & finemap_clpp_local > 0.01)]
+  nrow(m_sub) # 31
+  # for locus plots 
+  #write.table(m_sub, file='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/better_with_one_AA_method.tsv',sep='\t', col.names=T, row.names=F, quote=F)
+  
+  master_coloc[,c('label','shortl') := NULL]
+  master_coloc[, sig := ifelse(pheno %in% m_sub[,pheno], 1, NA)]
+  master_coloc[gene_name == 'AP3S2' & tissue == 'Adipose_Subcutaneous' & grepl('DIAGRAM', gwas_trait), label := 'AP3S2:T2D']
+  master_coloc[gene_name == 'AP3S2' & tissue == 'Adipose_Subcutaneous' & grepl('DIAGRAM', gwas_trait), sig := 1]
+  
+  nrow(master_coloc[finemap_clpp_local > 0.01 | finemap_clpp_global > 0.01])
+  finemap = master_coloc[!is.na(finemap_clpp_local) & !is.na(finemap_clpp_global)]
+  max(finemap[,finemap_clpp_global])
+  max(finemap[,finemap_clpp_local])
+  
+  #finemap[,label:= ifelse( ((finemap_clpp_local > 0.01 & finemap_clpp_global < 0.01) | (finemap_clpp_local < 0.01 & finemap_clpp_global > 0.03)) & abs(finemap_clpp_local - finemap_clpp_global) > 0.01, gsub('_',' ',paste0(gene_name,': ',gwas_trait)), NA)]
+  
+  finemap[finemap_clpp_global < .0008, finemap_clpp_global := 0]
+  finemap[finemap_clpp_local < .0008, finemap_clpp_global := 0]
+  
+  g2 <- ggplot() +
+    
+    geom_hline(yintercept=0.01, colour=methodcols[['LAVA']]) +
+    geom_vline(xintercept=0.01, colour=methodcols[['global']]) +
+    
+    geom_point(data=finemap[finemap_clpp_global < 0.01 & finemap_clpp_local < 0.01], aes(x=finemap_clpp_global, y=finemap_clpp_local, shape=factor(EUR)), fill='gray', colour='gray', alpha=0.3,size=1) +
+    geom_point(data=finemap[finemap_clpp_global > 0.01 | finemap_clpp_local > 0.01], aes(x=finemap_clpp_global, y=finemap_clpp_local, fill=tissue, shape=factor(EUR), colour=tissue),alpha=0.7,size=1) +
+    geom_point(data=finemap[!is.na(sig)],alpha=1,aes(fill=tissue, x=finemap_clpp_global, y=finemap_clpp_local, shape=factor(EUR)),colour='black',size=2.5) +
+    
+    scale_colour_manual(values=tissuecols, labels=shortlab, name='Tissue', limits=tissues) +
+    scale_fill_manual(values=tissuecols, labels=tissuelabs, name='Tissue',guide='none') +
+    scale_shape_manual(values=c('1'=21,'0'=24)) +
+    
+    # fill
+    geom_label_repel(data=finemap[!is.na(label)],
+                     aes(x=finemap_clpp_global,y=finemap_clpp_local,label=label,fill=tissue,colour=tissue),
+                     nudge_y = 0.3,
+                     nudge_x = -0.2,
+                     seed=1,
+                     alpha=0.4,
+                     size=3,
+                     show.legend=F) + 
+    
+    # no fill
+    geom_label_repel(data=finemap[!is.na(label)],
+                     aes(x=finemap_clpp_global,y=finemap_clpp_local,label=label,colour=tissue),
+                     nudge_y = 0.3,
+                     nudge_x = -0.2,
+                     seed=1,
+                     fill=NA,
+                     size=3,
+                     show.legend=F) + 
+    
+    # black text 
+    geom_label_repel(data=finemap[!is.na(label)],
+                     aes(x=finemap_clpp_global,y=finemap_clpp_local,label=label),
+                     nudge_y = 0.3,
+                     nudge_x = -0.2,
+                     seed=1,
+                     fill=NA,
+                     colour='black',
+                     label.size=NA,
+                     segment.size=NA,
+                     size=3,
+                     show.legend=F) + 
+    
+    labs(x='GlobalAA FINEMAP CLPP', y='LocalAA FINEMAP CLPP') +
+    theme_classic() +
+    #coord_trans(x='log10',y='log10',xlim=c(0.0008,1), ylim=c(0.0008,1), expand=c(0,0), ) +
+    coord_cartesian(xlim=c(0.0008, 1), ylim=c(0.0008, 1)) +
+    scale_y_continuous(expand = c(0,0), trans='log10', breaks = c(.001, .01, .1, 1), labels=c('0.001','0.01','0.1','1')) +
+    scale_x_continuous(expand = c(0,0), trans='log10', breaks = c(.001, .01, .1, 1), labels=c('0.001','0.01','0.1','1')) +
+    guides(colour = guide_legend(override.aes=list(alpha=0.7,shape=19,size=3),ncol=2),fill=FALSE,label=F,
+           shape = F) + 
+    theme(panel.grid=element_blank(),
+          legend.position='none') +
+    geom_abline(linetype='dashed') 
+  
+  png(paste0(plot_dir,'/Fig4-FINEMAP.png'), width=4,height=4,unit='in',res=300)
+  print(g2)
+  dev.off()
+  
+  return(g2)
+}
+
 # DEPRECATED
 # coloc <- function(w=11,h=8){
 # 
@@ -1152,7 +1416,7 @@ fix_label = function(x){
 coloc <- function(w=11,h=8){}
   
 
-fst_distn <- function(w=3,h=5){
+fst_distn <- function(w=6,h=3){
 	# # compile_coloc.R
 	# load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/master_all.RData')
 
@@ -1221,13 +1485,15 @@ fst_distn <- function(w=3,h=5){
 		scale_fill_manual(values=c(Europe="#0000FF",Africa="#FF9900",'Between-continent Fst'='white'),
 			limits=c('Europe','Africa'),
 			labels=c(Europe='Europe\n(max: 0.61)',Africa='Africa\n(max: 0.99)')) +
-		facet_wrap(~name, ncol=1, labeller = label_parsed, scales='free_y') +
+		facet_wrap(~name, ncol=2, labeller = label_parsed, scales='free_y') +
 		scale_x_continuous(limits=c(0,0.5)) +
+	  scale_y_continuous(labels = scales::scientific) +
+	  theme_classic() +
 		theme(
 			#strip.text = element_text(size=14),
-			panel.border = element_rect(colour = "black", fill=NA, size=1),
-			strip.background = element_rect(size=1, colour='black',fill=NA),
-			legend.position=c(0.65,0.30),
+			#panel.border = element_rect(colour = "black", fill=NA, size=1),
+			#strip.background = element_rect(size=1, colour='black',fill=NA),
+			legend.position=c(0.88,0.65),
 			legend.title=element_blank(),
 			#legend.spacing.y = unit(1.2, 'lines'),
 			#axis.title=element_text(size=14),
@@ -1279,7 +1545,7 @@ max_fst_pop <- function(w=5,h=4){
 	return(g)
 }
 
-regression_res <- function(w=3,h=4){
+regression_res <- function(w=4,h=2.5){
   load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/merged/lmer_coef-to-plot.RData')
   ann_text = data.frame(coefficient = c('methodlocal:max_within_fst','max_within_fst'),
                         method = c('COLOC PP4', 'COLOC PP4'),
@@ -1291,7 +1557,7 @@ regression_res <- function(w=3,h=4){
     geom_point() +
     geom_errorbar(aes(xmin=estimate-se, xmax=estimate+se), width=.2) +
     theme_classic() +
-    facet_wrap(~method, ncol=2) + 
+    facet_wrap(~method, ncol=2, scales='free_x') + 
     theme(axis.text.y=element_text(colour='black'),
           axis.title.y=element_blank()) +
     labs(x='Coefficient estimate') +
@@ -1307,7 +1573,7 @@ regression_res <- function(w=3,h=4){
                               'AFR_EUR_fst'=expression(F[ST*","*between]))) +
     geom_text(data = ann_text, aes(label = label), vjust=0.8, colour='red')
   
-	pdf(paste0(plot_dir,'/fig4-coloc-regr.pdf'), width=w, height=h)
+	pdf(paste0(plot_dir,'/fig4-coloc-reg.pdf'), width=w, height=h)
 	print(g)
 	dev.off()
 
@@ -1412,6 +1678,9 @@ ve_expr_ancestry <- function(w=5,h=5){
 
 	print(head(merged))
 	print(t.test(merged[,variance_explained_ga], merged[,variance_explained_la]))
+	sub_high_la = merged[variance_explained_la > 0.07]
+	nrow(sub_high_la)
+	nrow(sub_high_la)/nrow(merged)
 
 	# shuffle rows
 	merged <- merged[sample(1:nrow(merged),nrow(merged),replace=F)]
@@ -1496,7 +1765,7 @@ admix_per_tissue <- function(w=4,h=6){
 		size = 2.5) +
 	scale_fill_manual(values=tcols,guide='none') +
 	scale_colour_manual(values=c(black='black','NA'=NA),guide='none') +
-	scale_x_discrete(labels=labs,limits=limits) +
+	scale_x_discrete(labels=all_labs,limits=limits) +
 	labs(y="N admixed individuals (117AX)") +
 	theme_classic() +
 	theme(axis.text.y = element_text(hjust=1,vjust=0.5,
@@ -1735,18 +2004,13 @@ figure2 <- function(){
 
 figure3 <- function(cutoff=1e-6){
 
-	coloc <- coloc()
-	pop_fst <- fst_distn()
-	max_pop <- max_fst_pop()
-	reg <- regression_res()
-
-	png(sprintf("%s/figure3.png",plot_dir),res=300, units='in', width=8.5, height=10)
-	grid.arrange(coloc, pop_fst, max_pop, reg,
-		layout_matrix=rbind(c(1,1,1,1,1,1,1,1,1),
-							c(1,1,1,1,1,1,1,1,1),
-							c(1,1,1,1,1,1,1,1,1),
-							c(2,2,2,3,3,3,4,4,4),
-							c(2,2,2,3,3,3,4,4,4))
+	coloc <- COLOC()
+	finemap <- FINEMAP()
+	
+	png(sprintf("%s/figure3.png",plot_dir),res=300, units='in', width=8, height=4)
+	grid.arrange(coloc, finemap, 
+		layout_matrix=rbind(c(1,2),
+							c(1,2))
 	)
 	dev.off()
 
@@ -1792,8 +2056,11 @@ if(args$gtex_r2){
 if(args$gtex_esnps_r2_high){
 	g <- gtex_esnps_r2_high()
 }
-if(args$coloc){
-	g <- coloc()
+if(args$COLOC){
+	g <- COLOC()
+}
+if(args$FINEMAP){
+  g <- FINEMAP()
 }
 if(args$fst_distn){
 	g <- fst_distn()

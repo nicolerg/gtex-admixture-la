@@ -98,6 +98,8 @@ if(!file.exists('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/maste
 # now, with a linear mixed model and *all* colocalization tests 
 head(master_coloc_fst)
 
+
+
 # rearrange into narrower df
 local = master_coloc_fst[,.(gene_id, tissue, pval_nominal_local, lead_variants_local, gwas_trait, ref_snp_local_coloc, n_snps_local_coloc, coloc_h4_local, 
                             ref_snp_local_finemap, n_snps_global_finemap, finemap_clpp_local, gwas_pval_log10_local, eqtl_pval_log10_local, 
@@ -115,6 +117,15 @@ colnames(local) = colnames(global) = c('gene_id','tissue','pval_nominal','lead_v
 
 master_coloc_fst_narrow = rbindlist(list(local,global))
 head(master_coloc_fst_narrow)
+
+m_sub = master_coloc_fst_narrow[,.(max_fst_AFR, max_fst_EUR, AFR_EUR_fst, max_within_fst)]
+m_sub = unique(m_sub)
+
+ggplot(m_sub, aes(x=AFR_EUR_fst, y=max_within_fst)) +
+  geom_point()
+
+ggplot(m_sub, aes(x=AFR_EUR_fst, y=max_fst_AFR)) +
+  geom_point()
 
 # lmm <- lmer(coloc_h4 ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method*AFR_EUR_fst + method*max_within_fst,
 #             data = master_coloc_fst_narrow)
