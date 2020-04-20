@@ -4,11 +4,11 @@ library(data.table)
 library(ggplot2)
 library(grid)
 library(gridExtra)
-library(lme4)
+library(lmerTest)
 
-if(!file.exists('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc_fst-for-regression.RData')){
+if(!file.exists('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc_fst-for-regression_20200418.RData')){
   
-  load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc-1e-04-20200414.RData')
+  load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc-1e-04-20200418.RData')
   head(master_coloc)
   nrow(unique(master_coloc[,.(gene_id, tissue)])) # 4529, same as pruned egenes 
   master_coloc[,variant_local := sapply(lead_variants_local, function(x) unname(unlist(strsplit(x, ';')))[1])]
@@ -67,9 +67,9 @@ if(!file.exists('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/maste
   
   master_coloc_fst[,c('variant_local','variant_global','pos_global','pos_local','chr_global','chr_local') := NULL]
   
-  save(master_coloc_fst, file='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc_fst-for-regression.RData')
+  save(master_coloc_fst, file='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc_fst-for-regression_20200418.RData')
 }else{
-  load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc_fst-for-regression.RData')
+  load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc_fst-for-regression_20200418.RData')
 }
 
 # try some different regressions 
@@ -99,18 +99,18 @@ if(!file.exists('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/maste
 head(master_coloc_fst)
 
 # rearrange into narrower df
-local = master_coloc_fst[,.(gene_id, tissue, pval_nominal_local, lead_variants_local, ref_snp, gwas_trait, n_snps_coloc, coloc_h4_local, 
-                            n_snps_finemap, finemap_clpp_local, `-log_gwas_pval_local`, `-log_eqtl_pval_local`, 
+local = master_coloc_fst[,.(gene_id, tissue, pval_nominal_local, lead_variants_local, gwas_trait, ref_snp_local_coloc, n_snps_local_coloc, coloc_h4_local, 
+                            ref_snp_local_finemap, n_snps_global_finemap, finemap_clpp_local, gwas_pval_log10_local, eqtl_pval_log10_local, 
                             max_fst_AFR_local, which_max_fst_AFR_local, max_fst_EUR_local, which_max_fst_EUR_local, AFR_EUR_fst_local, max_within_fst_local)]
 local[,method := 'local']
 
-global = master_coloc_fst[,.(gene_id, tissue, pval_nominal_global, lead_variants_global, ref_snp, gwas_trait, n_snps_coloc, coloc_h4_global, 
-                            n_snps_finemap, finemap_clpp_global, `-log_gwas_pval_global`, `-log_eqtl_pval_global`, 
+global = master_coloc_fst[,.(gene_id, tissue, pval_nominal_global, lead_variants_global, gwas_trait, ref_snp_global_coloc, n_snps_global_coloc, coloc_h4_global, 
+                             ref_snp_global_finemap, n_snps_global_finemap, finemap_clpp_global, gwas_pval_log10_global, eqtl_pval_log10_global,
                             max_fst_AFR_global, which_max_fst_AFR_global, max_fst_EUR_global, which_max_fst_EUR_global, AFR_EUR_fst_global, max_within_fst_global)]
 global[,method := 'global']
 
-colnames(local) = colnames(global) = c('gene_id','tissue','pval_nominal','lead_variants','ref_snp','gwas_trait','n_snps_coloc','coloc_h4',
-                                       'n_snps_finemap','finemap_clpp','log10_gwas_pval','log10_eqtl_pval','max_fst_AFR','which_max_fst_AFR',
+colnames(local) = colnames(global) = c('gene_id','tissue','pval_nominal','lead_variants','gwas_trait','ref_snps_coloc','n_snps_coloc','coloc_h4',
+                                       'ref_snp_finemap','n_snps_finemap','finemap_clpp','gwas_pval_log10_local','eqtl_pval_log10_local','max_fst_AFR','which_max_fst_AFR',
                                        'max_fst_EUR','which_max_fst_EUR','AFR_EUR_fst','max_within_fst','method')
 
 master_coloc_fst_narrow = rbindlist(list(local,global))
@@ -136,75 +136,40 @@ m2_coloc = merge(master_coloc_fst_narrow, subset, by=c('gene_id','tissue','gwas_
 ####################################
 m3_coloc = m2_coloc[,.(tissue, gene_id, gwas_trait, coloc_h4, AFR_EUR_fst, max_within_fst, method)]
 m3_coloc = m3_coloc[complete.cases(m3_coloc)]
-lmm <- lmer(coloc_h4 ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + AFR_EUR_fst + max_within_fst + method:max_within_fst + method:AFR_EUR_fst,
+lmm <- lmerTest::lmer(coloc_h4 ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + AFR_EUR_fst + max_within_fst + method:max_within_fst + method:AFR_EUR_fst,
             data = m3_coloc)
 summary(lmm)
-# Linear mixed model fit by REML ['lmerMod']
+coloc = data.table(summary(lmm)$coefficients, keep.rownames = T)
+colnames(coloc) = c('coefficient','estimate','se','df','t','pvalue')
+coloc = coloc[coefficient != '(Intercept)']
+
+# Linear mixed model fit by REML. t-tests use Satterthwaite's method ['lmerModLmerTest']
 # Formula: coloc_h4 ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) +  
-#   method + AFR_EUR_fst + max_within_fst + method:max_within_fst +      method:AFR_EUR_fst
-# Data: m3_coloc
+#     method + AFR_EUR_fst + max_within_fst + method:max_within_fst +      method:AFR_EUR_fst
+#    Data: m3_coloc
 # 
-# REML criterion at convergence: -1891.4
+# REML criterion at convergence: -2467
 # 
 # Scaled residuals: 
-#   Min      1Q  Median      3Q     Max 
-# -3.3963 -0.3957  0.0256  0.4078  4.1601 
+#     Min      1Q  Median      3Q     Max 
+# -3.6930 -0.4362  0.0375  0.4663  3.8519 
 # 
 # Random effects:
-#   Groups     Name        Variance  Std.Dev.
-# gene_id    (Intercept) 0.0116678 0.10802 
-# gwas_trait (Intercept) 0.0034346 0.05861 
-# tissue     (Intercept) 0.0007913 0.02813 
-# Residual               0.0071114 0.08433 
-# Number of obs: 1155, groups:  gene_id, 207; gwas_trait, 89; tissue, 7
+#  Groups     Name        Variance Std.Dev.
+#  gene_id    (Intercept) 0.010894 0.10438 
+#  gwas_trait (Intercept) 0.004946 0.07033 
+#  tissue     (Intercept) 0.001559 0.03948 
+#  Residual               0.006738 0.08209 
+# Number of obs: 1438, groups:  gene_id, 231; gwas_trait, 91; tissue, 7
 # 
 # Fixed effects:
-#   Estimate Std. Error t value
-# (Intercept)                 0.59459    0.01776  33.476
-# methodlocal                -0.04847    0.01130  -4.290
-# AFR_EUR_fst                 0.06767    0.03448   1.963
-# max_within_fst             -0.95998    0.17342  -5.536
-# methodlocal:max_within_fst  1.09245    0.22018   4.962
-# methodlocal:AFR_EUR_fst     0.01590    0.02858   0.556
-# 
-# Correlation of Fixed Effects:
-#   (Intr) mthdlc AFR_EU mx_wt_ mth:__
-# methodlocal -0.226                            
-# AFR_EUR_fst -0.287  0.028                     
-# mx_wthn_fst -0.343  0.370 -0.137              
-# mthdlcl:m__  0.180 -0.758  0.195 -0.618       
-# mt:AFR_EUR_  0.081 -0.317 -0.364  0.132 -0.177
-####################################
-
-# method:max_within_fst
-lmm0 <- lmer(coloc_h4 ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + AFR_EUR_fst + max_within_fst + method:AFR_EUR_fst,
-            data = m3_coloc)
-anova(lmm0,lmm,refit=T)
-# p-value: 8.373e-07
-
-# methodlocal
-lmm0 <- lmer(coloc_h4 ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + AFR_EUR_fst + max_within_fst + method:max_within_fst + method:AFR_EUR_fst,
-            data = m3_coloc)
-anova(lmm0,lmm,refit=T)
-# p-value: 1.947e-05
-
-# AFR_EUR_fst
-lmm0 <- lmer(coloc_h4 ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + max_within_fst + method:max_within_fst + method:AFR_EUR_fst,
-            data = m3_coloc)
-anova(lmm0,lmm,refit=T)
-# p-value < 2.2e-16
-
-# max_within_fst
-lmm0 <- lmer(coloc_h4 ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + AFR_EUR_fst + method:max_within_fst + method:AFR_EUR_fst,
-            data = m3_coloc)
-anova(lmm0,lmm,refit=T)
-# p-value < 2.2e-16
-
-# methodlocal:AFR_EUR_fst
-lmm0 <- lmer(coloc_h4 ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + AFR_EUR_fst + max_within_fst + method:max_within_fst,
-            data = m3_coloc)
-anova(lmm0,lmm,refit=T)
-# p-value: 0.576
+#                              Estimate Std. Error         df t value Pr(>|t|)    
+# (Intercept)                 5.955e-01  2.028e-02  1.414e+01  29.368 4.43e-14 ***
+# methodlocal                -2.070e-02  9.918e-03  1.115e+03  -2.087 0.037091 *  
+# AFR_EUR_fst                -9.879e-03  2.862e-02  1.230e+03  -0.345 0.729982    
+# max_within_fst             -9.345e-01  1.545e-01  1.285e+03  -6.048 1.93e-09 ***
+# methodlocal:max_within_fst  6.951e-01  1.923e-01  1.158e+03   3.614 0.000315 ***
+# methodlocal:AFR_EUR_fst    -1.030e-02  2.494e-02  1.051e+03  -0.413 0.679582 
 
 ####################################
 
@@ -233,164 +198,160 @@ dev.off()
 
 # does finemap give me the same result?
 # first try with best finemap coloc
-subset = unique(master_coloc_fst[!is.na(finemap_clpp_local) & !is.na(finemap_clpp_global), .(gene_id, tissue, gwas_trait)])
+subset = unique(master_coloc_fst[finemap_clpp_local > 0.01 | finemap_clpp_global > 0.01, .(gene_id, tissue, gwas_trait)])
 m4_finemap = merge(master_coloc_fst_narrow, subset, by=c('gene_id','tissue','gwas_trait'))
-m4_finemap[,finemap_clpp := -log10(finemap_clpp)]
 m5_finemap = m4_finemap[,.(tissue, gene_id, gwas_trait, finemap_clpp, AFR_EUR_fst, max_within_fst, method)]
 m5_finemap = m5_finemap[complete.cases(m5_finemap)]
-m5_finemap = m5_finemap[finemap_clpp != Inf]
+hist(m5_finemap[,finemap_clpp], breaks=500)
 lmm <- lmer(finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method*AFR_EUR_fst + method*max_within_fst,
             data = m5_finemap)
 summary(lmm)
-# no, don't get the same result 
-
-# Linear mixed model fit by REML ['lmerMod']
-# Formula: finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) +      method * AFR_EUR_fst + method * max_within_fst
-# Data: m5_finemap
+# Linear mixed model fit by REML. t-tests use Satterthwaite's method ['lmerModLmerTest']
+# Formula: finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) +  
+#     method * AFR_EUR_fst + method * max_within_fst
+#    Data: m5_finemap
 # 
-# REML criterion at convergence: -391201.7
+# REML criterion at convergence: -1013.5
 # 
 # Scaled residuals: 
-#   Min      1Q  Median      3Q     Max 
-# -16.208  -0.276   0.021   0.353  46.540 
+#     Min      1Q  Median      3Q     Max 
+# -4.6052 -0.2946 -0.0833  0.1514  6.0145 
 # 
 # Random effects:
-#   Groups     Name        Variance  Std.Dev.
-# gene_id    (Intercept) 1.970e-02 0.140360
-# gwas_trait (Intercept) 1.584e-03 0.039805
-# tissue     (Intercept) 2.075e-05 0.004555
-# Residual               6.267e-03 0.079166
-# Number of obs: 183277, groups:  gene_id, 3751; gwas_trait, 142; tissue, 7
+#  Groups     Name        Variance  Std.Dev.
+#  gene_id    (Intercept) 0.0032721 0.05720 
+#  gwas_trait (Intercept) 0.0000000 0.00000 
+#  tissue     (Intercept) 0.0000000 0.00000 
+#  Residual               0.0008662 0.02943 
+# Number of obs: 306, groups:  gene_id, 106; gwas_trait, 56; tissue, 7
 # 
 # Fixed effects:
-#   Estimate Std. Error t value
-# (Intercept)                 3.3571571  0.0044782 749.663
-# methodlocal                 0.0004882  0.0008925   0.547
-# AFR_EUR_fst                -0.0092623  0.0024438  -3.790
-# max_within_fst              0.0239220  0.0136182   1.757
-# methodlocal:AFR_EUR_fst     0.0051127  0.0029145   1.754 NS 
-# methodlocal:max_within_fst -0.0310976  0.0172025  -1.808 NS 
+#                              Estimate Std. Error         df t value Pr(>|t|)    
+# (Intercept)                  0.045392   0.008780 261.651039   5.170 4.66e-07 ***
+# methodlocal                 -0.015320   0.008048 201.041871  -1.904   0.0584 .  
+# AFR_EUR_fst                 -0.029771   0.021791 251.586609  -1.366   0.1731    
+# max_within_fst               0.016867   0.138962 237.415139   0.121   0.9035    
+# methodlocal:AFR_EUR_fst      0.014994   0.023123 201.368781   0.648   0.5174    
+# methodlocal:max_within_fst   0.139331   0.155161 205.156969   0.898   0.3703    
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 # 
 # Correlation of Fixed Effects:
-#   (Intr) mthdlc AFR_EU mx_wt_ m:AFR_
-# methodlocal -0.100                            
-# AFR_EUR_fst -0.089  0.314                     
-# mx_wthn_fst -0.113  0.476 -0.004              
-# mt:AFR_EUR_  0.050 -0.532 -0.558 -0.004       
-# mthdlcl:m__  0.075 -0.736 -0.009 -0.656  0.004
-
-# calculate p-values 
-
-# method:max_within_fst
-lmm0 <- lmer(finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + AFR_EUR_fst + max_within_fst + method:AFR_EUR_fst,
-             data = m5_finemap)
-anova(lmm0,lmm,refit=T)
-# p-value: 0.07059
-
-# methodlocal
-lmm0 <- lmer(finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + AFR_EUR_fst + max_within_fst + method:max_within_fst + method:AFR_EUR_fst,
-             data = m5_finemap)
-anova(lmm0,lmm,refit=T)
-# p-value: can't compute
-
-# AFR_EUR_fst
-lmm0 <- lmer(finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + max_within_fst + method:max_within_fst + method:AFR_EUR_fst,
-             data = m5_finemap)
-anova(lmm0,lmm,refit=T)
-# p-value: can't compute
-
-# max_within_fst
-lmm0 <- lmer(finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + AFR_EUR_fst + method:max_within_fst + method:AFR_EUR_fst,
-             data = m5_finemap)
-anova(lmm0,lmm,refit=T)
-# p-value: < 2.2e-16
-
-# methodlocal:AFR_EUR_fst
-lmm0 <- lmer(finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + AFR_EUR_fst + max_within_fst + method:max_within_fst,
-             data = m5_finemap)
-anova(lmm0,lmm,refit=T)
-# p-value: 0.07942
+#             (Intr) mthdlc AFR_EU mx_wt_ m:AFR_
+# methodlocal -0.403                            
+# AFR_EUR_fst -0.406  0.159                     
+# mx_wthn_fst -0.615  0.423  0.064              
+# mt:AFR_EUR_  0.118 -0.450 -0.380  0.027       
+# mthdlcl:m__  0.390 -0.795  0.018 -0.645  0.035
+# convergence code: 0
+# boundary (singular) fit: see ?isSingular
 
 
-# how many signif COLOC overlap with finemap?
-m3_coloc[,hit_name := paste(tissue, gene_id, gwas_trait, sep=':')]
-master_coloc_fst_narrow[,hit_name := paste(tissue, gene_id, gwas_trait, sep=':')]
-coloc_hit_subset = master_coloc_fst_narrow[hit_name %in% m3_coloc[,hit_name]]
-m6_finemap = coloc_hit_subset[,.(tissue, gene_id, gwas_trait, finemap_clpp, AFR_EUR_fst, max_within_fst, method)]
-m6_finemap = m6_finemap[complete.cases(m6_finemap)]
-m6_finemap = m6_finemap[finemap_clpp != Inf]
-m6_finemap[,finemap_clpp := -log10(finemap_clpp)]
-# 846 out of 1155 signif coloc hits were tested with finemap 
-lmm <- lmer(finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method*AFR_EUR_fst + method*max_within_fst,
-            data = m6_finemap)
+# remove tissue and GWAS trait so it's not singular 
+lmm <- lmer(finemap_clpp ~ (1 | gene_id) + method + AFR_EUR_fst + max_within_fst + method:AFR_EUR_fst + method:max_within_fst,
+            data = m5_finemap)
+finemap = data.table(summary(lmm)$coefficients, keep.rownames = T)
+colnames(finemap) = c('coefficient','estimate','se','df','t','pvalue')
+finemap = finemap[coefficient != '(Intercept)']
+anova(lmm)
+
+finemap[,method := 'FINEMAP CLPP']
+coloc[,method := 'COLOC PP4']
+lmer_coef = rbindlist(list(coloc, finemap))
+
+save(lmer_coef, file='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/merged/lmer_coef-to-plot.RData')
+
+# load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/merged/lmer_coef-to-plot.RData')
+# ggplot(lmer_coef, aes(y = coefficient, x = estimate)) +
+#   geom_vline(xintercept=0, linetype='dashed') +
+#   geom_point() +
+#   geom_errorbar(aes(xmin=estimate-se, xmax=estimate+se), width=.2) +
+#   theme_classic() +
+#   facet_wrap(~method, ncol=2) + 
+#   theme(axis.text.y=element_text(colour='black'),
+#         axis.title.y=element_blank()) +
+#   labs(x='Coefficient estimate') +
+#   scale_y_discrete(limits = rev(c('methodlocal',
+#                               'AFR_EUR_fst',
+#                               'max_within_fst',
+#                               'methodlocal:AFR_EUR_fst',
+#                               'methodlocal:max_within_fst')),
+#                    labels=c('methodlocal:max_within_fst'=expression(LocalAA:F[ST*","*within]),
+#                             'methodlocal:AFR_EUR_fst'=expression(LocalAA:F[ST*","*between]),
+#                             'methodlocal'='LocalAA',
+#                             'max_within_fst'=expression(F[ST*","*within]),
+#                             'AFR_EUR_fst'=expression(F[ST*","*between])))
+
+
+# Linear mixed model fit by REML. t-tests use Satterthwaite's method ['lmerModLmerTest']
+# Formula: finemap_clpp ~ (1 | gene_id) + method + AFR_EUR_fst + max_within_fst +  
+#     method:AFR_EUR_fst + method:max_within_fst
+#    Data: m5_finemap
+# 
+# REML criterion at convergence: -1013.5
+# 
+# Scaled residuals: 
+#     Min      1Q  Median      3Q     Max 
+# -4.6052 -0.2946 -0.0833  0.1514  6.0145 
+# 
+# Random effects:
+#  Groups   Name        Variance  Std.Dev.
+#  gene_id  (Intercept) 0.0032721 0.05720 
+#  Residual             0.0008662 0.02943 
+# Number of obs: 306, groups:  gene_id, 106
+# 
+# Fixed effects:
+#                              Estimate Std. Error         df t value Pr(>|t|)    
+# (Intercept)                  0.045392   0.008780 261.651039   5.170 4.66e-07 ***
+# methodlocal                 -0.015320   0.008048 201.041871  -1.904   0.0584 .  
+# AFR_EUR_fst                 -0.029771   0.021791 251.586609  -1.366   0.1731    
+# max_within_fst               0.016867   0.138962 237.415139   0.121   0.9035    
+# methodlocal:AFR_EUR_fst      0.014994   0.023123 201.368781   0.648   0.5174    
+# methodlocal:max_within_fst   0.139331   0.155161 205.156969   0.898   0.3703    
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Correlation of Fixed Effects:
+#             (Intr) mthdlc AFR_EU mx_wt_ m:AFR_
+# methodlocal -0.403                            
+# AFR_EUR_fst -0.406  0.159                     
+# mx_wthn_fst -0.615  0.423  0.064              
+# mt:AFR_EUR_  0.118 -0.450 -0.380  0.027       
+# mthdlcl:m__  0.390 -0.795  0.018 -0.645  0.035
+# > anova(lmm)
+# Type III Analysis of Variance Table with Satterthwaite's method
+# Sum Sq    Mean Sq NumDF  DenDF F value Pr(>F)  
+# method                0.00313852 0.00313852     1 201.04  3.6235 0.0584 .
+# AFR_EUR_fst           0.00103061 0.00103061     1 270.04  1.1899 0.2763  
+# max_within_fst        0.00056829 0.00056829     1 252.57  0.6561 0.4187  
+# method:AFR_EUR_fst    0.00036421 0.00036421     1 201.37  0.4205 0.5174  
+# method:max_within_fst 0.00069843 0.00069843     1 205.16  0.8064 0.3703  
+# ---
+#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+
+# does mixed versus EUR predict anything?
+mixed = c('Wojcik',
+          'pgc.scz2',
+          'RA_OKADA_TRANS_ETHNIC',
+          'ISGC_Malik_2016_METASTROKE_all_strokes',
+          'ILAE_Genetic_generalised_epilepsy',
+          'DIAGRAM_T2D_TRANS_ETHNIC',
+          'CARDIoGRAM_C4D_CAD_ADDITIVE')
+master_coloc_fst_narrow[,EUR := sapply(gwas_trait, function(x) ifelse(any(sapply(mixed, function(y) grepl(y, x))), 0, 1))]
+subset = unique(master_coloc_fst[finemap_clpp_local > 0.01 | finemap_clpp_global > 0.01, .(gene_id, tissue, gwas_trait)])
+m4_finemap = merge(master_coloc_fst_narrow, subset, by=c('gene_id','tissue','gwas_trait'))
+m5_finemap = m4_finemap[,.(tissue, gene_id, gwas_trait, finemap_clpp, AFR_EUR_fst, max_within_fst, method, EUR)]
+m5_finemap = m5_finemap[complete.cases(m5_finemap)]
+
+lmm <- lmer(finemap_clpp ~ (1 | gene_id) + method + AFR_EUR_fst + max_within_fst + method:AFR_EUR_fst + method:max_within_fst + EUR,
+            data = m5_finemap)
 summary(lmm)
-# Linear mixed model fit by REML ['lmerMod']
-# Formula: finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) +      method * AFR_EUR_fst + method * max_within_fst
-# Data: m6_finemap
-# 
-# REML criterion at convergence: -795.4
-# 
-# Scaled residuals: 
-#   Min      1Q  Median      3Q     Max 
-# -6.1622 -0.2702  0.0562  0.2943  5.4355 
-# 
-# Random effects:
-#   Groups     Name        Variance  Std.Dev.
-# gene_id    (Intercept) 0.0599664 0.24488 
-# gwas_trait (Intercept) 0.0166950 0.12921 
-# tissue     (Intercept) 0.0005107 0.02260 
-# Residual               0.0091954 0.09589 
-# Number of obs: 846, groups:  gene_id, 192; gwas_trait, 87; tissue, 7
-# 
-# Fixed effects:
-#   Estimate Std. Error t value
-# (Intercept)                 3.06720    0.02861 107.220
-# methodlocal                 0.01377    0.01559   0.883
-# AFR_EUR_fst                -0.06455    0.04860  -1.328
-# max_within_fst              0.53521    0.23053   2.322
-# methodlocal:AFR_EUR_fst     0.03432    0.03833   0.895
-# methodlocal:max_within_fst -0.58637    0.28873  -2.031
-# 
-# Correlation of Fixed Effects:
-#   (Intr) mthdlc AFR_EU mx_wt_ m:AFR_
-# methodlocal -0.169                            
-# AFR_EUR_fst -0.272  0.008                     
-# mx_wthn_fst -0.290  0.331 -0.095              
-# mt:AFR_EUR_  0.073 -0.385 -0.329  0.099       
-# mthdlcl:m__  0.138 -0.767  0.190 -0.581 -0.095
+anova(lmm)
 
-# no, still don't get the same result 
-
-# calculate p-values 
-
-# method:max_within_fst
-lmm0 <- lmer(finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + AFR_EUR_fst + max_within_fst + method:AFR_EUR_fst,
-             data = m6_finemap)
-anova(lmm0,lmm,refit=T)
-# p-value: 0.04155
-
-# methodlocal
-lmm0 <- lmer(finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + AFR_EUR_fst + max_within_fst + method:max_within_fst + method:AFR_EUR_fst,
-             data = m6_finemap)
-anova(lmm0,lmm,refit=T)
-# p-value: 0.3742
-
-# AFR_EUR_fst
-lmm0 <- lmer(finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + max_within_fst + method:max_within_fst + method:AFR_EUR_fst,
-             data = m6_finemap)
-anova(lmm0,lmm,refit=T)
-# p-value: 1
-
-# max_within_fst
-lmm0 <- lmer(finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + AFR_EUR_fst + method:max_within_fst + method:AFR_EUR_fst,
-             data = m6_finemap)
-anova(lmm0,lmm,refit=T)
-# p-value: 1
-
-# methodlocal:AFR_EUR_fst
-lmm0 <- lmer(finemap_clpp ~ (1 | tissue) + (1 | gwas_trait) + (1 | gene_id) + method + AFR_EUR_fst + max_within_fst + method:max_within_fst,
-             data = m6_finemap)
-anova(lmm0,lmm,refit=T)
-# p-value: 0.3684
+lmm <- lmer(finemap_clpp ~ (1 | gene_id) + method + AFR_EUR_fst + max_within_fst + method:AFR_EUR_fst + method:max_within_fst + EUR*method,
+            data = m5_finemap)
+summary(lmm)
+anova(lmm)
 
 

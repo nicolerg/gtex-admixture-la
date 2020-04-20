@@ -115,10 +115,48 @@ if(!file.exists('merged_finemap_results.tsv')){
   merged_finemap = fread('merged_finemap_results.tsv', sep='\t', header=T)
 }
 
+# FINEMAP v2: 1000G VCF
+finemap = fread(cmd='zcat signif_coloc_loci_tests_finemap_clpp_status.txt.gz', sep='\t', header=T)
+finemap[, tissue := sapply(eqtl_file, function(x) unname(unlist(strsplit(x, '_filtered')))[1])]
+finemap[, method := sapply(eqtl_file, function(x) ifelse(grepl('global',x), 'global','local'))]
+table(finemap[,tissue])
+table(finemap[,method])
+finemap[,eqtl_file := NULL]
+finemap[,gwas := sapply(gwas_trait, function(x) gsub('\\.formatted.*','',x))]
+length(unique(finemap[,gwas]))
+finemap[,c('base_gwas_file','gwas_trait'):=NULL]
+finemap = finemap[order(tissue, feature, gwas)]
+setnames(finemap, "gwas", "gwas_trait")
+setnames(finemap, "feature", "gene_id")
+
+# remove tests with low numbers of snps
+nrow(finemap)
+nrow(finemap[n_snps <= 20])
+finemap = finemap[n_snps > 20]
+
+# collapse by best coloc per gene/tissue/gwas/method combination 
+finemap_best = finemap[,list(finemap_clpp = max(clpp, na.rm=T),
+                             finemap_clpp_mod = clpp_mod[which.max(clpp)],
+                             gwas_pval_log10 = `-log_gwas_pval`[which.max(clpp)],
+                             eqtl_pval_log10 = `-log_eqtl_pval`[which.max(clpp)],
+                             ref_snp = ref_snp[which.max(clpp)],
+                             n_snps = n_snps[which.max(clpp)]),
+                       by=c('tissue','gene_id','gwas_trait','method')]
+
+g = finemap_best[method=='global']
+l = finemap_best[method=='local']
+l[,method:=NULL]
+g[,method:=NULL]
+l = unique(l[complete.cases(l)])
+g = unique(g[complete.cases(g)])
+
+merged_finemap = merge(g, l, by=c('tissue','gwas_trait','gene_id'), suffixes=c('_global','_local'), all=T)
+write.table(merged_finemap, 'merged_finemap_results_1000G.tsv', sep='\t', col.names=T, row.names=F, quote=F)
+
 # merge finemap and coloc
 setnames(merged_coloc, "feature", "gene_id")
 master_coloc = merge(merged_coloc, merged_finemap, by=c('gene_id','tissue','gwas_trait'), all=T, suffixes=c('_coloc','_finemap'))
-write.table(master_coloc, file='merged_coloc_finemap_all.tsv', sep='\t', col.names=T, row.names=F, quote=F)
+write.table(master_coloc, file='merged_coloc_finemap_1000G_all.tsv', sep='\t', col.names=T, row.names=F, quote=F)
 
 # subset down to genes of interest
 # merge with egenes 
@@ -132,12 +170,14 @@ master_coloc = merge(egenes,master_coloc, by=c('gene_id','tissue'), all.x=T)
 nrow(master_coloc)
 nrow(unique(master_coloc[,.(gene_id,tissue)])) == nrow(egenes)
 
-save(master_coloc, file='master_coloc-1e-04-20200417.RData')
+save(master_coloc, file='master_coloc-1e-04-20200418.RData')
+
+hist(master_coloc[,finemap_clpp_global], breaks=500)
 
 #####################################################################
 
 # compare finemap GTEx vs 1KG VCF:
-kg = fread('finemap_1000G_test.tsv',sep='\t',header=T)
+kg = fread(cmd='zcat signif_coloc_loci_tests_finemap_clpp_status.txt.gz',sep='\t',header=T)
 kg[, tissue := sapply(eqtl_file, function(x) unname(unlist(strsplit(x, '_filtered')))[1])]
 kg[, method := sapply(eqtl_file, function(x) ifelse(grepl('global',x), 'global','local'))]
 table(kg[,tissue])
