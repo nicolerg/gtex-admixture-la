@@ -6,77 +6,63 @@ library(data.table)
 library(plyr)
 library(ggplot2)
 
-# already filtered by pval and lead SNPs
-load('coloc/master_coloc-20191030.RData') # colocalization results
+load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc-for-plotting.RData')
+# ID subset of loci 
+m_sub = master_coloc[unique_hit == 1]
+nrow(m_sub) # 31
 
-gene_names <- fread('gene_name_map.tsv', sep='\t', header=TRUE) # ENSEMBL ID to gene name conversion
+table(m_sub[,ref_snp_global_finemap] == m_sub[,ref_snp_local_finemap])
+table(m_sub[,ref_snp_global_coloc] == m_sub[,ref_snp_local_coloc])
+table(m_sub[,ref_snp_global_coloc] == m_sub[,ref_snp_global_finemap])
 
-master_coloc[, gene_stable_id := sapply(gene_id, function(x) unname(unlist(strsplit(x, '[.]')))[1])]
-master_coloc <- merge(master_coloc, gene_names, by='gene_stable_id', all.x=TRUE)
+m_sub[,global_better := ifelse(coloc_h4_global > coloc_h4_local, 1, 0)]
 
-master_coloc[,label_global:= ifelse(clpp_h4_local < 0.50 & clpp_h4_global > 0.5 & (clpp_h4_global - clpp_h4_local) > 0.3, gsub('_',' ',paste0(gene_name,': ',gwas_trait)), NA)]
-master_coloc[,label_local:= ifelse(clpp_h4_local > 0.5 & clpp_h4_global < 0.5 & (clpp_h4_local - clpp_h4_global) > 0.3, gsub('_',' ',paste0(gene_name,': ',gwas_trait)), NA)]
+sites = m_sub[,.(gwas,gwas_trait,tissue,ref_snp_global_finemap,gene_name,gene_id,global_better)]
+setnames(sites, 'ref_snp_global_finemap','ref_snp')
 
-global_better <- master_coloc[!is.na(label_global)]
-local_better <- master_coloc[!is.na(label_local)]
-
-# now get "seed SNP" of each eGene tested
-load('merged/egenes_master-20191030.RData') # lead variants for all tested genes, called egenes_master
-
-# filter by LD 
-egenes = fread('plink-r2/20191030/evariant_pairs_test_ld.txt', sep='\t', header=F)
-colnames(egenes) = c('gene_id','tissue','lead_local','lead_global')
-
-global = egenes[,.(gene_id,tissue,lead_global)]
-local = egenes[,.(gene_id,tissue,lead_local)]
-
-colnames(global) = c('gene_id','tissue','variant_id')
-global[,method := 'Global']
-colnames(local) = c('gene_id','tissue','variant_id')
-local[,method := 'Local']
-
-diff_lead = rbindlist(list(global,local))
-
-diff_lead[,snp_pos := as.integer(unname(unlist(strsplit(variant_id,'_')))[2])]
-diff_lead[,chr := unname(unlist(strsplit(variant_id,'_')))[1]]
-diff_lead[,alt := unname(unlist(strsplit(variant_id,'_')))[4]]
-diff_lead[,ref := unname(unlist(strsplit(variant_id,'_')))[3]]
-diff_lead[,gene := gene_id]
-diff_lead[,gene_id := NULL]
-
-sites <- data.table(rbind(global_better[,.(gwas_trait,tissue,ref_snp,gene_name,gene_id,clpp_h4_global,clpp_h4_local)],local_better[,.(gwas_trait,tissue,ref_snp,gene_name,gene_id,clpp_h4_global,clpp_h4_local)]))
+gwas_indir = '/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/gwas'
+#imputed_UKB_20002_1463_self_reported_ulcerative_colitis.formatted.txt.gz
+eqtl_indir = '/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/allpairs_difflead'
+#Muscle_Skeletal.filtered.local.allpairs.sorted.tsv.gz
+outdir='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/locusplots'
 
 plot_df <- list()
-i <- 1
 for (i in 1:nrow(sites)){
+  
+  print(i)
+  
 	pos <- as.integer(unlist(unname(strsplit(sites[i,ref_snp],'_')))[2])
 	chr <- unlist(unname(strsplit(sites[i,ref_snp],'_')))[1]
-	start <- pos - 500000
-	end <- pos + 500000
+	start <- pos - 1000000
+	end <- pos + 1000000
 	eqtl_locus <- paste0(chr,':',start,'-',end)
 	gwas_locus <- paste0('chr',eqtl_locus)
 	target_gene <- sites[i,gene_id]
 	gene_label <- sites[i,gene_name]
 
-	global_p4 <- sites[i,clpp_h4_global]
-	local_p4 <- sites[i,clpp_h4_local]
+	global_better <- sites[i,global_better]
+	if(global_better == 1){
+	  better_method = 'GlobalAA'
+	}else{
+	  better_method = 'LocalAA'
+	}
 
 	tissue <- sites[i,tissue]
 
 	# get stats from Global eQTL file 
-	geqtl <- sprintf('coloc/allpairs_difflead/%s.filtered.global.allpairs.sorted.tsv.gz',tissue)
-	gout <- sprintf('coloc/locus_plots/%s-%s-global.txt',gsub(':','_',eqtl_locus),tissue)
+	geqtl <- sprintf('%s/%s.filtered.global.allpairs.sorted.tsv.gz',eqtl_indir,tissue)
+	gout <- sprintf('%s/%s-%s-global.txt',outdir,gsub(':','_',eqtl_locus),tissue)
 	system(sprintf('tabix %s %s > %s',geqtl,eqtl_locus,gout))
 
 	# get stats form Local eQTL file
-	lout <- sprintf('coloc/locus_plots/%s-%s-local.txt',gsub(':','_',eqtl_locus),tissue)
-	leqtl <- sprintf('coloc/allpairs_difflead/%s.filtered.local.allpairs.sorted.tsv.gz',tissue)
+	lout <- sprintf('%s/%s-%s-local.txt',outdir,gsub(':','_',eqtl_locus),tissue)
+	leqtl <- sprintf('%s/%s.filtered.local.allpairs.sorted.tsv.gz',eqtl_indir,tissue)
 	system(sprintf('tabix %s %s > %s',leqtl,eqtl_locus,lout))
 
 	# get stats from GWAS
-	gwas <- sites[i,gwas_trait]
-	gwas_file <- sprintf('coloc/gtex_gwas/coloc_input/coloc_imputed_%s.txt.gz',gwas)
-	gwasout <- sprintf('coloc/locus_plots/%s-%s-global.txt',gsub(':','_',gwas_locus),gwas)
+	gwas_t <- sites[i,gwas]
+	gwas_file <- sprintf('%s/%s.formatted.txt.gz',gwas_indir,gwas_t)
+	gwasout <- sprintf('%s/%s-%s-global.txt',outdir,gsub(':','_',gwas_locus),gwas_t)
 	system(sprintf('tabix %s %s > %s',gwas_file,gwas_locus,gwasout))
 
 	gwas_ss <- fread(gwasout,sep='\t',header=FALSE)
@@ -85,8 +71,8 @@ for (i in 1:nrow(sites)){
 
 	colnames(local_ss) <- c('chr','snp_pos','alt','ref','beta','se','pvalue','gene','effect_af')
 	colnames(global_ss) <- c('chr','snp_pos','alt','ref','beta','se','pvalue','gene','effect_af')
-	local_ss[,method := 'Local']
-	global_ss[,method := 'Global']
+	local_ss[,method := 'LocalAA']
+	global_ss[,method := 'GlobalAA']
 	m_eqtl <- data.table(rbind(local_ss, global_ss))
 	m_eqtl[,chr:=paste0('chr',chr)]
 	m_eqtl <- m_eqtl[,.(chr, snp_pos, alt, ref, pvalue, gene, method)]
@@ -101,11 +87,12 @@ for (i in 1:nrow(sites)){
 	m[,pvalue_eqtl := -log10(pvalue_eqtl)]
 	m <- m[pvalue_eqtl > 1]
 
-	sub_diff <- diff_lead[tissue==tissue&gene==target_gene,.(method,variant_id,snp_pos,chr,alt,ref)]
+	#sub_diff <- diff_lead[tissue==tissue&gene==target_gene,.(method,variant_id,snp_pos,chr,alt,ref)]
 
-	merged <- merge(m, sub_diff, by=c('method','snp_pos','chr','ref','alt'),all.x=TRUE)
-	merged[,global_p4 := global_p4]
-	merged[,local_p4 := local_p4]
+	merged = m
+	# merged <- merge(m, sub_diff, by=c('method','snp_pos','chr','ref','alt'),all.x=TRUE)
+	# merged[,global_p4 := global_p4]
+	# merged[,local_p4 := local_p4]
 
 	# fix strings
 	fix_strings = function(x){
@@ -118,12 +105,9 @@ for (i in 1:nrow(sites)){
 		return(x)
 	}
 
-	merged[,description := sprintf('%s & %s: %s',gwas, tissue, gene_label)]
+	merged[,description := sprintf('%s & %s: %s',gwas_t, tissue, gene_label)]
 	merged[,description := sapply(description, fix_strings)]
-
-	p4_lab <- as.character(sprintf('GlobalAA PP4 = %s\nLocalAA PP4 = %s',round(unique(global_p4),digits=2),round(unique(local_p4),digits=2)))
-
-	merged[,p4_lab := p4_lab]
+	merged[,better_coloc := better_method]
 
 	print(head(merged))
 
@@ -132,4 +116,4 @@ for (i in 1:nrow(sites)){
 }
 
 master <- data.table(rbindlist(plot_df))
-save(master, file='coloc/master-locus_plots.RData')
+save(master, file=sprintf('%s/master-locus_plots.RData',outdir))

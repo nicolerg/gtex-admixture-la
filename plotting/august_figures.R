@@ -474,7 +474,7 @@ local_block_trunc <- function(chr_start,chr_stop,w=7.5,h=2){
 	# filter out subject with >0.9 homogeneity
 	global_ai <- global_ai[ global_ai$AFR < 0.9 & global_ai$ASN < 0.9 & global_ai$EUR < 0.9 ,]
 	admixed <- data.frame(ID=global_ai$ID)
-	write.table(admixed,paste0(indir,"gtex-admixed0.9.txt"),sep='\t',col.names=FALSE,row.names=FALSE,quote=FALSE)
+	#write.table(admixed,paste0(indir,"gtex-admixed0.9.txt"),sep='\t',col.names=FALSE,row.names=FALSE,quote=FALSE)
 	n <- nrow(admixed)
 	# ID	ASN	EUR	AFR
 	# GTEX-1117F	0.0064	0.1938	0.7997
@@ -728,7 +728,20 @@ venn <- function(h=3.5,w=5,cutoff=1e-6){
 
 	load(sprintf('%s/egenes_master-20200326.RData',master_data_dir))
 	egenes_master <- egenes_master[pval_nominal_local < cutoff | pval_nominal_global < cutoff]
-
+	
+	nrow(egenes_master)
+	sub = egenes_master[(pval_nominal_local < cutoff & pval_nominal_global > cutoff) | (pval_nominal_local > cutoff & pval_nominal_global < cutoff)]
+  nrow(sub) 
+  length(unique(sub[,gene_id]))
+  sub[,diff := abs(-log10(pval_nominal_global) + log10(pval_nominal_local))]
+  table(sub[,diff] < 1)
+  table(sub[,diff] < 2)
+  table(sub[,diff] < 3)
+  sub = sub[diff > 2]
+	table(sub[,pval_nominal_global] < sub[,pval_nominal_local])
+	table(sub[,tissue])
+	table(sub[,overlapping_lead_variants])
+	
 	counts <- data.table(TISSUE=tissues)
 	counts[, N_diff_lead_snp := 0]
 	counts[, N_same_lead_snp := 0] 
@@ -995,30 +1008,17 @@ fix_label = function(x){
 COLOC = function(){
   
   load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc-for-plotting.RData')
+  write.table(master_coloc, file='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc_supplement.tsv', sep='\t', col.names=T, quote=F, row.names=F)
   
-  # ID subset of loci 
-  m_sub = copy(master_coloc)
-  m_sub[,coloc_sig := coloc_h4_global > 0.5 | coloc_h4_local > 0.5]
-  m_sub[,finemap_sig := finemap_clpp_global > 0.01 | finemap_clpp_local > 0.01]
-  nrow(m_sub[coloc_sig | finemap_sig])
-  m_sub = m_sub[coloc_sig & finemap_sig]
-  nrow(m_sub)
-  m_sub[,coloc_global_better := ifelse(coloc_h4_global > coloc_h4_local, 1, 0)]
-  m_sub[,finemap_global_better := ifelse(finemap_clpp_global > finemap_clpp_local, 1, 0)]
-  table(m_sub[finemap_sig==T,finemap_global_better])
-  m_sub = m_sub[(coloc_global_better == 1 & finemap_global_better == 1) | (coloc_global_better == 0 & finemap_global_better == 0)]
-  table(m_sub[coloc_sig==T,coloc_global_better])
-  # remove cases where both are significant 
-  m_sub = m_sub[!(coloc_h4_global > 0.5 & coloc_h4_local > 0.5)]
-  m_sub = m_sub[!(finemap_clpp_global > 0.01 & finemap_clpp_local > 0.01)]
-  nrow(m_sub) # 31
-  # for locus plots 
-  #write.table(m_sub, file='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/better_with_one_AA_method.tsv',sep='\t', col.names=T, row.names=F, quote=F)
+  t.test(master_coloc[, coloc_h4_global], master_coloc[, coloc_h4_local]) # 0.791
+  t.test(master_coloc[(coloc_h4_global > 0.5 | coloc_h4_local > 0.5), coloc_h4_global], master_coloc[(coloc_h4_global > 0.5 | coloc_h4_local > 0.5), coloc_h4_local]) # 0.6638
+  t.test(master_coloc[, finemap_clpp_local], master_coloc[, finemap_clpp_global]) # 0.3244
+  t.test(master_coloc[(finemap_clpp_local > 0.01 | finemap_clpp_global > 0.01), finemap_clpp_local], master_coloc[(finemap_clpp_local > 0.01 | finemap_clpp_global > 0.01), finemap_clpp_global]) # 0.2651
   
-  master_coloc[,c('label','shortl') := NULL]
-  master_coloc[, sig := ifelse(pheno %in% m_sub[,pheno], 1, NA)]
-  master_coloc[gene_name == 'AP3S2' & tissue == 'Adipose_Subcutaneous' & grepl('DIAGRAM', gwas_trait), label := 'AP3S2:T2D']
-  master_coloc[gene_name == 'AP3S2' & tissue == 'Adipose_Subcutaneous' & grepl('DIAGRAM', gwas_trait), sig := 1]
+  m_sub = master_coloc[unique_hit == 1]
+
+  #master_coloc[gene_name == 'AP3S2' & tissue == 'Adipose_Subcutaneous' & grepl('DIAGRAM', gwas_trait), label := 'AP3S2:T2D']
+  #master_coloc[gene_name == 'AP3S2' & tissue == 'Adipose_Subcutaneous' & grepl('DIAGRAM', gwas_trait), unique_hit := 1]
   
   g <- ggplot() +
     
@@ -1027,42 +1027,42 @@ COLOC = function(){
     
     geom_point(data=master_coloc[coloc_h4_global < 0.5 & coloc_h4_local < 0.5], aes(x=coloc_h4_global, y=coloc_h4_local, shape=factor(EUR)), fill='gray', colour='gray', alpha=0.3,size=1) +
     geom_point(data=master_coloc[coloc_h4_global > 0.5 | coloc_h4_local > 0.5], aes(x=coloc_h4_global, y=coloc_h4_local, fill=tissue, shape=factor(EUR), colour=tissue),alpha=0.7,size=1) +
-    geom_point(data=master_coloc[!is.na(sig)],alpha=1,aes(fill=tissue, x=coloc_h4_global, y=coloc_h4_local, shape=factor(EUR)),colour='black',size=2.5) +
+    geom_point(data=master_coloc[unique_hit == 1],alpha=1,aes(fill=tissue, x=coloc_h4_global, y=coloc_h4_local, shape=factor(EUR)),colour='black',size=2.5) +
     
     scale_shape_manual(values=c('1'=21,'0'=24)) +
-    
-    # fill
-    geom_label_repel(data=master_coloc[!is.na(label)],
-                     aes(x=coloc_h4_global,y=coloc_h4_local,label=label,fill=tissue,colour=tissue),
-                     nudge_x = -0.15,
-                     nudge_y = 0.05,
-                     seed=1,
-                     alpha=0.4,
-                     size=3,
-                     show.legend=F) + 
-    
-    # no fill
-    geom_label_repel(data=master_coloc[!is.na(label)],
-                     nudge_x = -0.15,
-                     nudge_y = 0.05,
-                     aes(x=coloc_h4_global,y=coloc_h4_local,label=label,colour=tissue),
-                     seed=1,
-                     fill=NA,
-                     size=3,
-                     show.legend=F) + 
-    
-    # black text 
-    geom_label_repel(data=master_coloc[!is.na(label)],
-                     nudge_x = -0.15,
-                     nudge_y = 0.05,
-                     aes(x=coloc_h4_global,y=coloc_h4_local,label=label),
-                     seed=1,
-                     fill=NA,
-                     colour='black',
-                     label.size=NA,
-                     segment.size = NA,
-                     size=3,
-                     show.legend=F) + 
+    # 
+    # # fill
+    # geom_label_repel(data=master_coloc[!is.na(label)],
+    #                  aes(x=coloc_h4_global,y=coloc_h4_local,label=label,fill=tissue,colour=tissue),
+    #                  nudge_x = -0.15,
+    #                  nudge_y = 0.05,
+    #                  seed=1,
+    #                  alpha=0.4,
+    #                  size=3,
+    #                  show.legend=F) + 
+    # 
+    # # no fill
+    # geom_label_repel(data=master_coloc[!is.na(label)],
+    #                  nudge_x = -0.15,
+    #                  nudge_y = 0.05,
+    #                  aes(x=coloc_h4_global,y=coloc_h4_local,label=label,colour=tissue),
+    #                  seed=1,
+    #                  fill=NA,
+    #                  size=3,
+    #                  show.legend=F) + 
+    # 
+    # # black text 
+    # geom_label_repel(data=master_coloc[!is.na(label)],
+    #                  nudge_x = -0.15,
+    #                  nudge_y = 0.05,
+    #                  aes(x=coloc_h4_global,y=coloc_h4_local,label=label),
+    #                  seed=1,
+    #                  fill=NA,
+    #                  colour='black',
+    #                  label.size=NA,
+    #                  segment.size = NA,
+    #                  size=3,
+    #                  show.legend=F) + 
     
     scale_colour_manual(values=tissuecols, labels=tissuelabs, name='Tissue', limits=tissues) +
     scale_fill_manual(values=tissuecols, labels=tissuelabs, name='Tissue',guide='none') +
@@ -1090,7 +1090,7 @@ COLOC = function(){
   
   j = ggplot() +
     geom_point(data=master_coloc[coloc_h4_global > 0.5 | coloc_h4_local > 0.5], aes(x=coloc_h4_global, y=coloc_h4_local, fill=tissue, shape=factor(EUR), colour=tissue),alpha=0.7,size=1) +
-    geom_point(data=master_coloc[!is.na(label)],alpha=1,aes(fill=tissue, x=coloc_h4_global, y=coloc_h4_local, shape=factor(EUR)),colour='black',size=2) +
+    geom_point(data=master_coloc[unique_hit == 1],alpha=1,aes(fill=tissue, x=coloc_h4_global, y=coloc_h4_local, shape=factor(EUR)),colour='black',size=2) +
 
     scale_colour_manual(values=tissuecols, labels=tissuelabs, name='Tissue', limits=tissues) +
     scale_fill_manual(values=tissuecols, labels=tissuelabs, name='Tissue',guide='none') +
@@ -1150,35 +1150,111 @@ COLOC = function(){
   
 }
 
+fix_gwas_label = function(x){
+  x = gsub('UKB_Standing_height', 'UKB height', x, fixed=T)
+  x = gsub('UKB_Body_fat_percentage', 'UKB body fat%', x, fixed=T)
+  x = gsub('GIANT_HEIGHT', 'GIANT height', x, fixed=T)
+  x = gsub('Astle_High_light_scatter_reticulocyte_count', 'Astle HLS reticulocyte N', x, fixed=T)
+  x = gsub('UKB_Body_mass_index_BMI', 'UKB BMI', x, fixed=T)
+  x = gsub('UKB_SR_eczema_or_dermatitis', 'UKB SR eczema', x, fixed=T)
+  x = gsub('SSGAC_Education_Years_Pooled', 'SSGAC edu. years', x, fixed=T)
+  x = gsub('EGG_BW3_EUR', 'EGG birth weight', x, fixed=T)
+  x = gsub('Astle_Lymphocyte_counts', 'Astle lymphocyte N', x, fixed=T)
+  x = gsub('MAGNETIC_CH2.DB.ratio', 'FA CH2:double bonds', x, fixed=T)
+  x = gsub('UKB_SR_asthma', 'UKB SR asthma', x, fixed=T)
+  x = gsub('Astle_Red_blood_cell_count', 'Astle RBC N', x, fixed=T)
+  x = gsub('UKB_DBD_Asthma', 'UKB DBD asthma', x, fixed=T)
+  x = gsub('Astle_Reticulocyte_count', 'Astle reticulocyte N', x, fixed=T)
+  x = gsub('GLGC_Mc_TG', 'GLGC triglycerides', x, fixed=T)
+  x = gsub('UKB_Neuroticism_score', 'UKB neuroticism', x, fixed=T)
+  x = gsub('Astle_Eosinophil_counts', 'Astle eosinophil N', x, fixed=T)
+  x = gsub('UKB_BMI_Active_EUR', 'UKB BMI - active', x, fixed=T)
+  x = gsub('UKB_Morning_or_evening_person_chronotype', 'UKB AM/PM person', x, fixed=T)
+  x = gsub('Astle_Monocyte_count', 'Astle monocyte N', x, fixed=T)
+  return(x)
+}
+
 #################################################################################################
+
+sig_coloc = function(){
+  load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc-for-plotting.RData')
+  m_sub = master_coloc[unique_hit == 1]
+  
+
+  
+  m_sub = m_sub[,.(gene_id, gene_name, tissue, gwas_trait, coloc_h4_global, 
+                   coloc_h4_local, finemap_clpp_global, finemap_clpp_local,
+                   pval_nominal_local, pval_nominal_global)]
+  m_sub[,diff := coloc_h4_global - coloc_h4_local]
+  m_sub = m_sub[order(diff, decreasing = T)]
+  m_sub[,pheno := paste(gene_name, gwas_trait, sep=':')]
+  m_sub[,pheno := sapply(pheno, fix_gwas_label)]
+  m_sub_order = unique(m_sub[,.(pheno,tissue)])
+  cols = unname(tissuecols[match(m_sub_order[,tissue], names(tissuecols))])
+  
+  l = m_sub[,.(gene_id, gene_name, tissue, gwas_trait, coloc_h4_local, finemap_clpp_local, pval_nominal_local, pheno)]
+  g = m_sub[,.(gene_id, gene_name, tissue, gwas_trait, coloc_h4_global, finemap_clpp_global, pval_nominal_global, pheno)]
+  l[,method := 'LAVA']
+  g[,method := 'global']
+  colnames(l) = colnames(g) = c('gene_id','gene_name','tissue','gwas_trait','coloc_h4','finemap_clpp','pval_nominal','pheno','method')
+  m = rbindlist(list(g,l))
+  head(m)
+  
+  c = m[,.(gene_id,
+           gene_name,
+           tissue,
+           gwas_trait,
+           coloc_h4,
+           pval_nominal,
+           method,
+           pheno)]
+  
+  f = m[,.(gene_id,
+           gene_name,
+           tissue,
+           gwas_trait,
+           finemap_clpp,
+           pval_nominal,
+           method,
+           pheno)]
+  
+  c[,coloc := 'COLOC PP4']
+  f[,coloc := 'FINEMAP CLPP (log10)']
+  colnames(c) = colnames(f) = c("gene_id","gene_name","tissue","gwas_trait","coloc_pp","pval_nominal","method","pheno","coloc")
+  
+  m = rbindlist(list(c,f))
+  m[coloc == 'FINEMAP CLPP (log10)', coloc_pp := log10(coloc_pp)]
+  
+  col_df = data.table(pheno = m_sub_order[,pheno], method = m_sub_order[,tissue], coloc = 'FINEMAP CLPP (log10)', coloc_pp = -Inf)
+  m = rbindlist(list(col_df, m), fill=T)
+  m[,size:=ifelse(coloc_pp == -Inf, 2, 1)]
+  
+  g = ggplot(m) +
+    geom_hline(data = m[coloc == 'COLOC PP4'], aes(yintercept = 0.5), linetype='dashed', colour='gray') +
+    geom_hline(data = m[coloc == 'FINEMAP CLPP (log10)'], aes(yintercept = log10(0.01)), linetype='dashed', colour='gray') +
+    geom_point(aes(x=pheno, y=coloc_pp, colour=method, size=factor(size))) +
+    scale_colour_manual(values=c(tissuecols, methodcols), breaks=names(methodcols), labels=methodlabs) +
+    theme_classic() +
+    scale_x_discrete(limits = unique(m_sub[,pheno]), labels=gsub('_',' ',unique(m_sub[,pheno]))) +
+    theme(axis.text.x = element_text(angle=90, hjust=1, vjust=0.5),
+          axis.title = element_blank(),
+          legend.position = 'top',
+          legend.title = element_blank(),
+          axis.ticks.x = element_line(colour=cols),
+          legend.margin=margin(b = -2, unit='mm')) +
+    facet_wrap(~ coloc, scales = 'free_y', ncol=1) +
+    scale_size_manual(values=c('1'=1,'2'=2), guide='none')
+  g
+  return(g)
+  
+}
 
 FINEMAP = function(){
   
   load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc-for-plotting.RData')
-  
-  # ID subset of loci 
-  m_sub = copy(master_coloc)
-  m_sub[,coloc_sig := coloc_h4_global > 0.5 | coloc_h4_local > 0.5]
-  m_sub[,finemap_sig := finemap_clpp_global > 0.01 | finemap_clpp_local > 0.01]
-  nrow(m_sub[coloc_sig | finemap_sig])
-  m_sub = m_sub[coloc_sig & finemap_sig]
-  nrow(m_sub)
-  m_sub[,coloc_global_better := ifelse(coloc_h4_global > coloc_h4_local, 1, 0)]
-  m_sub[,finemap_global_better := ifelse(finemap_clpp_global > finemap_clpp_local, 1, 0)]
-  table(m_sub[finemap_sig==T,finemap_global_better])
-  m_sub = m_sub[(coloc_global_better == 1 & finemap_global_better == 1) | (coloc_global_better == 0 & finemap_global_better == 0)]
-  table(m_sub[coloc_sig==T,coloc_global_better])
-  # remove cases where both are significant 
-  m_sub = m_sub[!(coloc_h4_global > 0.5 & coloc_h4_local > 0.5)]
-  m_sub = m_sub[!(finemap_clpp_global > 0.01 & finemap_clpp_local > 0.01)]
-  nrow(m_sub) # 31
-  # for locus plots 
-  #write.table(m_sub, file='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/better_with_one_AA_method.tsv',sep='\t', col.names=T, row.names=F, quote=F)
-  
-  master_coloc[,c('label','shortl') := NULL]
-  master_coloc[, sig := ifelse(pheno %in% m_sub[,pheno], 1, NA)]
-  master_coloc[gene_name == 'AP3S2' & tissue == 'Adipose_Subcutaneous' & grepl('DIAGRAM', gwas_trait), label := 'AP3S2:T2D']
-  master_coloc[gene_name == 'AP3S2' & tissue == 'Adipose_Subcutaneous' & grepl('DIAGRAM', gwas_trait), sig := 1]
+  m_sub = master_coloc[unique_hit == 1]
+  #master_coloc[gene_name == 'AP3S2' & tissue == 'Adipose_Subcutaneous' & grepl('DIAGRAM', gwas_trait), label := 'AP3S2:T2D']
+  #master_coloc[gene_name == 'AP3S2' & tissue == 'Adipose_Subcutaneous' & grepl('DIAGRAM', gwas_trait), unique_hit := 1]
   
   nrow(master_coloc[finemap_clpp_local > 0.01 | finemap_clpp_global > 0.01])
   finemap = master_coloc[!is.na(finemap_clpp_local) & !is.na(finemap_clpp_global)]
@@ -1197,44 +1273,44 @@ FINEMAP = function(){
     
     geom_point(data=finemap[finemap_clpp_global < 0.01 & finemap_clpp_local < 0.01], aes(x=finemap_clpp_global, y=finemap_clpp_local, shape=factor(EUR)), fill='gray', colour='gray', alpha=0.3,size=1) +
     geom_point(data=finemap[finemap_clpp_global > 0.01 | finemap_clpp_local > 0.01], aes(x=finemap_clpp_global, y=finemap_clpp_local, fill=tissue, shape=factor(EUR), colour=tissue),alpha=0.7,size=1) +
-    geom_point(data=finemap[!is.na(sig)],alpha=1,aes(fill=tissue, x=finemap_clpp_global, y=finemap_clpp_local, shape=factor(EUR)),colour='black',size=2.5) +
+    geom_point(data=finemap[unique_hit == 1],alpha=1,aes(fill=tissue, x=finemap_clpp_global, y=finemap_clpp_local, shape=factor(EUR)),colour='black',size=2.5) +
     
     scale_colour_manual(values=tissuecols, labels=shortlab, name='Tissue', limits=tissues) +
     scale_fill_manual(values=tissuecols, labels=tissuelabs, name='Tissue',guide='none') +
     scale_shape_manual(values=c('1'=21,'0'=24)) +
     
-    # fill
-    geom_label_repel(data=finemap[!is.na(label)],
-                     aes(x=finemap_clpp_global,y=finemap_clpp_local,label=label,fill=tissue,colour=tissue),
-                     nudge_y = 0.3,
-                     nudge_x = -0.2,
-                     seed=1,
-                     alpha=0.4,
-                     size=3,
-                     show.legend=F) + 
-    
-    # no fill
-    geom_label_repel(data=finemap[!is.na(label)],
-                     aes(x=finemap_clpp_global,y=finemap_clpp_local,label=label,colour=tissue),
-                     nudge_y = 0.3,
-                     nudge_x = -0.2,
-                     seed=1,
-                     fill=NA,
-                     size=3,
-                     show.legend=F) + 
-    
-    # black text 
-    geom_label_repel(data=finemap[!is.na(label)],
-                     aes(x=finemap_clpp_global,y=finemap_clpp_local,label=label),
-                     nudge_y = 0.3,
-                     nudge_x = -0.2,
-                     seed=1,
-                     fill=NA,
-                     colour='black',
-                     label.size=NA,
-                     segment.size=NA,
-                     size=3,
-                     show.legend=F) + 
+    # # fill
+    # geom_label_repel(data=finemap[!is.na(label)],
+    #                  aes(x=finemap_clpp_global,y=finemap_clpp_local,label=label,fill=tissue,colour=tissue),
+    #                  nudge_y = 0.3,
+    #                  nudge_x = -0.2,
+    #                  seed=1,
+    #                  alpha=0.4,
+    #                  size=3,
+    #                  show.legend=F) + 
+    # 
+    # # no fill
+    # geom_label_repel(data=finemap[!is.na(label)],
+    #                  aes(x=finemap_clpp_global,y=finemap_clpp_local,label=label,colour=tissue),
+    #                  nudge_y = 0.3,
+    #                  nudge_x = -0.2,
+    #                  seed=1,
+    #                  fill=NA,
+    #                  size=3,
+    #                  show.legend=F) + 
+    # 
+    # # black text 
+    # geom_label_repel(data=finemap[!is.na(label)],
+    #                  aes(x=finemap_clpp_global,y=finemap_clpp_local,label=label),
+    #                  nudge_y = 0.3,
+    #                  nudge_x = -0.2,
+    #                  seed=1,
+    #                  fill=NA,
+    #                  colour='black',
+    #                  label.size=NA,
+    #                  segment.size=NA,
+    #                  size=3,
+    #                  show.legend=F) + 
     
     labs(x='GlobalAA FINEMAP CLPP', y='LocalAA FINEMAP CLPP') +
     theme_classic() +
@@ -1412,173 +1488,169 @@ FINEMAP = function(){
 # 	return(g)
 # }
 
-
-coloc <- function(w=11,h=8){}
-  
-
-fst_distn <- function(w=6,h=3){
-	# # compile_coloc.R
-	# load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/master_all.RData')
-
-	# # add eur-afr Fst
-	# eur_afr <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/high_local_fst/EUR_AFR.weir.fst',sep='\t',header=T)
-	# colnames(eur_afr) <- c('CHROM','POS','EUR_AFR_Fst')
-
-	# eur_afr[EUR_AFR_Fst == '-nan', EUR_AFR_Fst := 0]
-	# eur_afr = eur_afr[EUR_AFR_Fst != 'WEIR_AND_COCKERHAM_FST']
-
-	# eur_afr[,EUR_AFR_Fst := as.numeric(EUR_AFR_Fst)]
-	# eur_afr[,CHROM := as.character(CHROM)]
-	# eur_afr[,POS := as.integer(POS)]
-	# master[,CHROM := as.character(CHROM)]
-	# master[,POS := as.integer(POS)]
-
-	# master <- merge(master, eur_afr, by=c('CHROM','POS'))
-	# master <- unique(master)
-
-	# eur_max <- round(max(master[grepl('EUR',which_max_fst),max_fst]),digits=2)
-	# afr_max <- round(max(master[grepl('AFR',which_max_fst),max_fst]),digits=2)
-	# eur_afr_fst <- round(max(master[,EUR_AFR_Fst], na.omit=T),digits=2)
-
-	# master <- melt(master, measure.vars=c('max_fst','EUR_AFR_Fst'))
-	# print(head(master))
-
-	# master[grepl('AFR',which_max_fst)&variable=='max_fst',group := 'Africa']
-	# master[grepl('EUR',which_max_fst)&variable=='max_fst',group := 'Europe']
-	# master[variable=='EUR_AFR_Fst',group := 'Between-continent Fst']
-
-	# labels <- data.table(label=c(sprintf('Max within-EUR Fst: %s\nMax within-AFR Fst: %s',eur_max,afr_max),
-	# 							sprintf('Max between-continent Fst\n(EUR vs AFR): %s',eur_afr_fst)),
-	# 					variable=c('Max. within-continent Fst','Between-continent Fst'))
-	# print(head(master))
-
-	# master[variable == 'EUR_AFR_Fst', variable := 'Between-continent Fst']
-	# master[variable == 'max_fst', variable := 'Max. within-continent Fst']
-
-	# save(master, file='/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/master_fst-distn-plot.RData')
-
-	load(sprintf('%s/master_fst-distn-plot.RData',master_data_dir))
-	print(max(master[group=='Europe'&variable=="Max. within-continent Fst",value], na.rm=T))
-	print(max(master[group=='Africa'&variable=='Max. within-continent Fst',value], na.rm=T))
-
-	master[variable == 'Max. within-continent Fst', name := 'F[ST*","*within]']
-	master[variable == 'Between-continent Fst', name := 'F[ST*","*between]']
-	# master[variable == "Max. within-continent Fst", title := 'Max. within-continent F[ST]']
-	# master[variable == "Between-continent Fst", title := 'Between-continent F[ST]']
-
-	print(master[value > 0.98])
-
-	print(max(master[variable=='Between-continent Fst',value], na.rm=T))
-
-	master <- master[complete.cases(master)]
-
-	labels <- data.table(label='Max: 0.95',name='F[ST*","*between]')
-	print(labels)
-
-	print(head(master))
-
-	g <- ggplot() +
-		geom_histogram(data=master, aes(value, fill=group), bins=40, colour='black') +
-		geom_label(data=labels, aes(label=label),x=Inf,y=Inf,hjust=1.2,vjust=1.4,label.size=NA) +
-		theme_bw() + 
-		labs(x=bquote('F'['ST']),y='Frequency') +
-		scale_fill_manual(values=c(Europe="#0000FF",Africa="#FF9900",'Between-continent Fst'='white'),
-			limits=c('Europe','Africa'),
-			labels=c(Europe='Europe\n(max: 0.61)',Africa='Africa\n(max: 0.99)')) +
-		facet_wrap(~name, ncol=2, labeller = label_parsed, scales='free_y') +
-		scale_x_continuous(limits=c(0,0.5)) +
-	  scale_y_continuous(labels = scales::scientific) +
-	  theme_classic() +
-		theme(
-			#strip.text = element_text(size=14),
-			#panel.border = element_rect(colour = "black", fill=NA, size=1),
-			#strip.background = element_rect(size=1, colour='black',fill=NA),
-			legend.position=c(0.88,0.65),
-			legend.title=element_blank(),
-			#legend.spacing.y = unit(1.2, 'lines'),
-			#axis.title=element_text(size=14),
-			#legend.text=element_text(size=14),
-			panel.grid = element_blank(),
-			legend.key.width=unit(0.5,"line"),
-			legend.key.heigh=unit(1.5,"line"))
-
-	pdf(paste0(plot_dir,'/fst_distn-merged-by-superpop.pdf'), width=w, height=h)
-	print(g)
-	dev.off()
-
-	return(g)
-}
-
-max_fst_pop <- function(w=5,h=4){
-	# compile_coloc.R
-	#load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/master_all.RData')
-	load(sprintf('%s/master_all_fst.RData',master_data_dir))
-
-	table <- data.table(table(master[,which_max_fst]))
-	print(table)
-	table[,N := N/nrow(master)*100]
-	table <- table[order(N, decreasing=FALSE)]
-	table[,colour := ifelse(grepl('EUR',V1), '#0000FF', '#FF9900')]
-	table[,V1 := gsub('AFR_','',V1)]
-	table[,V1 := gsub('EUR_','',V1)]
-	order_of_labels <- table[,V1]
-
-	g <- ggplot() +
-		geom_bar(data=table, aes(x=V1, y=N, fill=colour), stat='identity', colour='black') +
-		theme_classic() + 
-		labs(x='Pairwise subpopulations',y=bquote('Frequency of F'['ST'*","*'within']~'(%)')) +
-		scale_x_discrete(breaks=order_of_labels, limits=order_of_labels) +
-		scale_fill_identity(guide='legend',name='Super-\npopulation',labels=c('#0000FF'='Europe','#FF9900'='Africa')) +
-		theme(legend.position=c(0.65,0.2),
-			axis.text.y=element_text(colour='black'),
-			#axis.title=element_text(size=14),
-			#legend.text=element_text(size=14),
-			#legend.title=element_text(size=14)
-			) +
-		coord_flip() +
-		scale_y_continuous(expand = c(0,0),limits=c(0,max(table[,N]+0.5)))
-
-	pdf(paste0(plot_dir,'/fst_by_pair-all.pdf'), width=w, height=h)
-	print(g)
-	dev.off()
-
-	return(g)
-}
-
-regression_res <- function(w=4,h=2.5){
-  load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/merged/lmer_coef-to-plot.RData')
-  ann_text = data.frame(coefficient = c('methodlocal:max_within_fst','max_within_fst'),
-                        method = c('COLOC PP4', 'COLOC PP4'),
-                        estimate = c(0.38,-0.6),
-                        label = c('**','***'))
-  
-  g = ggplot(lmer_coef, aes(y = coefficient, x = estimate)) +
-    geom_vline(xintercept=0, linetype='dashed') +
-    geom_point() +
-    geom_errorbar(aes(xmin=estimate-se, xmax=estimate+se), width=.2) +
-    theme_classic() +
-    facet_wrap(~method, ncol=2, scales='free_x') + 
-    theme(axis.text.y=element_text(colour='black'),
-          axis.title.y=element_blank()) +
-    labs(x='Coefficient estimate') +
-    scale_y_discrete(limits = rev(c('methodlocal',
-                                    'AFR_EUR_fst',
-                                    'max_within_fst',
-                                    'methodlocal:AFR_EUR_fst',
-                                    'methodlocal:max_within_fst')),
-                     labels=c('methodlocal:max_within_fst'=expression(LocalAA:F[ST*","*within]),
-                              'methodlocal:AFR_EUR_fst'=expression(LocalAA:F[ST*","*between]),
-                              'methodlocal'='LocalAA',
-                              'max_within_fst'=expression(F[ST*","*within]),
-                              'AFR_EUR_fst'=expression(F[ST*","*between]))) +
-    geom_text(data = ann_text, aes(label = label), vjust=0.8, colour='red')
-  
-	pdf(paste0(plot_dir,'/fig4-coloc-reg.pdf'), width=w, height=h)
-	print(g)
-	dev.off()
-
-	return(g)
-}
+# fst_distn <- function(w=6,h=3){
+# 	# # compile_coloc.R
+# 	# load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/master_all.RData')
+# 
+# 	# # add eur-afr Fst
+# 	# eur_afr <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/high_local_fst/EUR_AFR.weir.fst',sep='\t',header=T)
+# 	# colnames(eur_afr) <- c('CHROM','POS','EUR_AFR_Fst')
+# 
+# 	# eur_afr[EUR_AFR_Fst == '-nan', EUR_AFR_Fst := 0]
+# 	# eur_afr = eur_afr[EUR_AFR_Fst != 'WEIR_AND_COCKERHAM_FST']
+# 
+# 	# eur_afr[,EUR_AFR_Fst := as.numeric(EUR_AFR_Fst)]
+# 	# eur_afr[,CHROM := as.character(CHROM)]
+# 	# eur_afr[,POS := as.integer(POS)]
+# 	# master[,CHROM := as.character(CHROM)]
+# 	# master[,POS := as.integer(POS)]
+# 
+# 	# master <- merge(master, eur_afr, by=c('CHROM','POS'))
+# 	# master <- unique(master)
+# 
+# 	# eur_max <- round(max(master[grepl('EUR',which_max_fst),max_fst]),digits=2)
+# 	# afr_max <- round(max(master[grepl('AFR',which_max_fst),max_fst]),digits=2)
+# 	# eur_afr_fst <- round(max(master[,EUR_AFR_Fst], na.omit=T),digits=2)
+# 
+# 	# master <- melt(master, measure.vars=c('max_fst','EUR_AFR_Fst'))
+# 	# print(head(master))
+# 
+# 	# master[grepl('AFR',which_max_fst)&variable=='max_fst',group := 'Africa']
+# 	# master[grepl('EUR',which_max_fst)&variable=='max_fst',group := 'Europe']
+# 	# master[variable=='EUR_AFR_Fst',group := 'Between-continent Fst']
+# 
+# 	# labels <- data.table(label=c(sprintf('Max within-EUR Fst: %s\nMax within-AFR Fst: %s',eur_max,afr_max),
+# 	# 							sprintf('Max between-continent Fst\n(EUR vs AFR): %s',eur_afr_fst)),
+# 	# 					variable=c('Max. within-continent Fst','Between-continent Fst'))
+# 	# print(head(master))
+# 
+# 	# master[variable == 'EUR_AFR_Fst', variable := 'Between-continent Fst']
+# 	# master[variable == 'max_fst', variable := 'Max. within-continent Fst']
+# 
+# 	# save(master, file='/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/master_fst-distn-plot.RData')
+# 
+# 	load(sprintf('%s/master_fst-distn-plot.RData',master_data_dir))
+# 	print(max(master[group=='Europe'&variable=="Max. within-continent Fst",value], na.rm=T))
+# 	print(max(master[group=='Africa'&variable=='Max. within-continent Fst',value], na.rm=T))
+# 
+# 	master[variable == 'Max. within-continent Fst', name := 'F[ST*","*within]']
+# 	master[variable == 'Between-continent Fst', name := 'F[ST*","*between]']
+# 	# master[variable == "Max. within-continent Fst", title := 'Max. within-continent F[ST]']
+# 	# master[variable == "Between-continent Fst", title := 'Between-continent F[ST]']
+# 
+# 	print(master[value > 0.98])
+# 
+# 	print(max(master[variable=='Between-continent Fst',value], na.rm=T))
+# 
+# 	master <- master[complete.cases(master)]
+# 
+# 	labels <- data.table(label='Max: 0.95',name='F[ST*","*between]')
+# 	print(labels)
+# 
+# 	print(head(master))
+# 
+# 	g <- ggplot() +
+# 		geom_histogram(data=master, aes(value, fill=group), bins=40, colour='black') +
+# 		geom_label(data=labels, aes(label=label),x=Inf,y=Inf,hjust=1.2,vjust=1.4,label.size=NA) +
+# 		theme_bw() + 
+# 		labs(x=bquote('F'['ST']),y='Frequency') +
+# 		scale_fill_manual(values=c(Europe="#0000FF",Africa="#FF9900",'Between-continent Fst'='white'),
+# 			limits=c('Europe','Africa'),
+# 			labels=c(Europe='Europe\n(max: 0.61)',Africa='Africa\n(max: 0.99)')) +
+# 		facet_wrap(~name, ncol=2, labeller = label_parsed, scales='free_y') +
+# 		scale_x_continuous(limits=c(0,0.5)) +
+# 	  scale_y_continuous(labels = scales::scientific) +
+# 	  theme_classic() +
+# 		theme(
+# 			#strip.text = element_text(size=14),
+# 			#panel.border = element_rect(colour = "black", fill=NA, size=1),
+# 			#strip.background = element_rect(size=1, colour='black',fill=NA),
+# 			legend.position=c(0.88,0.65),
+# 			legend.title=element_blank(),
+# 			#legend.spacing.y = unit(1.2, 'lines'),
+# 			#axis.title=element_text(size=14),
+# 			#legend.text=element_text(size=14),
+# 			panel.grid = element_blank(),
+# 			legend.key.width=unit(0.5,"line"),
+# 			legend.key.heigh=unit(1.5,"line"))
+# 
+# 	pdf(paste0(plot_dir,'/fst_distn-merged-by-superpop.pdf'), width=w, height=h)
+# 	print(g)
+# 	dev.off()
+# 
+# 	return(g)
+# }
+# 
+# max_fst_pop <- function(w=5,h=4){
+# 	# compile_coloc.R
+# 	#load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/fst/master_all.RData')
+# 	load(sprintf('%s/master_all_fst.RData',master_data_dir))
+# 
+# 	table <- data.table(table(master[,which_max_fst]))
+# 	print(table)
+# 	table[,N := N/nrow(master)*100]
+# 	table <- table[order(N, decreasing=FALSE)]
+# 	table[,colour := ifelse(grepl('EUR',V1), '#0000FF', '#FF9900')]
+# 	table[,V1 := gsub('AFR_','',V1)]
+# 	table[,V1 := gsub('EUR_','',V1)]
+# 	order_of_labels <- table[,V1]
+# 
+# 	g <- ggplot() +
+# 		geom_bar(data=table, aes(x=V1, y=N, fill=colour), stat='identity', colour='black') +
+# 		theme_classic() + 
+# 		labs(x='Pairwise subpopulations',y=bquote('Frequency of F'['ST'*","*'within']~'(%)')) +
+# 		scale_x_discrete(breaks=order_of_labels, limits=order_of_labels) +
+# 		scale_fill_identity(guide='legend',name='Super-\npopulation',labels=c('#0000FF'='Europe','#FF9900'='Africa')) +
+# 		theme(legend.position=c(0.65,0.2),
+# 			axis.text.y=element_text(colour='black'),
+# 			#axis.title=element_text(size=14),
+# 			#legend.text=element_text(size=14),
+# 			#legend.title=element_text(size=14)
+# 			) +
+# 		coord_flip() +
+# 		scale_y_continuous(expand = c(0,0),limits=c(0,max(table[,N]+0.5)))
+# 
+# 	pdf(paste0(plot_dir,'/fst_by_pair-all.pdf'), width=w, height=h)
+# 	print(g)
+# 	dev.off()
+# 
+# 	return(g)
+# }
+# 
+# regression_res <- function(w=4,h=2.5){
+#   load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/merged/lmer_coef-to-plot.RData')
+#   ann_text = data.frame(coefficient = c('methodlocal:max_within_fst','max_within_fst'),
+#                         method = c('COLOC PP4', 'COLOC PP4'),
+#                         estimate = c(0.38,-0.6),
+#                         label = c('**','***'))
+#   
+#   g = ggplot(lmer_coef, aes(y = coefficient, x = estimate)) +
+#     geom_vline(xintercept=0, linetype='dashed') +
+#     geom_point() +
+#     geom_errorbar(aes(xmin=estimate-se, xmax=estimate+se), width=.2) +
+#     theme_classic() +
+#     facet_wrap(~method, ncol=2, scales='free_x') + 
+#     theme(axis.text.y=element_text(colour='black'),
+#           axis.title.y=element_blank()) +
+#     labs(x='Coefficient estimate') +
+#     scale_y_discrete(limits = rev(c('methodlocal',
+#                                     'AFR_EUR_fst',
+#                                     'max_within_fst',
+#                                     'methodlocal:AFR_EUR_fst',
+#                                     'methodlocal:max_within_fst')),
+#                      labels=c('methodlocal:max_within_fst'=expression(LocalAA:F[ST*","*within]),
+#                               'methodlocal:AFR_EUR_fst'=expression(LocalAA:F[ST*","*between]),
+#                               'methodlocal'='LocalAA',
+#                               'max_within_fst'=expression(F[ST*","*within]),
+#                               'AFR_EUR_fst'=expression(F[ST*","*between]))) +
+#     geom_text(data = ann_text, aes(label = label), vjust=0.8, colour='red')
+#   
+# 	pdf(paste0(plot_dir,'/fig4-coloc-reg.pdf'), width=w, height=h)
+# 	print(g)
+# 	dev.off()
+# 
+# 	return(g)
+# }
 
 # DEPRECATED
 # regression_res <- function(w=3,h=4){
@@ -1864,37 +1936,37 @@ tg_gtex_pca <- function(){
 }
 
 # from locus_plots.R
-# this needs to be rerun first 
+locus_plots <- function(){
 
-# locus_plots <- function(){
+	load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/locusplots/master-locus_plots.RData')
+	#master[,p4_lab := sapply(p4_lab, function(x) gsub('p4','PP4',p4_lab))]
+	print(head(master))
+	print(unique(master[,description]))
 	
-# 	load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/coloc/master-locus_plots_v3.RData')
-# 	#master[,p4_lab := sapply(p4_lab, function(x) gsub('p4','PP4',p4_lab))]
-# 	print(head(master))
+	master[,description := sapply(description, function (x) gsub(' ','_',x))]
+	master[,description := sapply(description, fix_label)]
+	master[,description := sapply(description, fix_gwas_label)]
+	master[,description := sapply(description, function (x) gsub('_',' ',x))]
+	head(master)
+	
+	g <- ggplot(master) +
+		#geom_point(data=local[!is.na(variant_id)&global_p4 < local_p4],colour='black',size=2,aes(x=pvalue_gwas,y=pvalue_eqtl)) +
+		geom_point(aes(colour=method,x=pvalue_gwas,y=pvalue_eqtl), alpha=0.7,size=0.5) +
+		scale_colour_manual(values=c(GlobalAA=methodcols[['global']],LocalAA=methodcols[['LAVA']])) +
+		theme_classic() +
+		guides(color = guide_legend(override.aes = (list(size=2)), title.hjust = 0.5)) +
+		theme(legend.position='top',
+		      legend.title=element_blank(),
+		      legend.margin=margin(b = -2, unit='mm'),
+    			strip.text = element_text(size=8)) +
+		labs(x=expression('GWAS'~italic(P)*'-value (-log10)'),y=expression('eQTL'~italic(P)*'-value (-log10)')) +
+		facet_wrap(~description,scales='free',ncol=4,labeller = label_wrap_gen())
+	g1 <- g + geom_text(data = unique(master,by=c('description','better_coloc')), mapping = aes(x = -Inf, y = Inf, label = better_coloc),size=2.5, colour='black', hjust=-0.1, vjust=1.5)
 
-# 	# first just where Local is better (7 out of 23)
-# 	local <- master[global_p4 < local_p4]
-# 	g <- ggplot(local) +
-# 		geom_point(data=local[!is.na(variant_id)&global_p4 < local_p4],colour='black',size=2,aes(x=pvalue_gwas,y=pvalue_eqtl)) +
-# 		geom_point(aes(colour=method,x=pvalue_gwas,y=pvalue_eqtl),alpha=0.7,size=0.5) +
-# 		scale_colour_manual(name='eQTL ancestry adjustment',values=c(Global=methodcols[['global']],Local=methodcols[['LAVA']]), labels=c(Global='GlobalAA',Local='LocalAA')) +
-# 		theme_bw() +
-# 		guides(color = guide_legend(override.aes = (list(size=2)), title.position = "top", 
-# 									title.hjust = 0.5)) +
-# 		theme(legend.position='top',
-# 			legend.margin=margin(b = -2, unit='mm'),
-# 			strip.text = element_text(size=8),
-# 			panel.border = element_rect(colour = "black", fill=NA, size=1),
-# 			strip.background = element_rect(size=1, colour='black',fill=NA),
-# 			panel.grid = element_blank()) +
-# 		labs(x=expression('GWAS'~italic(P)*'-value (-log10)'),y=expression('eQTL'~italic(P)*'-value (-log10)')) +
-# 		facet_wrap(~description,scales='free',ncol=4,labeller = label_wrap_gen()) 
-# 	g1 <- g + geom_text(data = unique(local,by=c('description','p4_lab')), mapping = aes(x = -Inf, y = Inf, label = p4_lab),hjust = -0.1,vjust = 1.2,size=2.5)
-
-# 	png(sprintf('%s/coloc-locus-compare-wrapped-better-local.png',supp_dir),width=8,height=5,units='in',res=300)
-# 	print(g1)
-# 	dev.off()
-
+	png(sprintf('%s/coloc-locus-compare-wrapped.png',supp_dir),width=8,height=16,units='in',res=300)
+	print(g1)
+	dev.off()
+# 
 # 	# now just where Global is better (16 out of 23)
 # 	global <- master[global_p4 > local_p4]
 # 	g <- ggplot(global) +
@@ -1902,7 +1974,7 @@ tg_gtex_pca <- function(){
 # 		geom_point(aes(colour=method,x=pvalue_gwas,y=pvalue_eqtl),alpha=0.7,size=0.5) +
 # 		scale_colour_manual(name='eQTL ancestry adjustment',values=c(Global=methodcols[['global']],Local=methodcols[['LAVA']]), labels=c(Global='GlobalAA',Local='LocalAA')) +
 # 		theme_bw() +
-# 		guides(color = guide_legend(override.aes = (list(size=2)), title.position = "top", 
+# 		guides(color = guide_legend(override.aes = (list(size=2)), title.position = "top",
 # 									title.hjust = 0.5)) +
 # 		theme(legend.position='top',
 # 			legend.margin=margin(b = -2, unit='mm'),
@@ -1911,25 +1983,25 @@ tg_gtex_pca <- function(){
 # 			strip.background = element_rect(size=1, colour='black',fill=NA),
 # 			panel.grid = element_blank()) +
 # 		labs(x=expression('GWAS'~italic(P)*'-value (-log10)'),y=expression('eQTL'~italic(P)*'-value (-log10)')) +
-# 		facet_wrap(~description,scales='free',ncol=4,labeller = label_wrap_gen()) 
+# 		facet_wrap(~description,scales='free',ncol=4,labeller = label_wrap_gen())
 # 	g2 <- g + geom_text(data = unique(global,by=c('description','p4_lab')), mapping = aes(x = -Inf, y = Inf, label = p4_lab),hjust = -0.1,vjust = 1.2, size=2.5)
-
+# 
 # 	png(sprintf('%s/coloc-locus-compare-wrapped-better-global.png',supp_dir),width=8,height=9,units='in',res=300)
 # 	print(g2)
 # 	dev.off()
 
-# 	# split into two pages (one where local better; one where global better)
+	# split into two pages (one where local better; one where global better)
 
-# 	# pdf(sprintf("%s/coloc-locus-compare.pdf",supp_dir),width=15, height=15)
-# 	# grid.arrange(g1, g2,
-# 	# 	layout_matrix = rbind(c(1,1),
-# 	# 						c(2,2),
-# 	# 						c(2,2),
-# 	# 						c(2,2))
-# 	# )
-# 	# dev.off()
+	# pdf(sprintf("%s/coloc-locus-compare.pdf",supp_dir),width=15, height=15)
+	# grid.arrange(g1, g2,
+	# 	layout_matrix = rbind(c(1,1),
+	# 						c(2,2),
+	# 						c(2,2),
+	# 						c(2,2))
+	# )
+	# dev.off()
 
-# }
+}
 
 ########################################################################################################################################
 # put them together 
@@ -1945,7 +2017,7 @@ figure1 <- function(){
 
 	g <- local_block_trunc(1,2)
 
-	pdf(sprintf("%s/figure1-tmp.pdf",plot_dir),width=8, height=8)
+	pdf(sprintf("%s/figure1-tmp.pdf",plot_dir),width=8, height=7)
 	grid.arrange(genotype_pc(), admix_per_tissue_short(), rfmix_pc_cor(), g, ve_expr_ancestry(),
 		layout_matrix = rbind(c(1,2),
 								c(1,2),
@@ -2006,11 +2078,24 @@ figure3 <- function(cutoff=1e-6){
 
 	coloc <- COLOC()
 	finemap <- FINEMAP()
+	sig_coloc = sig_coloc()
 	
-	png(sprintf("%s/figure3.png",plot_dir),res=300, units='in', width=8, height=4)
-	grid.arrange(coloc, finemap, 
+	#png(sprintf("%s/figure3.png",plot_dir),res=300, units='in', width=8, height=8)
+	#png(sprintf("%s/figure3.png",plot_dir),res=300, units='in', width=7, height=8)
+	pdf(sprintf("%s/figure3.pdf",plot_dir),width=7, height=8)
+	grid.arrange(coloc, finemap, sig_coloc,
 		layout_matrix=rbind(c(1,2),
-							c(1,2))
+							          c(1,2),
+							          c(1,2),
+							          c(1,2),
+							          c(1,2),
+							          c(3,3),
+							          c(3,3),
+							          c(3,3),
+							          c(3,3),
+							          c(3,3),
+							          c(3,3),
+							          c(3,3))
 	)
 	dev.off()
 
@@ -2035,7 +2120,7 @@ if(args$rfmix_pc_cor){
 	g <- rfmix_pc_cor()
 }
 if(args$local_block_trunc){
-	g <- local_block_trunc(1,4)
+	g <- local_block_trunc(1,2)
 	g <- local_block_trunc(19,22,h=1)
 }
 if(args$qq){
