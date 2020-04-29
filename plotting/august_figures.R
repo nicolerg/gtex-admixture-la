@@ -468,8 +468,8 @@ local_block_trunc <- function(chr_start,chr_stop,w=7.5,h=2){
 
 	# local ancestry tracks
 	# read in global ancestry proportions
-	indir <- "/mnt/lab_data/montgomery/nicolerg/rfmix-admixed/combined/"
-	global_ai <- read.delim(paste0(indir,"gtex_ai_global_all.txt"), sep='\t', header=TRUE, stringsAsFactors=FALSE)
+	indir <- "/oak/stanford/groups/smontgom/nicolerg/LAVA/manuscript_version/rfmix/bed/"
+	global_ai <- read.delim(paste0(meta_dir,"gtex_ai_global_all.txt"), sep='\t', header=TRUE, stringsAsFactors=FALSE)
 
 	# filter out subject with >0.9 homogeneity
 	global_ai <- global_ai[ global_ai$AFR < 0.9 & global_ai$ASN < 0.9 & global_ai$EUR < 0.9 ,]
@@ -1180,6 +1180,18 @@ sig_coloc = function(){
   load('/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/master_coloc-for-plotting.RData')
   m_sub = master_coloc[unique_hit == 1]
   
+  nrow(m_sub)
+  length(unique(m_sub[,gwas]))
+  table(m_sub[,tissue], m_sub[,gene_name])
+  table(m_sub[,gwas], m_sub[,coloc_h4_global] > m_sub[,coloc_h4_local])
+  
+  m_sub[,global_better := coloc_h4_global>coloc_h4_local]
+  m_sub[gene_name == 'AP003108.2' & tissue == 'Artery_Tibial'] # 6 - global better
+  m_sub[gene_name == 'MYO3A' & tissue == 'Nerve_Tibial'] # 2
+  m_sub[gene_name == 'ZSCAN25' & tissue == 'Lung'] # 2
+  m_sub[gwas == 'imputed_UKB_50_Standing_height'] # 6 
+  m_sub[gwas == 'imputed_GIANT_HEIGHT'] # 2
+  m_sub[gwas == 'imputed_UKB_20127_Neuroticism_score'] # 2
 
   
   m_sub = m_sub[,.(gene_id, gene_name, tissue, gwas_trait, coloc_h4_global, 
@@ -1747,6 +1759,8 @@ ve_expr_ancestry <- function(w=5,h=5){
 	}
 
 	merged <- rbindlist(dt_list)
+	
+	write.table(merged, file='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/merged/ve_expr_supplement.tsv', sep='\t', col.names=T, row.names=F, quote=F)
 
 	print(head(merged))
 	print(t.test(merged[,variance_explained_ga], merged[,variance_explained_la]))
@@ -1771,7 +1785,7 @@ ve_expr_ancestry <- function(w=5,h=5){
 	collapsed[,diff := mean_la - mean_ga]
 	collapsed <- collapsed[order(diff,decreasing=T)]
 	print(collapsed[1:20])
-
+	
 	merged[,colour := tissue]
 	merged[gene_name=='TBC1D3L', colour := 'black']
 	merged[,size := ifelse(gene_name=='TBC1D3L', 2, 1)]
