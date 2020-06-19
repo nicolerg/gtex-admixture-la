@@ -151,4 +151,4 @@ Scripts from Alicia R. Martin were also used to [calculate global ancestry](http
 
 See the last chunk of [format-rfmix-pipeline.sh](format-rfmix-pipeline.sh) to generate chromosome-level local ancestry BED files.   
 
-Call [interpolate-local-anc.py](interpolate-local-anc.py) to extract local ancestry for each SNP in a target VCF (`subset` path). `mapfile` is each chromosome-level local ancestry BED file. See how target VCFs were generated for this manuscript [here](#prepare-vcfs). 
+Call [interpolate-local-anc.py](interpolate-local-anc.py) to extract local ancestry for each SNP in a target VCF (`subset` path). `mapfile` is each chromosome-level local ancestry BED file. See how target VCFs were generated for this manuscript [here](#merge-gtex-and-1000-genomes-vcfs). 
