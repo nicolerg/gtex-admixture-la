@@ -230,6 +230,7 @@ nrow(f)
 load('/mnt/lab_data/montgomery/nicolerg/local-eqtl/REVISIONS/merged/egenes_master-20200326.RData')
 egenes_master = egenes_master[,.(gene_id,tissue,LD,overlapping_lead_variants)]
 colnames(egenes_master) = c('gene_id','tissue','lead_variants_LD','overlapping_lead_variants')
+egenes_master[LD == 1, overlapping_lead_variants := 1]
 
 la_summary <- merge(f, egenes_master, by=c('gene_id','tissue'))
 print(nrow(f))

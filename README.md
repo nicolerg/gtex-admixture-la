@@ -6,7 +6,7 @@ This repository provides code and resources used to perform the analyses present
 
 Note that code is primarily provided to replicate analyses in the manuscript. However, when applicable, updated or more efficient versions of the code are also provided.  
 
-"117AX" refers to a subset of 117 admixed invididuals in the GTEx v8 release whose GTEx IDs are provided in [`metadata/gtex-admix0.9.txt`](metadata/gtex-admix0.9.txt). These scripts could be adapted for any subset of individuals.  
+"117AX" refers to a subset of 117 admixed invididuals in the GTEx v8 release whose GTEx IDs are provided in [`metadata/gtex-admixed0.9.txt`](metadata/gtex-admixed0.9.txt). These scripts could be adapted for any subset of individuals.  
 
 **Please see a subdirectory for detailed documentation for each step:** 
 

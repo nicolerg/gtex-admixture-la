@@ -1,5 +1,7 @@
 #!/bin/R
 
+# DEPRECATED 
+
 # clean up merged coloc results 
 
 library(data.table)
