@@ -15,7 +15,7 @@ GWAS summary statistics were downloaded from two sources:
 ### COLOC
 Follow [`coloc_pipeline.sh`](coloc_pipeline.sh) to do the following:  
   1. Calculate SNP allele frequencies for all tested SNPs based on 117AX genotypes (`snp_to_effect_af.tsv.gz`)  
-  2. Parse allpairs files to include only tests for "same eGene, different lead SNP" genes at a nominal p-value of 1e-04. This could be optimized by making these gene lists tissue-specific. More tests are currently performed than necessary. See [`parse_allpairs_for_coloc.py`](parse_allpairs_for_coloc.py)  
+  2. Parse allpairs files to include only tests for "same eGene, different lead SNP" genes at a nominal p-value of 1e-04 (see [`parse_allpairs_for_coloc.py`](parse_allpairs_for_coloc.py)). *Note: More tests are currently performed than necessary; this could be optimized by making these gene lists tissue-specific*     
   3. Sort, `bgzip`, and `tabix`-index filterd allpairs files  
   4. Make config files for the colocalization wrapper pipeline (see [`gwas_char.txt`](config/gwas_char.txt), [`gwas_experiments.json`](config/gwas_experiments.json), [`gtex_cc.json`](gtex_cc.json), [`format_config.py`](format_config.py); all config files used for COLOC are available [here](config/coloc))  
   5. Make `n_gwas.txt` and `n_eqtl.txt` sample size files manually (or include sample sizes in the config file)  
