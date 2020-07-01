@@ -10,34 +10,24 @@ GWAS summary statistics were downloaded from two sources:
 
 [`format_page_gwas.sh`](format_page_gwas.sh) was used to covert the PAGE GWAS summary statistics to the format required by the coloc wrapper pipeline.  
 
-## Run the colocalization pipeline (COLOC and FINEMAP)  
+## Perform colocalization with wrapper pipeline 
+
+## COLOC
 Follow [`coloc_pipeline.sh`](coloc_pipeline.sh) to do the following:  
   1. Calculate SNP allele frequencies for all tested SNPs based on 117AX genotypes (`snp_to_effect_af.tsv.gz`) 
   2. [`parse_allpairs_for_coloc.py`](parse_allpairs_for_coloc.py): parse allpairs files to include only tests for "same eGene, different lead SNP" genes at a nominal p-value of 1e-04. (This could be optimized by making these gene lists tissue-specific. More tests are currently performed than necessary.)  
   3. Sort, `bgzip`, and `tabix`-index filterd allpairs files  
   4. Make config file for the coloc wrapper pipeline (see [`gwas_char.txt`](config/gwas_char.txt) and [`gwas_experiments.json`](config/gwas_experiments.json); all config files used are available [here](config))  
   5. Make `n_gwas.txt` and `n_eqtl.txt` sample size files manually (or include sample sizes in the config file)
-  6. Run COLOC and FINEMAP with the colocalization wrapper pipeline 
+  6. Run COLOC with the colocalization wrapper pipeline 
   7. Merge results  
-
-**NOTE:** To run the pipeline on SCG, use the `scg` branch and load the following modules first IN THIS ORDER: 
-```bash 
-module load r/3.6 # R v3.6
-module load miniconda/2 # python2
-module load plink/1.90b6.13 # PLINK v1.90b
-module load tabix # tabix
-```
-
-You will also need to install [`FINEMAP v1.1`](http://www.christianbenner.com/), soft-link the executable to a file named `finemap`, and add the directory with the `finemap` soft link to your PATH. 
-
-Contact Mike Gloudemans about access to the colocalization wrapper pipeline: mgloud@stanford.edu
 
 Here is the code used to generate colocalization posterior probabilities with COLOC:
 ```r
 suppressMessages(require(coloc))
 
 # Get input and output locations as command-line arguments
-args <- commandArgs(TRUE)
+args = commandArgs(TRUE)
 infile = args[1]
 N_gwas = as.numeric(args[2]) # sample size of GWAS
 s_gwas = as.numeric(args[3])
@@ -74,6 +64,32 @@ h4 = results$summary[6]
 
 cat(h0, h1, h2, h3, h4, sep='\t')
 ```
+
+## FINEMAP  
+We performed FINEMAP colocalization on the subset of loci for which COLOC provided evidence of colocalization (PP4 > 0.5).  
+1. Adjust the COLOC outputs to ensure that the same lead SNP is used to test both eQTL files per tissue (see [`adjust_coloc_sites.py`](adjust_coloc_sites.py))  
+2. Filter sites by COLOC PP4 (see [`filter_loci_for_finemap.R`](filter_loci_for_finemap.R))  
+3. Run FINEMAP (v1.1) with the colocalization wrapper pipeline (see [`run_finemap_sig.sh`](run_finemap_sig.sh))  
+
+Within the wrapper pipeline, FINEMAP is called with the following parameters: 
+```bash
+finemap --sss --in-files ${infile} --n-causal-max 1 --n-iterations 1000000 --n-convergence 1000
+```
+For each locus, the colocalization posterior probability (CLPP) score is calculated from the marginal Posterior Inclusion Probabilities [as previously described](https://www-ncbi-nlm-nih-gov.stanford.idm.oclc.org/pmc/articles/PMC5142122/). 
+
+**NOTE:** To run the colocalization wrapper pipeline on SCG, use the `scg` branch of the `brain_gwas` repository and load the following modules first IN THIS ORDER: 
+```bash 
+module load r/3.6 # R v3.6
+module load miniconda/2 # python2
+module load plink/1.90b6.13 # PLINK v1.90b
+module load tabix # tabix
+```
+
+You will also need to install [`FINEMAP v1.1`](http://www.christianbenner.com/), soft-link the executable to a file named `finemap`, and add the directory with the `finemap` soft link to your PATH. 
+
+Contact Mike Gloudemans about access to the colocalization wrapper pipeline: mgloud@stanford.edu
+
+## Merge colocalization results from both methods  
 `format_coloc.R`: clean up the colocalization results
 
 `locus_plots.R`: generate tables used to make colocalization signal plots for loci in which one ancestry adjustment method has a stronger colocalization than the other; used to make Figure S4.
