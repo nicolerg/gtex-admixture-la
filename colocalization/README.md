@@ -12,7 +12,7 @@ GWAS summary statistics were downloaded from two sources:
 
 ## Perform colocalization with wrapper pipeline 
 
-## COLOC
+### COLOC
 Follow [`coloc_pipeline.sh`](coloc_pipeline.sh) to do the following:  
   1. Calculate SNP allele frequencies for all tested SNPs based on 117AX genotypes (`snp_to_effect_af.tsv.gz`) 
   2. [`parse_allpairs_for_coloc.py`](parse_allpairs_for_coloc.py): parse allpairs files to include only tests for "same eGene, different lead SNP" genes at a nominal p-value of 1e-04. (This could be optimized by making these gene lists tissue-specific. More tests are currently performed than necessary.)  
@@ -65,7 +65,7 @@ h4 = results$summary[6]
 cat(h0, h1, h2, h3, h4, sep='\t')
 ```
 
-## FINEMAP  
+### FINEMAP  
 We performed FINEMAP colocalization on the subset of loci for which COLOC provided evidence of colocalization (PP4 > 0.5).  
 1. Adjust the COLOC outputs to ensure that the same lead SNP is used to test both eQTL files per tissue (see [`adjust_coloc_sites.py`](adjust_coloc_sites.py))  
 2. Filter sites by COLOC PP4 (see [`filter_loci_for_finemap.R`](filter_loci_for_finemap.R))  
