@@ -16,3 +16,4 @@ Note that code is primarily provided to replicate analyses in the manuscript. Ho
 - [**Colocalization:**](colocalization) Perform colocalization between eQTL summary statistics (GlobalAA and LocalAA) and each of 114 GWAS (see [this preprint](https://www.biorxiv.org/content/10.1101/814350v1))
 - [**Global ancestry inference with ADMIXTURE:**](admixture) Compare global ancestry fractions estimated from RFMix to ADMIXTURE global ancestry inference  
 - [**Annotations:**](annotation) Annotate SNPs or genes with characteristics including variance in genotype explained by local ancestry, variance in gene expression explained by ancestry, RSIDs, LD, etc.  
+- [**Plotting:**](plotting) Scripts used to generate plots and supplementary tables included in the manuscript  
