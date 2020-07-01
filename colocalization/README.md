@@ -68,7 +68,7 @@ cat(h0, h1, h2, h3, h4, sep='\t')
 ### FINEMAP  
 We performed FINEMAP colocalization on the subset of loci for which COLOC provided evidence of colocalization (PP4 > 0.5).  
 1. Adjust the COLOC outputs to ensure that the same lead SNP is used to test both eQTL files per tissue (see [`adjust_coloc_sites.py`](adjust_coloc_sites.py))  
-2. Filter sites by COLOC PP4 (see [`filter_loci_for_finemap.R`](filter_loci_for_finemap.R))  
+2. Filter sites by COLOC PP4, i.e. `signif_coloc_loci.tests.txt` (see [`filter_loci_for_finemap.R`](filter_loci_for_finemap.R))  
 3. Run FINEMAP (v1.1) with the colocalization wrapper pipeline (see [`run_finemap_sig.sh`](run_finemap_sig.sh))  
 
 Within the wrapper pipeline, FINEMAP is called with the following parameters: 
