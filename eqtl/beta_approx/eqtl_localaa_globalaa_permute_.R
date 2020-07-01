@@ -17,15 +17,6 @@ out <- args[7] # output file
 egenes_master_file <- args[8]
 keep <- args[9]
 
-# tissue='Whole_Blood'
-# exprfile='/oak/stanford/groups/smontgom/shared/GTEx/all_data/GTEx_Analysis_2017-06-05_v8/eqtl/GTEx_Analysis_v8_eQTL_expression_matrices/Whole_Blood.v8.normalized_expression.bed.gz'
-# globalcov='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_PERMUTE/Whole_Blood/Whole_Blood.all_covariates.txt'
-# geno='/oak/stanford/groups/smontgom/nicolerg/LAVA/manuscript_version/admixed_vcf/gtex.admixed.MAC10.phased.chr22.recode.vcf.gz'
-# localcov='/oak/stanford/groups/smontgom/nicolerg/LAVA/manuscript_version/admixed_ancestry/chr22.hg19.maf0.localcov.tsv.gz'
-# out='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_PERMUTE/test.txt'
-# egenes_master_file='/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_PERMUTE/egenes_master.RData'
-# keep='/oak/stanford/groups/smontgom/nicolerg/src/gtex-admixture-la/metadata/gtex-admixed0.9.txt'
-
 timestamp = function(message){
 	writeLines(sprintf('%s	%s', as.character(Sys.time()), message))
 }
@@ -259,9 +250,7 @@ for(j in 1:nrow(geno)){
 				}else{
 					global_pval = NA_real_
 				}
-				#existing_pvalues = permuted_pvalues[[gene]][['global']][[perm]]
-				#permuted_pvalues[[gene]][['global']][[perm]] = c(existing_pvalues, global_pval)
-
+				
 				# LAVA
 				local.fit <- trylmlocal(df2)
 				if(!is.na(local.fit[1])){
@@ -269,9 +258,6 @@ for(j in 1:nrow(geno)){
 				}else{
 					local_pval = NA_real_
 				}
-				#existing_pvalues = permuted_pvalues[[gene]][['LAVA']][[perm]]
-				#permuted_pvalues[[gene]][['LAVA']][[perm]] = c(existing_pvalues, local_pval)
-
 				string=paste(Tissue,gene_id,perm,variant_id,global_pval,local_pval, sep='\t')
 				cat(paste0(string,'\n'), file=allp, append=T)
 
@@ -285,7 +271,6 @@ close(allp)
 timestamp('Done generating null distributions of p-values')
 
 outfile = sprintf('%s.pvalues.RData',gsub('\\..*', '',out))
-#save(permuted_pvalues, permuted_expr, file=outfile)
 save(permuted_expr, file=outfile)
 
 gc(verbose=F)
@@ -299,19 +284,6 @@ minimum_pvalues = permuted_pvalues[,list(global_pval_min=min(global_pval_nominal
 	local_variant_id=variant_id[which.min(local_pval_nominal)],
 	global_variant_id=variant_id[which.min(global_pval_nominal)]),
 by=.(tissue, gene_id, permutation)]
-
-# minimum_pvalues = list()
-# for (gene in names(permuted_pvalues)){
-# 	minimum_pvalues[[gene]] = list()
-# 	minimum_pvalues[[gene]][['global']] = c()
-# 	minimum_pvalues[[gene]][['LAVA']] = c()
-# 	for (method in c('global','LAVA')){
-# 		for (perm in 1:N_ITER){
-# 			min_pval = min(unlist(permuted_pvalues[[gene]][[method]][[perm]]), na.rm=T)
-# 			minimum_pvalues[[gene]][[method]] = c(minimum_pvalues[[gene]][[method]], min_pval)
-# 		}
-# 	}
-# }
 
 timestamp('Fit beta distribution for each gene and approximate adjusted p-value')
 dt = data.table(gene_id = unique(minimum_pvalues[,gene_id]), 
