@@ -17,5 +17,5 @@ module load miniconda/2 # python2
 module load plink/1.90b6.13 # PLINK v1.90b
 module load tabix # tabix
 
-config=/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISED_COLOC/overlap/finemap_1000G_sig.json
-python brain_gwas/scripts/dispatch.py ${config} 12
+config=finemap_1000G_sig.json
+python brain_gwas/scripts/dispatch.py ${config} 12 # Mike Gloudemans wrapper pipeline
