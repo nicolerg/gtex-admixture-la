@@ -880,8 +880,7 @@
 
     "methods":
     {
-        "coloc": {},
-        "finemap": {}
+        "coloc": {}
     },
 
     "ref_genomes":
