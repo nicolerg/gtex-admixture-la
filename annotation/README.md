@@ -1,4 +1,4 @@
-# Annotation
+# SNP annotation
 
 ## Calculate variance in gene expression explained by local and global ancestry 
 1. Use [`interpolate-tss-la.py`](interpolate-tss-la.py) to extract local ancestry calls for 117AX at annotated hg19 TSSs 
