@@ -15,13 +15,13 @@ i = 1
 for (chunk in list.files(path=indir, full.names=T)){
   timestamp(chunk)
   permuted_pvalues = fread(chunk, sep='\t', header=F)
-	colnames(permuted_pvalues) = c('tissue','gene_id','permutation','variant_id','global_pval_nominal','local_pval_nominal')
-	timestamp('Find minimum p-value per permutation')
-	minimum_pvalues = permuted_pvalues[,list(global_pval_min=min(global_pval_nominal, na.rm=T),
-	                                         local_pval_min=min(local_pval_nominal, na.rm=T),
-	                                         local_variant_id=variant_id[which.min(local_pval_nominal)],
-	                                         global_variant_id=variant_id[which.min(global_pval_nominal)]),
-	                                   by=.(tissue, gene_id, permutation)]
+  colnames(permuted_pvalues) = c('tissue','gene_id','permutation','variant_id','global_pval_nominal','local_pval_nominal')
+  timestamp('Find minimum p-value per permutation')
+  minimum_pvalues = permuted_pvalues[,list(global_pval_min=min(global_pval_nominal, na.rm=T),
+					   local_pval_min=min(local_pval_nominal, na.rm=T),
+					   local_variant_id=variant_id[which.min(local_pval_nominal)],
+					   global_variant_id=variant_id[which.min(global_pval_nominal)]),
+				     by=.(tissue, gene_id, permutation)]
 	min_all[[i]] = minimum_pvalues
 	i = i + 1
 }
