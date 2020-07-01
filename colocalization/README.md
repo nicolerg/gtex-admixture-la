@@ -14,13 +14,13 @@ GWAS summary statistics were downloaded from two sources:
 
 ### COLOC
 Follow [`coloc_pipeline.sh`](coloc_pipeline.sh) to do the following:  
-  1. Calculate SNP allele frequencies for all tested SNPs based on 117AX genotypes (`snp_to_effect_af.tsv.gz`) 
-  2. [`parse_allpairs_for_coloc.py`](parse_allpairs_for_coloc.py): parse allpairs files to include only tests for "same eGene, different lead SNP" genes at a nominal p-value of 1e-04. (This could be optimized by making these gene lists tissue-specific. More tests are currently performed than necessary.)  
+  1. Calculate SNP allele frequencies for all tested SNPs based on 117AX genotypes (`snp_to_effect_af.tsv.gz`)  
+  2. Parse allpairs files to include only tests for "same eGene, different lead SNP" genes at a nominal p-value of 1e-04. This could be optimized by making these gene lists tissue-specific. More tests are currently performed than necessary. See [`parse_allpairs_for_coloc.py`](parse_allpairs_for_coloc.py)  
   3. Sort, `bgzip`, and `tabix`-index filterd allpairs files  
-  4. Make config file for the coloc wrapper pipeline (see [`gwas_char.txt`](config/gwas_char.txt) and [`gwas_experiments.json`](config/gwas_experiments.json); all config files used are available [here](config))  
-  5. Make `n_gwas.txt` and `n_eqtl.txt` sample size files manually (or include sample sizes in the config file)
-  6. Run COLOC with the colocalization wrapper pipeline 
-  7. Merge results  
+  4. Make config files for the colocalization wrapper pipeline (see [`gwas_char.txt`](config/gwas_char.txt), [`gwas_experiments.json`](config/gwas_experiments.json), [`gtex_cc.json`](gtex_cc.json), [`format_config.py`](format_config.py); all config files used for COLOC are available [here](config/coloc))  
+  5. Make `n_gwas.txt` and `n_eqtl.txt` sample size files manually (or include sample sizes in the config file)  
+  6. Run COLOC with the colocalization wrapper pipeline  
+  7. Concatenate results  
 
 Here is the code used to generate colocalization posterior probabilities with COLOC:
 ```r
@@ -69,7 +69,7 @@ cat(h0, h1, h2, h3, h4, sep='\t')
 We performed FINEMAP colocalization on the subset of loci for which COLOC provided evidence of colocalization (PP4 > 0.5).  
 1. Adjust the COLOC outputs to ensure that the same lead SNP is used to test both eQTL files per tissue (see [`adjust_coloc_sites.py`](adjust_coloc_sites.py))  
 2. Filter sites by COLOC PP4, i.e. `signif_coloc_loci.tests.txt` (see [`filter_loci_for_finemap.R`](filter_loci_for_finemap.R))  
-3. Run FINEMAP (v1.1) with the colocalization wrapper pipeline (see [`run_finemap_sig.sh`](run_finemap_sig.sh))  
+3. Run FINEMAP (v1.1) with the colocalization wrapper pipeline (see [`run_finemap_sig.sh`](run_finemap_sig.sh) and [config file](config/finemap/finemap_1000G_sig.json))   
 
 Within the wrapper pipeline, FINEMAP is called with the following parameters: 
 ```bash
@@ -90,6 +90,7 @@ You will also need to install [`FINEMAP v1.1`](http://www.christianbenner.com/),
 Contact Mike Gloudemans about access to the colocalization wrapper pipeline: mgloud@stanford.edu
 
 ## Merge colocalization results from both methods  
-`format_coloc.R`: clean up the colocalization results
+After concatenating the colocalization results from each method, merge the results. [`format_coloc.R`](format_coloc.R) provides the code for how this was done specifically for our project (the results are saved in `master_coloc-1e-04-20200418.RData`). 
 
-`locus_plots.R`: generate tables used to make colocalization signal plots for loci in which one ancestry adjustment method has a stronger colocalization than the other; used to make Figure S4.
+## Create colocalization signal plots  
+[`locus_plots.R`](locus_plots.R) generates tables used to make colocalization signal plots for loci in which one ancestry adjustment method has a stronger colocalization than the other. These plots are shown in Figure S4 of [our original manuscript](https://www.biorxiv.org/content/10.1101/836825v1) and Figure S5 of our revised manuscript. 
