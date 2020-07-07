@@ -11,8 +11,8 @@ library(gtable)
 library(grid)
 
 master_data_dir = "/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/merged/"
-plot_dir = "/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/plots/"
-supp_dir = "/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/plots/supplement/"
+plot_dir = "/oak/stanford/groups/smontgom/nicolerg/LAVA/ACCEPTED/plots/"
+supp_dir = "/oak/stanford/groups/smontgom/nicolerg/LAVA/ACCEPTED/plots/supplement/"
 meta_dir = "/oak/stanford/groups/smontgom/nicolerg/LAVA/REVISIONS/metadata/"
 
 parser <- ArgumentParser()
@@ -714,7 +714,8 @@ egene_discovery <- function(h=3,w=5,cutoff=1e-6){
 		geom_abline(slope=1, intercept=0, linetype='dashed') +
 		scale_fill_manual(values=tissuecols, labels=tissuelabs, name='Tissue', limits=tissues) +
 		labs(x='N GlobalAA eGenes', y='N LocalAA eGenes') +
-		theme_classic() 
+		theme_classic() +
+	  theme(legend.key.size = unit(0.9,unit='line'))
 
 	pdf(paste0(plot_dir,"/fig2b_egene_discovery_",cutoff,".pdf"),width=w,height=h)
 	print(egene_discovery)
@@ -789,16 +790,16 @@ venn <- function(h=3.5,w=5,cutoff=1e-6){
 
 	g <- ggplot(dt) +
 	         geom_bar(aes(x=TISSUE, y=count, fill=type), stat='identity', colour='black') +
-	         geom_text(aes(x=TISSUE, y=global_y, label=global_label)) +
-	         geom_text(aes(x=TISSUE, y=local_y, label=local_label)) +
+	         geom_text(aes(x=TISSUE, y=global_y, label=global_label), size=3) +
+	         geom_text(aes(x=TISSUE, y=local_y, label=local_label), size=3) +
 	         scale_fill_manual(values=c(N_diff_lead_snp='#8C7AA9',
 	                                      N_same_lead_snp='gray',
 	                                      N_global_only=unname(methodcols['global']),
 	                                      N_local_only=unname(methodcols['LAVA'])),
-	                             labels=c(N_diff_lead_snp=' Same eGene,\n different lead eVariant',
-	                                      N_same_lead_snp=' Same eGene,\n same lead eVariant',
-	                                      N_global_only=' eGene in GlobalAA only ',
-	                                      N_local_only=' eGene in LocalAA only'),
+	                             labels=c(N_diff_lead_snp='Same eGene,\ndifferent lead eVariant',
+	                                      N_same_lead_snp='Same eGene,\nsame lead eVariant',
+	                                      N_global_only='eGene in GlobalAA only ',
+	                                      N_local_only='eGene in LocalAA only'),
 	                             breaks=c('N_local_only', 'N_global_only', 'N_same_lead_snp', 'N_diff_lead_snp')) +
 	         theme_classic() +
 	         scale_x_discrete(labels=shortlab,limits=tissues) +
@@ -806,7 +807,7 @@ venn <- function(h=3.5,w=5,cutoff=1e-6){
 	               axis.text.x=element_text(colour='black'),
 	               legend.title=element_blank(),
 	               legend.position=c(0.5,0.87),
-	               legend.key.height=unit(1.75, 'lines')) +
+	               legend.key.height=unit(1.2, 'lines')) +
 	         labs(y='N eGenes') +
 	         ylim(c(0,max(dt[,local_y])+0.5*(max(dt[,local_y])))) +
 	         guides(fill=guide_legend(ncol=2))
@@ -842,8 +843,12 @@ pval_distn <- function(cutoff=1e-6,w=6,h=5){
 		labs(x=expression('GlobalAA'~italic(P)*'-value (-log10)'), y=expression('LocalAA'~italic(P)*'-value (-log10)')) +
 		scale_shape_manual(values=c('0'=21,'1'=24),name='Same lead\neVariant', labels=c('0'='No','1'='Yes')) +
 		scale_fill_manual(values=tissuecols, guide='none') +
-		theme(legend.position=c(0.8,0.81),
-			panel.grid = element_blank()) +
+		theme(legend.position=c(0.8,0.82),
+			panel.grid = element_blank(),
+			#legend.spacing.y = unit(2,unit='mm')
+			legend.key.size = unit(0.8, unit='line'),
+			legend.title = element_text(size=10),
+			legend.margin=margin(t = 0, b = 0, unit='cm')) +
 		geom_abline(intercept=2, slope=1, linetype='dotted') +
 		geom_abline(intercept=-2, slope=1, linetype='dotted') +
 		guides(shape = guide_legend(override.aes = list(size=2))) +
@@ -2066,23 +2071,27 @@ figure2 <- function(){
 	
 	r <- rectGrob(gp=gpar(fill="white",colour='white'))
 
-	# pdf(sprintf("%s/figure2-tmp.pdf",plot_dir),width=7.5,height=6)
+	# pdf(sprintf("%s/figure2-tmp.pdf",plot_dir),width=7.5,height=5)
 	# grid.arrange(egene_discovery(cutoff=1e-06), r, venn(cutoff=1e-06), pval_distn(cutoff=1e-06),
 	# 	layout_matrix = rbind(c(2,2,2,1,1,1,1),
 	# 						c(2,2,2,1,1,1,1),
+	# 						c(2,2,2,1,1,1,1),
+	# 						c(3,3,3,3,4,4,4),
 	# 						c(3,3,3,3,4,4,4),
 	# 						c(3,3,3,3,4,4,4),
 	# 						c(3,3,3,3,4,4,4))
 	# )
 	# dev.off()
 
-	png(sprintf("%s/figure2.png",plot_dir),width=7.5,height=6,units='in',res=300)
+	png(sprintf("%s/figure2.png",plot_dir),width=7.5,height=5,units='in',res=300)
 	grid.arrange(egene_discovery(cutoff=1e-06), qq(), venn(cutoff=1e-06), pval_distn(cutoff=1e-06),
-		layout_matrix = rbind(c(2,2,2,1,1,1,1),
-							c(2,2,2,1,1,1,1),
-							c(3,3,3,3,4,4,4),
-							c(3,3,3,3,4,4,4),
-							c(3,3,3,3,4,4,4))
+	             layout_matrix = rbind(c(2,2,2,1,1,1,1),
+	                                   c(2,2,2,1,1,1,1),
+	                                   c(2,2,2,1,1,1,1),
+	                                   c(3,3,3,3,4,4,4),
+	                                   c(3,3,3,3,4,4,4),
+	                                   c(3,3,3,3,4,4,4),
+	                                   c(3,3,3,3,4,4,4))
 	)
 	dev.off()
 

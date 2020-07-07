@@ -1,0 +1,3 @@
+# deprecated scripts
+annotation/merge_all_annotations.R
+eqtl/compare_LocalAA_GTEx.R
