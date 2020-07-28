@@ -343,7 +343,11 @@ genotype_pc <- function(w=4,h=4){
 	}
 	pc[,FID:=sapply(FID,split)]
 	m <- merge(pop, pc, by.x="SUBJID", by.y="FID")
-
+	
+	# filter by subjects in VCF 
+	geno_subj = fread(sprintf('%s/gtex_ids_in_vcf.txt', meta_dir), header=F)
+	m = m[SUBJID %in% geno_subj[,V1]]
+	
 	admixed <- fread(sprintf('%s/gtex-admixed0.9.txt',meta_dir),sep='\t',header=FALSE)
 	m[,shape:=ifelse(SUBJID %in% admixed[,V1],1,2)]
 
@@ -352,7 +356,6 @@ genotype_pc <- function(w=4,h=4){
 		PC1=NA,
 		PC2=NA,
 		shape=1)))
-	print(m)
 
 	print(table(m[,RACE]))
 
@@ -360,8 +363,9 @@ genotype_pc <- function(w=4,h=4){
 		geom_point(data=m,aes(fill=factor(RACE),colour=factor(RACE),shape=factor(shape),alpha=factor(shape),size=factor(shape))) + 
 		scale_fill_manual(values=c('1'="green3", '2'="#FF9900", '3'="#0000FF", '4'='#FF3D3D', '99'='gray', '10'=NA),guide='none') +
 		scale_colour_manual(values=c('1'="green3", '2'="#FF9900", '3'="#0000FF", '4'='#FF3D3D', '99'='gray','10'='black'),
-			labels=c('1'="Asian American (N=12)", '2'="African American (N=103)", '3'="European American (N=714)", '4'='Native American (N=2)', '99'='Unknown (N=8)'),
-			breaks=c('3','2','1','99','4')) +
+			labels=c('1'="Asian American (N=12)", '2'="African American (N=103)", '3'="European American (N=715)", '4'='Native American (N=2)', '99'='Unknown (N=6)'),
+			breaks=c('3','2','1','99','4'),
+			limits=c('3','2','1','99','4')) +
 		scale_size_manual(values=c('1'=2,'2'=1), guide='none') +
 		scale_shape_manual(values=c('1'=21,'2'=16), breaks='2', limits='2', labels='117 admixed (117AX)') +
 		scale_alpha_manual(values=c('1'=0.8,'2'=0.6), guide='none') +
@@ -369,10 +373,10 @@ genotype_pc <- function(w=4,h=4){
 		geom_point(data=m[shape==1],colour='black',shape=21,alpha=1,size=2,fill=NA) +
 		theme_classic() +
 		theme(legend.justification=c(0,0), 
-			legend.position=c(0.01,0.51),
+			legend.position=c(0.01,0.47),
 			legend.text = element_text(size=10),
 			legend.title = element_blank(),
-        	legend.spacing = unit(3,unit='mm')) +
+			legend.spacing = unit(1,unit='mm')) +
 		guides(colour = guide_legend(override.aes = list(size=2,
 									alpha=1,
 									shape=21,
@@ -865,7 +869,7 @@ gtex_r2 <- function(w=4,h=3){
 	
 	# plot_gtex_la_r2.R, r2_gtex_lead_snps.R
 	#gtex_r2 <- fread('/mnt/lab_data/montgomery/nicolerg/local-eqtl/admixed/annotation/r2/gtex/results/unique_lead_snp_r2.txt',sep='\t',header=FALSE)
-	gtex_r2 = fread(sprintf('%s/unique_lead_snp_r2.txt',master_data_dir), sep='\t', header=T)
+	gtex_r2 = fread(sprintf('%s/unique_lead_snp_r2.txt',master_data_dir), sep='\t', header=F)
 
 	g <- ggplot(gtex_r2, aes(V2)) +
 		geom_histogram(bins=40,colour='black',fill='white') +
@@ -1811,7 +1815,7 @@ ve_expr_ancestry <- function(w=5,h=5){
 		scale_fill_manual(values=tissuecols, guide='none') +
 		scale_colour_manual(values=c(tissuecols, black='black'),
 			breaks='black',
-			labels='TBC1D3L') +
+			labels=expression(italic('TBC1D3'))) +
 		theme(legend.title = element_blank(), 
 			legend.position=c(0.83,0.67),
 			legend.background=element_blank()) +
